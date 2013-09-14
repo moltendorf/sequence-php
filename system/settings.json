@@ -1,0 +1,20 @@
+{
+	"path": {
+		"root":		"page",
+
+		"page":		"../page",
+		"content":	"../live/content"
+	},
+
+	"connection": {
+		"type":		"mysqli",
+
+		"hostname":	"p:localhost",
+
+		"username":	"moltendorf.com",
+		"password":	"&KiTOQOen$lEu#=6:B1*6?Q%",
+
+		"database":	"moltendorf.com",
+		"prefix":	"blink_"
+	}
+}
