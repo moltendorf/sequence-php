@@ -83,7 +83,7 @@ namespace blink\root {
 			$class = __NAMESPACE__.'\\database\\'.$settings['type'];
 
 			$root->database = new $class($root);
-			$root->database->connect($settings);
+			$root->database->_connect($settings);
 		}
 	}
 }
