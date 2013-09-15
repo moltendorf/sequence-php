@@ -1,6 +1,8 @@
 <?php
 
 namespace blink {
+	use blink\functions as f;
+
 	abstract class bind {
 
 		/**
@@ -31,7 +33,7 @@ namespace blink {
 		 *
 		 * @var array
 		 */
-		private $listeners = [];
+		private $listeners;
 
 		/**
 		 *
