@@ -10,8 +10,6 @@ namespace blink\root\database {
 		 * @param array $settings
 		 */
 		public function connect($settings) {
-			parent::connect($settings);
-
 			if (!isset($settings['username'])) {
 				throw new \Exception('NO_CONNECTION_USERNAME');
 			}

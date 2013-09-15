@@ -20,6 +20,12 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 * @param array $settings
+		 */
+		abstract public function connect($settings);
+
+		/**
+		 *
 		 * @param string $query
 		 * @param array|null $columns
 		 * @return result\common|boolean
@@ -66,10 +72,12 @@ namespace blink\root\database {
 		 *
 		 * @param array $settings
 		 */
-		public function connect($settings) {
+		public function _connect($settings) {
 			if (isset($settings['prefix'])) {
 				$this->prefix = $settings['prefix'];
 			}
+
+			$this->connect($settings);
 		}
 
 		/**
