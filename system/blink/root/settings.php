@@ -39,6 +39,8 @@ namespace blink\root {
 			}
 
 			unset ($row);
+
+			$this->listen([$this, 'pushAll'], 'sent', 'root/application');
 		}
 
 		/*
