@@ -59,6 +59,9 @@ namespace blink\root {
 
 			$this->broadcast('sent');
 
+			// Close connection to the database.
+			$root->database->close();
+
 			// Calculate the total runtime of the script.
 			$total = microtime(true) * 1e6 - $start;
 
