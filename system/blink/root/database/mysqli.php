@@ -26,22 +26,26 @@ namespace blink\root\database {
 				throw new \Exception('NO_CONNECTION_DATABASE');
 			}
 
-			$hostname = isset($settings['hostname']) ? $settings['hostname'] : null;
-
-			if ($hostname !== null) {
-				$hostname = (string) $hostname;
-			}
-
 			$username = (string) $settings['username'];
 			$password = (string) $settings['password'];
 
 			$database = (string) $settings['database'];
 
-			if (!isset($settings['port'])) {
-				$this->_instance = new \mysqli($hostname, $username, $password, $database);
+			if (isset($settings['socket'])) {
+				$this->_instance = new \mysqli('.', $username, $password, $database, null, $settings['socket']);
 			} else {
-				// The port parameter must be an integer so we have a special case for when it's defined.
-				$this->_instance = new \mysqli($hostname, $username, $password, $database, (integer) $settings['port']);
+				$hostname = isset($settings['hostname']) ? $settings['hostname'] : null;
+
+				if ($hostname !== null) {
+					$hostname = (string) $hostname;
+				}
+
+				if (isset($settings['port'])) {
+					// The port parameter must be an integer so we have a special case for when it's defined.
+					$this->_instance = new \mysqli($hostname, $username, $password, $database, (integer) $settings['port']);
+				} else {
+					$this->_instance = new \mysqli($hostname, $username, $password, $database);
+				}
 			}
 		}
 
