@@ -1,8 +1,9 @@
 <?php
 
 namespace blink\root {
-	use blink as b;
-	use blink\functions as f;
+
+	use blink as b,
+	 blink\functions as f;
 
 	class application extends b\bind {
 
@@ -28,7 +29,7 @@ namespace blink\root {
 			$root = $this->root;
 
 			// Store this internally so it doesn't get tampered with.
-			$start = $_SERVER['REQUEST_TIME_FLOAT']*1e6;
+			$start = $_SERVER['REQUEST_TIME_FLOAT'] * 1e6;
 
 			// Load our settings.
 			$settings = $this->settings($system);
@@ -59,7 +60,7 @@ namespace blink\root {
 			$this->broadcast('finish');
 
 			// Calculate the total runtime of the script.
-			$total = microtime(true)*1e6-$start;
+			$total = microtime(true) * 1e6 - $start;
 
 			f\dump(number_format($total).'µs');
 		}
@@ -91,5 +92,7 @@ namespace blink\root {
 			$root->database = new $class($root);
 			$root->database->_connect($settings);
 		}
+
 	}
+
 }
