@@ -5,7 +5,7 @@ namespace blink {
 
 	/**
 	 *
-	 * @property-read database\common $database
+	 * @property-read root\database\common $database
 	 * @property-read root\hook $hook
 	 * @property-read root\handler $handler
 	 * @property-read root\path $path
