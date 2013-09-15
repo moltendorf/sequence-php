@@ -57,7 +57,7 @@ namespace blink\root {
 			// Run the module.
 			$root->handler->load();
 
-			$this->broadcast('finish');
+			$this->broadcast('sent');
 
 			// Calculate the total runtime of the script.
 			$total = microtime(true) * 1e6 - $start;
