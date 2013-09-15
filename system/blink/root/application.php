@@ -36,6 +36,8 @@ namespace blink\root {
 			// Set up our paths.
 			$root->path->settings($system, $settings['path']);
 
+			$this->broadcast('start');
+
 			// Connect to the database.
 			$this->connect($settings['connection']);
 
@@ -46,11 +48,15 @@ namespace blink\root {
 				define('blink\\debug', false);
 			}
 
+			$this->broadcast('ready');
+
 			// Parse the request.
 			$root->handler->parse();
 
 			// Run the module.
 			$root->handler->load();
+
+			$this->broadcast('finish');
 
 			// Calculate the total runtime of the script.
 			$total = microtime(true)*1e6-$start;

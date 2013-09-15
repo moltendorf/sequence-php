@@ -73,11 +73,15 @@ namespace blink\root\database {
 		 * @param array $settings
 		 */
 		public function _connect($settings) {
+			$this->broadcast('connecting');
+
 			if (isset($settings['prefix'])) {
 				$this->prefix = $settings['prefix'];
 			}
 
 			$this->connect($settings);
+
+			$this->broadcast('connected');
 		}
 
 		/**
