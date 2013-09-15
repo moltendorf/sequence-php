@@ -29,12 +29,20 @@ namespace blink {
 
 		/**
 		 *
+		 * @var array
+		 */
+		private $listeners = [];
+
+		/**
+		 *
 		 * @param root $root
 		 * @param string $binding
 		 */
 		final public function __construct(root $root, $binding = '') {
-			$this->root = $root;
-			$this->binding = $binding.$this->getBinding();
+			$this->root		 = $root;
+			$this->binding	 = $binding.$this->getBinding();
+
+			$this->listeners = &$this->root->hook->register($this, $binding);
 
 			$this->construct();
 		}
@@ -47,7 +55,13 @@ namespace blink {
 		final protected function broadcast($message) {
 			$data = array_slice(func_get_args(), 1);
 
-			$this->root->hook->_broadcast($this->binding, $message, $data);
+			$this->root->hook->broadcast($message, $data);
+
+			if (isset($this->listeners[$message])) {
+				foreach ($this->listeners[$message] as $method) {
+					call_user_func_array($method, $data);
+				}
+			}
 		}
 
 		/**
@@ -57,27 +71,7 @@ namespace blink {
 		 * @param string $binding
 		 */
 		final protected function listen(callable $method, $message, $binding = null) {
-			$this->root->hook->_listen($method, $message, $binding);
-		}
-
-		/**
-		 *
-		 * @param string $binding
-		 * @param string $message
-		 * @param array $data
-		 */
-		final private function _broadcast($binding, $message, $data) {
-
-		}
-
-		/**
-		 *
-		 * @param callable $method
-		 * @param string $message
-		 * @param string $binding
-		 */
-		final private function _listen(callable $method, $message, $binding) {
-
+			$this->root->hook->listen($method, $message, $binding);
 		}
 	}
 }
