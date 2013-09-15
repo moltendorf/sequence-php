@@ -84,7 +84,7 @@ namespace blink\root {
 		 * @param string $message
 		 * @param string $binding
 		 */
-		public function listen(callable $method, $message, $binding) {
+		public function listen(callable $method, $message, $binding = null) {
 			if ($binding === null) {
 				if (isset($this->global[$message])) {
 					$this->global[$message][] = [$method];
