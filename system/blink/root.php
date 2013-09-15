@@ -1,6 +1,7 @@
 <?php
 
 namespace blink {
+
 	use blink\functions as f;
 
 	/**
@@ -19,10 +20,12 @@ namespace blink {
 		 * @return mixed
 		 */
 		public function __get($name) {
-			$class = 'blink\\root\\'.$name;
+			$class		 = 'blink\\root\\'.$name;
 			$this->$name = new $class($this);
 
 			return $this->$name;
 		}
+
 	}
+
 }
