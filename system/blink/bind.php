@@ -42,7 +42,7 @@ namespace blink {
 			$this->root		 = $root;
 			$this->binding	 = $binding.$this->getBinding();
 
-			$this->listeners = &$this->root->hook->register($this, $binding);
+			$this->listeners = &$this->root->hook->register($this, $this->binding);
 
 			$this->construct();
 		}
