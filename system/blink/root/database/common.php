@@ -64,6 +64,13 @@ namespace blink\root\database {
 
 		}
 
+		/**
+		 * Override automatic binding.
+		 */
+		final protected function getBinding() {
+			return 'root\\database';
+		}
+
 		/*
 		 * End implementation of b\bind.
 		 */
