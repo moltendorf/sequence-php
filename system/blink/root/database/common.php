@@ -26,6 +26,11 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 */
+		abstract public function close();
+
+		/**
+		 *
 		 * @param string $query
 		 * @param array|null $columns
 		 * @return result\common|boolean
@@ -89,6 +94,17 @@ namespace blink\root\database {
 			$this->connect($settings);
 
 			$this->broadcast('connected');
+		}
+
+		/**
+		 *
+		 */
+		public function _close() {
+			$this->broadcast('closing');
+
+			$this->close();
+
+			$this->broadcast('closed');
 		}
 
 		/**

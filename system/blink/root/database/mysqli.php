@@ -5,6 +5,10 @@ namespace blink\root\database {
 
 	class mysqli extends common {
 
+		/*
+		 * Implementation of common.
+		 */
+
 		/**
 		 *
 		 * @param array $settings
@@ -39,6 +43,13 @@ namespace blink\root\database {
 				// The port parameter must be an integer so we have a special case for when it's defined.
 				$this->_instance = new \mysqli($hostname, $username, $password, $database, (integer) $settings['port']);
 			}
+		}
+
+		/**
+		 *
+		 */
+		public function close() {
+			$this->_instance->close();
 		}
 
 		/**
@@ -83,5 +94,9 @@ namespace blink\root\database {
 		public function escape_value($value) {
 			return '\''.$this->_instance->real_escape_string($value).'\'';
 		}
+
+		/*
+		 * End implementation of common.
+		 */
 	}
 }
