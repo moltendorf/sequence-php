@@ -18,7 +18,7 @@ namespace blink {
 		 *
 		 */
 		protected function getBinding() {
-			return substr(get_class($this), strlen(__NAMESPACE__)+1);
+			return str_replace('\\', '/', substr(get_class($this), strlen(__NAMESPACE__)+1));
 		}
 
 		/**
