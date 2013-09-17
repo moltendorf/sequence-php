@@ -29,6 +29,15 @@ namespace blink {
 		 * @param root $root
 		 * @param string $binding
 		 */
+		public function __construct(root $root, $binding = '') {
+			$this->bind($root, $binding);
+		}
+
+		/**
+		 *
+		 * @param root $root
+		 * @param string $binding
+		 */
 		public function bind(root $root, $binding = '') {
 			$this->root		 = $root;
 			$this->binding	 = $binding.$this->getBinding();
