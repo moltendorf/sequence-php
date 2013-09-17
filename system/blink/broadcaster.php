@@ -3,18 +3,7 @@
 namespace blink {
 	use blink\functions as f;
 
-	abstract class bind {
-
-		/**
-		 *
-		 * @var root
-		 */
-		protected $root;
-
-		/**
-		 *
-		 */
-		abstract protected function construct();
+	trait broadcaster {
 
 		/**
 		 *
@@ -40,13 +29,11 @@ namespace blink {
 		 * @param root $root
 		 * @param string $binding
 		 */
-		final public function __construct(root $root, $binding = '') {
+		public function bind(root $root, $binding = '') {
 			$this->root		 = $root;
 			$this->binding	 = $binding.$this->getBinding();
 
 			$this->listeners = &$this->root->hook->register($this, $this->binding);
-
-			$this->construct();
 		}
 
 		/**
@@ -64,16 +51,6 @@ namespace blink {
 					call_user_func_array($method, $data);
 				}
 			}
-		}
-
-		/**
-		 *
-		 * @param callable $method
-		 * @param string $message
-		 * @param string $binding
-		 */
-		final protected function listen(callable $method, $message, $binding = null) {
-			$this->root->hook->listen($method, $message, $binding);
 		}
 	}
 }
