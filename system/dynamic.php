@@ -41,6 +41,6 @@ namespace blink {
 		$root = new root();
 
 		// Run.
-		$root->application->start(__DIR__);
+		$root->application->routine(__DIR__);
 	}
 }

@@ -25,14 +25,18 @@ namespace blink\root {
 		/**
 		 * @param string $system
 		 */
-		public function start($system) {
+		public function routine($system) {
 			$root = $this->root;
 
 			// Store this internally so it doesn't get tampered with.
 			$start = $_SERVER['REQUEST_TIME_FLOAT'] * 1e6;
 
 			// Load our settings.
-			$settings = $this->settings($system);
+			$settings = f\file_get_json($system.'/settings.json');
+
+			if ($settings === false) {
+				throw new \Exception('NO_SETTINGS_FILE');
+			}
 
 			// Set up our paths.
 			$root->path->settings($system, $settings['path']);
@@ -53,8 +57,6 @@ namespace blink\root {
 
 			// Parse the request.
 			$root->handler->parse();
-
-			// Run the module.
 			$root->handler->load();
 
 			$this->broadcast('sent');
@@ -66,20 +68,6 @@ namespace blink\root {
 			$total = microtime(true) * 1e6 - $start;
 
 			f\dump(number_format($total).'µs');
-		}
-
-		/**
-		 *
-		 * @param string $system
-		 */
-		private function settings($system) {
-			$settings = f\file_get_json($system.'/settings.json');
-
-			if ($settings === false) {
-				throw new \Exception('NO_SETTINGS_FILE');
-			}
-
-			return $settings;
 		}
 
 		/**
