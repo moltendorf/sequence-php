@@ -1,9 +1,10 @@
 <?php
 
 namespace blink\root\database {
+
 	use blink\functions as f;
 
-	class mysqli extends common {
+	class pdo extends common {
 
 		/*
 		 * Implementation of common.
