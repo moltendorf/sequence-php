@@ -3,7 +3,7 @@
 namespace blink {
 	use blink\functions as f;
 
-	require './functions.php';
+	require __DIR__ . '/functions.php';
 
 	/*
 	 * For debugging purposes.

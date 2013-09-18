@@ -25,7 +25,7 @@ namespace blink\root {
 			$start = $_SERVER['REQUEST_TIME_FLOAT'] * 1e6;
 
 			// Load our settings.
-			$settings = include $system . '/settings.php';
+			$settings = require $system . '/settings.php';
 
 			if ($settings === false) {
 				throw new \Exception('NO_SETTINGS_FILE');
