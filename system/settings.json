@@ -1,18 +1,14 @@
 {
 	"path": {
-		"root":		"page",
-
-		"page":		"../page",
-		"content":	"../live/content"
+		"root": "page",
+		"page": "../page",
+		"content": "../live/content"
 	},
-
 	"database": {
 		"type": "mysql",
-
-		"username":	"moltendorf.com",
-		"password":	"&KiTOQOen$lEu#=6:B1*6?Q%",
-
-		"use":		"moltendorf.com",
-		"prefix":	"blink_"
+		"use": "moltendorf.com",
+		"username": "moltendorf.com",
+		"password": "&KiTOQOen$lEu#=6:B1*6?Q%",
+		"prefix": "blink_"
 	}
 }
