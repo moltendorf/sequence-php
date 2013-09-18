@@ -61,7 +61,7 @@ namespace blink\root\database {
 		 *
 		 */
 		public function close() {
-			$this->_instance->close();
+			$this->_instance = null;
 		}
 
 		/**
