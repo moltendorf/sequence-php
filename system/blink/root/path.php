@@ -4,7 +4,7 @@ namespace blink\root {
 	use blink as b;
 	use blink\functions as f;
 
-	class path extends b\bind {
+	class path {
 		/**
 		 * The path under the site's configured root this application operates in.
 		 *
@@ -47,21 +47,6 @@ namespace blink\root {
 		 * @var string
 		 */
 		public $content;
-
-		/*
-		 * Implementation of b\bind.
-		 */
-
-		/**
-		 *
-		 */
-		protected function construct() {
-
-		}
-
-		/*
-		 * End implementation of b\bind.
-		 */
 
 		/**
 		 *

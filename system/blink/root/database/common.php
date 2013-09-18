@@ -1,10 +1,13 @@
 <?php
 
 namespace blink\root\database {
-	use blink as b;
-	use blink\functions as f;
 
-	abstract class common extends b\bind {
+	use blink as b,
+	 blink\functions as f;
+
+	abstract class common {
+
+		use b\broadcaster;
 
 		/**
 		 *
@@ -64,9 +67,22 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 * @param b\root $root
+		 * @param array $settings
+		 * @param string $binding
 		 */
-		protected function construct() {
+		final public function __construct(b\root $root, array $settings, $binding = '') {
+			$this->bind($root, $binding);
 
+			$this->broadcast('connecting');
+
+			if (isset($settings['prefix'])) {
+				$this->prefix = $settings['prefix'];
+			}
+
+			$this->connect($settings);
+
+			$this->broadcast('connected');
 		}
 
 		/**
@@ -79,22 +95,6 @@ namespace blink\root\database {
 		/*
 		 * End implementation of b\bind.
 		 */
-
-		/**
-		 *
-		 * @param array $settings
-		 */
-		public function _connect($settings) {
-			$this->broadcast('connecting');
-
-			if (isset($settings['prefix'])) {
-				$this->prefix = $settings['prefix'];
-			}
-
-			$this->connect($settings);
-
-			$this->broadcast('connected');
-		}
 
 		/**
 		 *

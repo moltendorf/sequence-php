@@ -4,7 +4,10 @@ namespace blink\root {
 	use blink as b;
 	use blink\functions as f;
 
-	class settings extends b\bind implements \ArrayAccess {
+	class settings implements \ArrayAccess {
+
+		use b\listener;
+
 		/**
 		 *
 		 * @var array
@@ -16,36 +19,6 @@ namespace blink\root {
 		 * @var array
 		 */
 		private $container = [];
-
-		/*
-		 * Implementation of b\bind.
-		 */
-
-		/**
-		 *
-		 */
-		protected function construct() {
-			$database = $this->root->database;
-
-			$result = $database->select([
-				'select' => ['key', 'value'],
-				'from' => 'settings'
-			]);
-
-			$column = $result->column;
-
-			while ($row = $result->fetch_row()) {
-				$this->container[$row[$column['key']]] = $row[$column['value']];
-			}
-
-			unset ($row);
-
-			$this->listen([$this, 'pushAll'], 'sent', 'root/application');
-		}
-
-		/*
-		 * End implementation of b\bind.
-		 */
 
 		/*
 		 * Implementation of \ArrayAccess.
@@ -118,6 +91,26 @@ namespace blink\root {
 		/*
 		 * End implementation of \ArrayAccess.
 		 */
+
+		/**
+		 * @param b\root $root
+		 */
+		public function __construct(b\root $root) {
+			$result = $root->database->select([
+				'select' => ['key', 'value'],
+				'from' => 'settings'
+			]);
+
+			$column = $result->column;
+
+			while ($row = $result->fetch_row()) {
+				$this->container[$row[$column['key']]] = $row[$column['value']];
+			}
+
+			unset($row);
+
+			$this->listen([$this, 'pushAll'], 'sent', 'root/application');
+		}
 
 		/**
 		 *
