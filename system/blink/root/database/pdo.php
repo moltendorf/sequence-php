@@ -73,8 +73,8 @@ namespace blink\root\database {
 		public function query($query, $columns = null) {
 			$result = $this->_instance->query($query);
 
-			if ($result instanceof \mysqli_result) {
-				return new result\mysqli($result, $query, $columns);
+			if ($result instanceof \PDOStatement) {
+				return new result\pdo($result, $query, $columns);
 			}
 
 			return $result;

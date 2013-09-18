@@ -44,7 +44,7 @@ namespace blink\root\database\result {
 		 * @return array|null
 		 */
 		public function fetch_row() {
-			return $this->_instance->fetch_row();
+			return $this->_instance->fetch();
 		}
 
 		/**
