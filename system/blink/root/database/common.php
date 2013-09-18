@@ -31,12 +31,12 @@ namespace blink\root\database {
 		 *
 		 * @param array $settings
 		 */
-		abstract public function connect($settings);
+		abstract protected function connect($settings);
 
 		/**
 		 *
 		 */
-		abstract public function close();
+		abstract protected function destroy();
 
 		/**
 		 *
@@ -105,10 +105,10 @@ namespace blink\root\database {
 		/**
 		 *
 		 */
-		public function _close() {
+		final public function close() {
 			$this->broadcast('closing');
 
-			$this->close();
+			$this->destroy();
 
 			$this->broadcast('closed');
 		}

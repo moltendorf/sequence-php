@@ -14,7 +14,7 @@ namespace blink\root\database {
 		 *
 		 * @param array $settings
 		 */
-		public function connect($settings) {
+		protected function connect($settings) {
 			if (!isset($settings['username'])) {
 				throw new \Exception('NO_DATABASE_USERNAME');
 			}
@@ -60,7 +60,7 @@ namespace blink\root\database {
 		/**
 		 *
 		 */
-		public function close() {
+		protected function destroy() {
 			$this->_instance = null;
 		}
 
