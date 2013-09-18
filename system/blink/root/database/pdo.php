@@ -54,7 +54,9 @@ namespace blink\root\database {
 			$password = (string) $settings['password'];
 
 
-			$this->_instance = new \PDO($dsn, $username, $password);
+			$this->_instance = new \PDO($dsn, $username, $password, [
+				\PDO::ATTR_PERSISTENT => true
+			]);
 		}
 
 		/**
