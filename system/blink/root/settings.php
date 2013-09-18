@@ -12,13 +12,13 @@ namespace blink\root {
 		 *
 		 * @var array
 		 */
-		private $original = [];
+		private $container = [];
 
 		/**
 		 *
 		 * @var array
 		 */
-		private $container = [];
+		private $original = [];
 
 		/**
 		 *
