@@ -1,16 +1,10 @@
 <?php
 
 namespace blink {
+
 	use blink\functions as f;
 
 	trait broadcaster {
-
-		/**
-		 *
-		 */
-		protected function getBinding() {
-			return str_replace('\\', '/', substr(get_class($this), strlen(__NAMESPACE__)+1));
-		}
 
 		/**
 		 *
@@ -35,12 +29,19 @@ namespace blink {
 
 		/**
 		 *
+		 */
+		protected function getBinding() {
+			return str_replace('\\', '/', substr(get_class($this), strlen(__NAMESPACE__) + 1));
+		}
+
+		/**
+		 *
 		 * @param root $root
 		 * @param string $binding
 		 */
-		public function bind(root $root, $binding = '') {
-			$this->root		 = $root;
-			$this->binding	 = $binding.$this->getBinding();
+		final protected function bind(root $root, $binding = '') {
+			$this->root = $root;
+			$this->binding = $binding . $this->getBinding();
 
 			$this->listeners = &$this->root->hook->register($this, $this->binding);
 		}
@@ -61,5 +62,7 @@ namespace blink {
 				}
 			}
 		}
+
 	}
+
 }

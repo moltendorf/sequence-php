@@ -20,6 +20,12 @@ namespace blink\root {
 		 */
 		private $container = [];
 
+		/**
+		 *
+		 * @var b\root
+		 */
+		protected $root;
+
 		/*
 		 * Implementation of \ArrayAccess.
 		 */
@@ -96,6 +102,8 @@ namespace blink\root {
 		 * @param b\root $root
 		 */
 		public function __construct(b\root $root) {
+			$this->root = $root;
+
 			$result = $root->database->select([
 				'select' => ['key', 'value'],
 				'from' => 'settings'

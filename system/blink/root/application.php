@@ -10,6 +10,12 @@ namespace blink\root {
 		use b\broadcaster;
 
 		/**
+		 *
+		 * @var b\root
+		 */
+		protected $root;
+
+		/**
 		 * @param string $system
 		 */
 		public function routine($system) {

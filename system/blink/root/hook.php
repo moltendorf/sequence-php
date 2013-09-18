@@ -6,10 +6,6 @@ namespace blink\root {
 
 	class hook {
 
-		/*
-		 * Re-implementation of b\bind.
-		 */
-
 		/**
 		 *
 		 * @var b\root

@@ -4,24 +4,23 @@ namespace blink\root {
 	use blink as b;
 	use blink\functions as f;
 
-	class handler extends b\bind {
+	class handler {
 		protected $module = null;
 		protected $request = null;
 
-		/*
-		 * Implementation of b\bind.
+		/**
+		 *
+		 * @var b\root
 		 */
+		protected $root;
 
 		/**
 		 *
+		 * @param b\root $root
 		 */
-		protected function construct() {
-
+		public function __construct(b\root $root) {
+			$this->root = $root;
 		}
-
-		/*
-		 * End implementation of b\bind.
-		 */
 
 		public function parse($request = null) {
 			$settings = $this->root->settings;

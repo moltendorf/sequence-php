@@ -23,6 +23,12 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 * @var b\root
+		 */
+		protected $root;
+
+		/**
+		 *
 		 * @param array $settings
 		 */
 		abstract public function connect($settings);
