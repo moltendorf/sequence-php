@@ -17,7 +17,7 @@ namespace blink\root\database {
 
 		/**
 		 *
-		 * @var \mysqli
+		 * @var \PDO
 		 */
 		protected $_instance;
 
