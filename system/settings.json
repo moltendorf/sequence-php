@@ -6,15 +6,13 @@
 		"content":	"../live/content"
 	},
 
-	"connection": {
-		"type":		"mysqli",
-
-		"hostname":	"p:localhost",
+	"database": {
+		"type": "mysql",
 
 		"username":	"moltendorf.com",
 		"password":	"&KiTOQOen$lEu#=6:B1*6?Q%",
 
-		"database":	"moltendorf.com",
+		"use":		"moltendorf.com",
 		"prefix":	"blink_"
 	}
 }

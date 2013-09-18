@@ -16,38 +16,45 @@ namespace blink\root\database {
 		 */
 		public function connect($settings) {
 			if (!isset($settings['username'])) {
-				throw new \Exception('NO_CONNECTION_USERNAME');
+				throw new \Exception('NO_DATABASE_USERNAME');
 			}
 
 			if (!isset($settings['password'])) {
-				throw new \Exception('NO_CONNECTION_PASSWORD');
+				throw new \Exception('NO_DATABASE_PASSWORD');
 			}
 
-			if (!isset($settings['database'])) {
-				throw new \Exception('NO_CONNECTION_DATABASE');
+			$type = (string) $settings['type'];
+
+			$dsn = [];
+
+			switch ($type) {
+				case 'mysql':
+					if (!isset($settings['use'])) {
+						throw new \Exception('NO_DATABASE_USE');
+					}
+
+					$dsn[] = 'dbname=' . $settings['use'];
+
+					if (isset($settings['socket'])) {
+						$dsn[] = 'unix_socket=' . $settings['socket'];
+					} else if (isset($settings['hostname'])) {
+						$dsn[] = 'host=' . $settings['hostname'];
+
+						if (isset($settings['port'])) {
+							$dsn[] = 'port=' . $settings['port'];
+						}
+					}
+
+					break;
 			}
+
+			$dsn = $type . ':' . implode(';', $dsn);
 
 			$username = (string) $settings['username'];
 			$password = (string) $settings['password'];
 
-			$database = (string) $settings['database'];
 
-			if (isset($settings['socket'])) {
-				$this->_instance = new \mysqli('.', $username, $password, $database, null, $settings['socket']);
-			} else {
-				$hostname = isset($settings['hostname']) ? $settings['hostname'] : null;
-
-				if ($hostname !== null) {
-					$hostname = (string) $hostname;
-				}
-
-				if (isset($settings['port'])) {
-					// The port parameter must be an integer so we have a special case for when it's defined.
-					$this->_instance = new \mysqli($hostname, $username, $password, $database, (integer) $settings['port']);
-				} else {
-					$this->_instance = new \mysqli($hostname, $username, $password, $database);
-				}
-			}
+			$this->_instance = new \PDO($dsn, $username, $password);
 		}
 
 		/**
