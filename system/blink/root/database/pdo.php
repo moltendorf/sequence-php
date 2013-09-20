@@ -106,7 +106,7 @@ namespace blink\root\database {
 		 * @return string
 		 */
 		public function escape_value($value) {
-			return '\'' . $this->_instance->quote($value) . '\'';
+			return $this->_instance->quote($value);
 		}
 
 		/*
