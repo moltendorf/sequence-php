@@ -174,9 +174,6 @@ namespace blink\root {
 		public function pushAll() {
 			$database = $this->root->database;
 
-			$inserts = [];
-			$deletes = [];
-
 			foreach ($this->original as $offset => $original) {
 				if ($original !== false) {
 					if (isset($this->container[$offset])) {
@@ -194,33 +191,20 @@ namespace blink\root {
 							]
 						]);
 					} else {
-						$deletes[] = $offset;
+						$database->delete([
+							'from' => 'settings',
+							'where' => [
+								'key' => [$offset]
+							]
+						]);
 					}
 				} else {
-					$inserts[] = [$offset, $this->container[$offset]];
+					$database->insert([
+						'into' => 'settings',
+						'columns' => ['key', 'value'],
+						'values' => [[$offset, $this->container[$offset]]]
+					]);
 				}
-			}
-
-			if (count($inserts)) {
-				// Bulk insert.
-				$database->insert([
-					'into' => 'settings',
-
-					'columns' => ['key', 'value'],
-
-					'values' => $inserts
-				]);
-			}
-
-			if (count($deletes)) {
-				// Bulk delete.
-				$database->delete([
-					'from' => 'settings',
-
-					'where' => [
-						'key' => $deletes
-					]
-				]);
 			}
 		}
 	}
