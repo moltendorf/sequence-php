@@ -10,7 +10,7 @@ return [
 		'type' => 'mysql',
 		'use' => 'moltendorf.com',
 		'username' => 'moltendorf.com',
-		'prefix' => 'blink_'
 		'password' => '9ic4hkuZ9xgCKGzG9hqvthdE',
+		'prefix' => 'blink__'
 	]
 ];
