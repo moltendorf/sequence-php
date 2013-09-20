@@ -1,8 +1,9 @@
 <?php
 
 namespace blink\root {
-	use blink as b;
-	use blink\functions as f;
+
+	use blink as b,
+	 blink\functions as f;
 
 	class settings implements \ArrayAccess {
 
@@ -41,9 +42,9 @@ namespace blink\root {
 
 			if (isset($this->original[$offset])) {
 				if ($this->original[$offset] == $value) {
-					unset ($this->original[$offset]);
+					unset($this->original[$offset]);
 				}
-			} else if (isset($this->container[$offset])){
+			} else if (isset($this->container[$offset])) {
 				if ($this->container[$offset] != $value) {
 					$this->original[$offset] = $this->container[$offset];
 				}
@@ -83,14 +84,14 @@ namespace blink\root {
 
 			if (isset($this->original[$offset])) {
 				if ($this->original[$offset] === false) {
-					unset ($this->original[$offset]);
+					unset($this->original[$offset]);
 				}
 			} else {
 				$this->original[$offset] = $this->container[$offset];
 			}
 
 			if (isset($this->container[$offset])) {
-				unset ($this->container[$offset]);
+				unset($this->container[$offset]);
 			}
 		}
 
@@ -134,11 +135,9 @@ namespace blink\root {
 					if (isset($this->container[$offset])) {
 						$database->update([
 							'table' => 'settings',
-
 							'set' => [
 								'value' => $this->container[$offset]
 							],
-
 							'where' => [
 								'key' => $offset
 							]
@@ -146,7 +145,6 @@ namespace blink\root {
 					} else {
 						$database->delete([
 							'from' => 'settings',
-
 							'where' => [
 								'key' => $offset
 							]
@@ -155,16 +153,14 @@ namespace blink\root {
 				} else {
 					$database->insert([
 						'into' => 'settings',
-
 						'columns' => ['key', 'value'],
-
 						'values' => [
 							[$offset, $this->container[$offset]]
 						]
 					]);
 				}
 
-				unset ($this->original[$offset]);
+				unset($this->original[$offset]);
 			}
 		}
 
@@ -181,11 +177,9 @@ namespace blink\root {
 						// do multiple queries. @todo: Improve bulk update code.
 						$database->update([
 							'table' => 'settings',
-
 							'set' => [
 								'value' => $this->container[$offset]
 							],
-
 							'where' => [
 								'key' => $offset
 							]
@@ -207,5 +201,7 @@ namespace blink\root {
 				}
 			}
 		}
+
 	}
+
 }
