@@ -10,7 +10,7 @@ return [
 		'type' => 'mysql',
 		'use' => 'moltendorf.com',
 		'username' => 'moltendorf.com',
-		'password' => '&KiTOQOen$lEu#=6:B1*6?Q%',
 		'prefix' => 'blink_'
+		'password' => '9ic4hkuZ9xgCKGzG9hqvthdE',
 	]
 ];
