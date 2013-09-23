@@ -11,6 +11,12 @@ namespace blink\root {
 
 		/**
 		 *
+		 * @var string
+		 */
+		protected $content;
+
+		/**
+		 *
 		 * @var b\root
 		 */
 		protected $root;
@@ -23,6 +29,15 @@ namespace blink\root {
 
 			// Store this internally so it doesn't get tampered with.
 			$start = $_SERVER['REQUEST_TIME_FLOAT'] * 1e6;
+
+			/*
+			 * Output buffering is used to prevent accidental output.
+			 * If there is any output, an error is thrown with the output dumped to the page in debug mode.
+			 * If the output buffering level is different by the end of the script, and error is thrown.
+			 */
+
+			$level = ob_get_level();
+			ob_start();
 
 			// Load our settings.
 			$settings = require $system . '/settings.php';
@@ -48,21 +63,81 @@ namespace blink\root {
 				define('blink\\debug', false);
 			}
 
-			$this->broadcast('ready');
+			$this->broadcast('generate');
+
+			if (b\debug) {
+				// There should be no output after this statement.
+				$this->generate();
+
+				$this->broadcast('close');
+
+				// Close connection to the database.
+				$root->database->close();
+
+				if (ob_get_length()) {
+					$root->template->error(ob_get_contents());
+
+					$this->headers();
+				}
+
+				// This will be about as accurate as it can be from within PHP.
+				header('X-Debug-Execution-Time: ' . number_format(microtime(true) * 1e6 - $start) . utf8_decode('µs'));
+
+				$this->output();
+
+				// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
+			} else {
+				$this->generate();
+				$this->output();
+
+				fastcgi_finish_request();
+
+				$this->broadcast('close');
+
+				// Close connection to the database.
+				$root->database->close();
+			}
+		}
+
+		/**
+		 *
+		 */
+		public function generate() {
+			$root = $this->root;
 
 			// Parse the request.
 			$root->handler->parse();
 			$root->handler->load();
 
-			$this->broadcast('sent');
+			$this->broadcast('output');
 
-			// Close connection to the database.
-			$root->database->close();
+			$root->template->header();
+			$root->template->body();
 
-			// Calculate the total runtime of the script.
-			$total = microtime(true) * 1e6 - $start;
+			$this->headers();
+		}
 
-			f\dump(number_format($total).'µs');
+		/**
+		 *
+		 */
+		public function headers() {
+			$this->content = ob_get_contents();
+			$digest = base64_encode(pack('H*', md5($this->content)));
+			$this->content = gzencode($this->content);
+
+			header('Content-Encoding: gzip');
+			header('Content-Length: ' . mb_strlen($this->content, '8bit'));
+			header('Content-MD5: ' . $digest);
+			header('Content-Type: text/html; charset=utf-8');
+		}
+
+		/**
+		 *
+		 */
+		public function output() {
+			ob_end_clean();
+
+			echo $this->content;
 		}
 
 	}
