@@ -36,8 +36,9 @@ namespace blink\root {
 			 * If the output buffering level is different by the end of the script, and error is thrown.
 			 */
 
-			$level = ob_get_level();
 			ob_start();
+
+			$level = ob_get_level();
 
 			// Load our settings.
 			$settings = require $system . '/settings.php';
@@ -72,8 +73,18 @@ namespace blink\root {
 			$this->broadcast('parse');
 
 			if (b\debug) {
-				// This should be the only output statement.
-				$this->parse();
+				if (ob_get_level() != $level) {
+					$root->template->error(new \Exception('OUTPUT_BUFFER_LEVEL_DIFFERS'));
+
+					$this->headers();
+				} else if (ob_get_length()) {
+					$root->template->error(ob_get_contents());
+
+					$this->headers();
+				} else {
+					// This should be the only output statement.
+					$this->parse();
+				}
 
 				$this->broadcast('close');
 
