@@ -65,9 +65,15 @@ namespace blink\root {
 
 			$this->broadcast('generate');
 
+			// Parse the request.
+			$root->handler->parse();
+			$root->handler->load();
+
+			$this->broadcast('parse');
+
 			if (b\debug) {
-				// There should be no output after this statement.
-				$this->generate();
+				// This should be the only output statement.
+				$this->parse();
 
 				$this->broadcast('close');
 
@@ -87,7 +93,7 @@ namespace blink\root {
 
 				// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
 			} else {
-				$this->generate();
+				$this->parse();
 				$this->output();
 
 				fastcgi_finish_request();
@@ -102,14 +108,8 @@ namespace blink\root {
 		/**
 		 *
 		 */
-		public function generate() {
+		public function parse() {
 			$root = $this->root;
-
-			// Parse the request.
-			$root->handler->parse();
-			$root->handler->load();
-
-			$this->broadcast('output');
 
 			$root->template->header();
 			$root->template->body();
