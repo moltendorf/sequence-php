@@ -25,10 +25,12 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @param mixed $input
 		 */
-		public function error($input) {
+		public function error() {
+			$contents = ob_get_contents();
+			ob_clean();
 
+			echo $contents;
 		}
 
 	}

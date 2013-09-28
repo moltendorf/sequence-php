@@ -78,7 +78,7 @@ namespace blink\root {
 
 					$this->headers();
 				} else if (ob_get_length()) {
-					$root->template->error(ob_get_contents());
+					$root->template->error();
 
 					$this->headers();
 				} else {
@@ -92,7 +92,7 @@ namespace blink\root {
 				$root->database->close();
 
 				if (ob_get_length()) {
-					$root->template->error(ob_get_contents());
+					$root->template->error();
 
 					$this->headers();
 				}
@@ -133,6 +133,8 @@ namespace blink\root {
 		 */
 		public function headers() {
 			$this->content = ob_get_contents();
+			ob_clean();
+
 			$digest = base64_encode(pack('H*', md5($this->content)));
 			$this->content = gzencode($this->content);
 
