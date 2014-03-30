@@ -56,7 +56,7 @@ namespace blink\root {
 			/*
 			 * Output buffering is used to prevent accidental output.
 			 * If there is any output, an error is thrown with the output dumped to the page in debug mode.
-			 * If the output buffering level is different by the end of the script, and error is thrown.
+			 * If the output buffering level is different by the end of the script, an error is thrown.
 			 */
 
 			ob_start();
