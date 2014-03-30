@@ -2,8 +2,6 @@
 
 namespace blink {
 
-	use blink\functions as f;
-
 	trait broadcaster {
 
 		/**

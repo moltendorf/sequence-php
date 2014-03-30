@@ -1,8 +1,6 @@
 <?php
 
 namespace blink\root {
-	use blink as b;
-	use blink\functions as f;
 
 	class path {
 		/**

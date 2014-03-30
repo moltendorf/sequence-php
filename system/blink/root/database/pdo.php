@@ -2,8 +2,6 @@
 
 namespace blink\root\database {
 
-	use blink\functions as f;
-
 	class pdo extends common {
 
 		/*

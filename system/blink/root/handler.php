@@ -2,7 +2,6 @@
 
 namespace blink\root {
 	use blink as b;
-	use blink\functions as f;
 
 	class handler {
 		protected $module = null;

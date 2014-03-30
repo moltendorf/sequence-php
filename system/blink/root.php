@@ -2,8 +2,6 @@
 
 namespace blink {
 
-	use blink\functions as f;
-
 	/**
 	 *
 	 * @property-read root\database\common $database

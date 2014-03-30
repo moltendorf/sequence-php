@@ -1,8 +1,6 @@
 <?php
 
 namespace blink {
-	use blink\functions as f;
-
 	require __DIR__ . '/functions.php';
 
 	/*

@@ -2,8 +2,7 @@
 
 namespace blink\root\database {
 
-	use blink as b,
-	 blink\functions as f;
+	use blink as b;
 
 	abstract class common {
 

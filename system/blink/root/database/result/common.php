@@ -1,7 +1,6 @@
 <?php
 
 namespace blink\root\database\result {
-	use blink as b;
 
 	abstract class common {
 

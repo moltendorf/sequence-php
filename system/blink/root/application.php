@@ -2,8 +2,7 @@
 
 namespace blink\root {
 
-	use blink as b,
-	 blink\functions as f;
+	use blink as b;
 
 	/**
 	 *
