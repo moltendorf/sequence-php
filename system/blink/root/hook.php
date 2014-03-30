@@ -1,6 +1,7 @@
 <?php
 
 namespace blink\root {
+
 	use blink as b;
 
 	class hook {
@@ -104,4 +105,5 @@ namespace blink\root {
 		}
 
 	}
+
 }

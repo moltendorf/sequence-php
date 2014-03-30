@@ -135,7 +135,7 @@ namespace blink\root\database {
 						$select[] = $this->escape_column($column[0]);
 					} else {
 						$columns[] = $column[0];
-						$select[] = $this->escape_column($column[0]).' AS '.$this->escape_column($column[1]);
+						$select[] = $this->escape_column($column[0]) . ' AS ' . $this->escape_column($column[1]);
 					}
 				}
 
@@ -144,9 +144,9 @@ namespace blink\root\database {
 				$query[] = '*';
 			}
 
-			$query[] = 'FROM '.$this->escape_table($this->prefix.$input['from']);
+			$query[] = 'FROM ' . $this->escape_table($this->prefix . $input['from']);
 
-			return $this->query(implode(' ', $query).';', $columns);
+			return $this->query(implode(' ', $query) . ';', $columns);
 		}
 
 		/**
@@ -155,7 +155,7 @@ namespace blink\root\database {
 		 * @return result\common|boolean
 		 */
 		public function insert($input) {
-			$query = ['INSERT INTO '.$this->escape_table($this->prefix.$input['into'])];
+			$query = ['INSERT INTO ' . $this->escape_table($this->prefix . $input['into'])];
 
 			if (isset($input['columns'])) {
 				$columns = [];
@@ -164,7 +164,7 @@ namespace blink\root\database {
 					$columns[] = $this->escape_column($column);
 				}
 
-				$query[] = '('.implode(', ', $columns).')';
+				$query[] = '(' . implode(', ', $columns) . ')';
 			}
 
 			$query[] = 'VALUES';
@@ -178,12 +178,12 @@ namespace blink\root\database {
 					$values[] = $this->escape_value($value);
 				}
 
-				$rows[] = '('.implode(', ', $values).')';
+				$rows[] = '(' . implode(', ', $values) . ')';
 			}
 
 			$query[] = implode(', ', $rows);
 
-			return $this->query(implode(' ', $query).';');
+			return $this->query(implode(' ', $query) . ';');
 		}
 
 		/**
@@ -192,15 +192,15 @@ namespace blink\root\database {
 		 * @return result\common|boolean
 		 */
 		public function update($input) {
-			$query = ['UPDATE '.$this->escape_table($this->prefix.$input['table']).' SET'];
+			$query = ['UPDATE ' . $this->escape_table($this->prefix . $input['table']) . ' SET'];
 
 			$set = [];
 
 			foreach ($input['set'] as $column => $value) {
-				$set[] = $this->escape_column($column).' = '.$this->escape_value($value);
+				$set[] = $this->escape_column($column) . ' = ' . $this->escape_value($value);
 			}
 
-			$query[] = implode(', ', $set).' WHERE';
+			$query[] = implode(', ', $set) . ' WHERE';
 
 			$where = [];
 
@@ -212,15 +212,15 @@ namespace blink\root\database {
 						$list[] = $this->escape_value($item);
 					}
 
-					$where[] = $this->escape_column($column).' IN ('.implode(', ', $list).')';
+					$where[] = $this->escape_column($column) . ' IN (' . implode(', ', $list) . ')';
 				} else {
-					$where[] = $this->escape_column($column).' = '.$this->escape_value($value);
+					$where[] = $this->escape_column($column) . ' = ' . $this->escape_value($value);
 				}
 			}
 
 			$query[] = implode(' AND ', $where);
 
-			return $this->query(implode(' ', $query).';');
+			return $this->query(implode(' ', $query) . ';');
 		}
 
 		/**
@@ -229,7 +229,7 @@ namespace blink\root\database {
 		 * @return result\common|boolean
 		 */
 		public function delete($input) {
-			$query = ['DELETE FROM '.$this->escape_table($this->prefix.$input['from']).' WHERE'];
+			$query = ['DELETE FROM ' . $this->escape_table($this->prefix . $input['from']) . ' WHERE'];
 
 			$where = [];
 
@@ -241,15 +241,17 @@ namespace blink\root\database {
 						$list[] = $this->escape_value($item);
 					}
 
-					$where[] = $this->escape_column($column).' IN ('.implode(', ', $list).')';
+					$where[] = $this->escape_column($column) . ' IN (' . implode(', ', $list) . ')';
 				} else {
-					$where[] = $this->escape_column($column).' = '.$this->escape_value($value);
+					$where[] = $this->escape_column($column) . ' = ' . $this->escape_value($value);
 				}
 			}
 
 			$query[] = implode(' AND ', $where);
 
-			return $this->query(implode(' ', $query).';');
+			return $this->query(implode(' ', $query) . ';');
 		}
+
 	}
+
 }

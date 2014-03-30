@@ -3,6 +3,7 @@
 namespace blink\root {
 
 	class path {
+
 		/**
 		 * The path under the site's configured root this application operates in.
 		 *
@@ -64,7 +65,7 @@ namespace blink\root {
 
 			foreach ($paths as $key => $path) {
 				if ($path === false) {
-					throw new \Exception(strtoupper($key).'_PATH_NOT_FOUND');
+					throw new \Exception(strtoupper($key) . '_PATH_NOT_FOUND');
 				}
 			}
 		}
@@ -75,7 +76,7 @@ namespace blink\root {
 		 * @return string|boolean
 		 */
 		public function module($module) {
-			$file = $this->store['module'].'/'.$module.'/load.php';
+			$file = $this->store['module'] . '/' . $module . '/load.php';
 
 			if (file_exists($file)) {
 				return $file;
@@ -83,5 +84,7 @@ namespace blink\root {
 
 			return false;
 		}
+
 	}
+
 }

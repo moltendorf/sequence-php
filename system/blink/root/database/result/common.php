@@ -52,5 +52,7 @@ namespace blink\root\database\result {
 		public function free() {
 			$this->_instance->free();
 		}
+
 	}
+
 }

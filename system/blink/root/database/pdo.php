@@ -3,7 +3,6 @@
 namespace blink\root\database {
 
 	class pdo extends common {
-
 		/*
 		 * Implementation of common.
 		 */
@@ -86,7 +85,7 @@ namespace blink\root\database {
 		 * @return string
 		 */
 		public function escape_table($table) {
-			return '`'.str_replace('`', '``', $table).'`';
+			return '`' . str_replace('`', '``', $table) . '`';
 		}
 
 		/**
@@ -95,7 +94,7 @@ namespace blink\root\database {
 		 * @return string
 		 */
 		public function escape_column($column) {
-			return '`'.str_replace('`', '``', $column).'`';
+			return '`' . str_replace('`', '``', $column) . '`';
 		}
 
 		/**
@@ -111,4 +110,5 @@ namespace blink\root\database {
 		 * End implementation of common.
 		 */
 	}
+
 }

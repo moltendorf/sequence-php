@@ -1,9 +1,11 @@
 <?php
 
 namespace blink\root {
+
 	use blink as b;
 
 	class handler {
+
 		protected $module = null;
 		protected $request = null;
 
@@ -33,7 +35,7 @@ namespace blink\root {
 			$setup = $this->root->setup;
 
 			if (substr($request, 0, $setup->root_length) === $setup->root) {
-				$trimmed = substr($request, $setup->root_length+1);
+				$trimmed = substr($request, $setup->root_length + 1);
 
 				if ($trimmed !== '' && $trimmed !== false) {
 					$parts = explode('/', $trimmed);
@@ -53,12 +55,12 @@ namespace blink\root {
 				$tree = $setup->handler['handler'];
 
 				for ($i = 0; $i < $length; $i++) {
-					$segment =& $parts[$i];
+					$segment = & $parts[$i];
 
 					if (isset($tree[$segment])) {
 						if ($tree[$segment]['module'] && ($tree[$segment]['prefix'] || $i === $length)) {
 							$this->module = $tree[$segment]['module'];
-							$this->request = '/'.implode('/', array_slice($parts, $i+1));
+							$this->request = '/' . implode('/', array_slice($parts, $i + 1));
 						}
 
 						if (isset($tree[$segment]['handler'])) {
@@ -86,7 +88,7 @@ namespace blink\root {
 				if ($file) {
 					require $file;
 
-					$class = 'blink\\module_'.$this->module;
+					$class = 'blink\\module_' . $this->module;
 					$module = $root->module = new $class($root);
 
 					$module->run();
@@ -98,5 +100,7 @@ namespace blink\root {
 				// 404.
 			}
 		}
+
 	}
+
 }

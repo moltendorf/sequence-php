@@ -1,6 +1,7 @@
 <?php
 
 namespace blink\functions {
+
 	/**
 	 *
 	 * @param mixed $variable
@@ -39,4 +40,5 @@ namespace blink\functions {
 
 		return false;
 	}
+
 }
