@@ -5,6 +5,10 @@ namespace blink\root {
 	use blink as b,
 	 blink\functions as f;
 
+	/**
+	 *
+	 * @property-read array $debug
+	 */
 	class application {
 
 		use b\broadcaster;
@@ -20,6 +24,26 @@ namespace blink\root {
 		 * @var b\root
 		 */
 		protected $root;
+
+		/**
+		 *
+		 * @var array
+		 */
+		private $debug = false;
+
+		/**
+		 *
+		 * @param string $name
+		 * @return mixed
+		 */
+		public function __get($name) {
+			switch ($name) {
+				case 'debug':
+					return $this->debug;
+			}
+
+			return null;
+		}
 
 		/**
 		 * @param string $system
@@ -40,6 +64,44 @@ namespace blink\root {
 
 			$level = ob_get_level();
 
+			/*
+			 * For debugging purposes.
+			 */
+
+			$debug = $system . '/debug';
+
+			if (is_dir($debug)) {
+				define('blink\\debug', true);
+
+				$this->debug = [];
+
+				/*
+				 * Display all errors.
+				 */
+				error_reporting(-1);
+
+				ini_set('display_errors', 1);
+				ini_set('html_errors', 1);
+
+				foreach (glob($debug . '/*.php') as $file) {
+					// Manually including each file as the namespace the classes are in would cause the autoloader to look in the wrong directory.
+					require $file;
+
+					$class = 'blink\\debug\\' . substr($file, strrpos($file, '/') + 1, -4);
+
+					if (class_exists($class, false)) {
+						// Instantiate the debug class.
+						$this->debug[] = new $class($root);
+					}
+				}
+
+				unset($class);
+			} else {
+				define('blink\\debug', false);
+			}
+
+			unset($debug);
+
 			// Load our settings.
 			$settings = require $system . '/settings.php';
 
@@ -56,13 +118,6 @@ namespace blink\root {
 			$class = __NAMESPACE__ . '\\database\\' . (isset($settings['plugin']) ? $settings['plugin'] : 'pdo');
 
 			$root->database = new $class($root, $settings['database']);
-
-			// Define our debugging constant.
-			if (isset($root->settings['debug'])) {
-				define('blink\\debug', (boolean) $root->settings['debug']);
-			} else {
-				define('blink\\debug', false);
-			}
 
 			$this->broadcast('generate');
 
