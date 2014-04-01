@@ -122,20 +122,20 @@ namespace blink\root {
 			// Set up our paths.
 			$root->path->settings($system, $settings['path']);
 
-			$this->broadcast('start');
+			$this->broadcast('connect');
 
 			// Construct the proper database abstraction layer.
 			$class = __NAMESPACE__ . '\\database\\' . (isset($settings['plugin']) ? $settings['plugin'] : 'pdo');
 
 			$root->database = new $class($root, $settings['database']);
 
-			$this->broadcast('generate');
+			$this->broadcast('module');
 
 			// Parse the request.
 			$root->handler->parse();
 			$root->handler->load();
 
-			$this->broadcast('parse');
+			$this->broadcast('template');
 
 			if (b\debug) {
 				if (ob_get_level() != $level) {

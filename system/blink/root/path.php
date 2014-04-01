@@ -34,6 +34,13 @@ namespace blink\root {
 		public $cache;
 
 		/**
+		 * A full path to the template system directory.
+		 *
+		 * @var string
+		 */
+		public $template;
+
+		/**
 		 * A full path to the page storage directory.
 		 *
 		 * @var string
@@ -54,13 +61,12 @@ namespace blink\root {
 		 */
 		public function settings($system, $settings) {
 			$paths = [
-				'root'		=> $this->root = $settings['root'],
-
-				'system'	=> $this->system = realpath($system),
-				'cache'		=> $this->cache = realpath($system.'/cache'),
-
-				'page'		=> $this->page = realpath($system.'/'.$settings['page']),
-				'content'	=> $this->content = realpath($system.'/'.$settings['content'])
+				'root'		=> $this->root		= $settings['root'],
+				'system'	=> $this->system	= realpath($system),
+				'cache'		=> $this->cache		= realpath($system . '/cache'),
+				'template'	=> $this->template	= realpath($system . '/template'),
+				'page'		=> $this->page		= realpath($system . '/' . $settings['page']),
+				'content'	=> $this->content	= realpath($system . '/' . $settings['content'])
 			];
 
 			foreach ($paths as $key => $path) {
