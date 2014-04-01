@@ -104,6 +104,8 @@ namespace blink\root {
 		public function __construct(b\root $root) {
 			$this->root = $root;
 
+			$this->container = $root->application->settings;
+
 			$result = $root->database->select([
 				'select' => ['key', 'value'],
 				'from' => 'settings'

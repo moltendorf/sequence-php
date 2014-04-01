@@ -14,6 +14,12 @@ namespace blink\root {
 
 		/**
 		 *
+		 * @var array
+		 */
+		public $settings = [];
+
+		/**
+		 *
 		 * @var string
 		 */
 		protected $content;
@@ -107,6 +113,10 @@ namespace blink\root {
 
 			if ($settings === false) {
 				throw new \Exception('NO_SETTINGS_FILE');
+			}
+
+			if ($settings['application']) {
+				$this->settings = &$settings['application'];
 			}
 
 			// Set up our paths.

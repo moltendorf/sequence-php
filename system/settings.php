@@ -1,6 +1,10 @@
 <?php
 
 return [
+	'application' => [
+		'language' => 'en-US',
+		'template' => 'default',
+	],
 	'path' => [
 		'root' => 'page',
 		'page' => '../page',
