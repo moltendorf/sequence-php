@@ -119,7 +119,7 @@ namespace blink\root {
 
 			unset($row);
 
-			$this->listen([$this, 'pushAll'], 'sent', 'root/application');
+			$this->listen([$this, 'pushAll'], 'close', 'root/application');
 		}
 
 		/**
