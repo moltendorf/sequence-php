@@ -116,7 +116,13 @@ namespace blink\root {
 			$contents = nl2br(htmlspecialchars(ob_get_contents(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5));
 			ob_clean();
 
+			$status = 500;
+
 			if ($exception) {
+				if ($exception instanceof b\StatusException) {
+					$status = $exception->getStatus();
+				}
+
 				$message = $exception->getMessage();
 
 				$type = get_class($exception);
@@ -132,6 +138,8 @@ namespace blink\root {
 			} else {
 				require $this->path('error');
 			}
+
+			http_response_code($status);
 		}
 
 	}
