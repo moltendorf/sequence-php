@@ -111,6 +111,8 @@ namespace blink\root {
 		 *
 		 */
 		public function error(\Exception $exception = null) {
+			$lang = $this->root->language;
+
 			$contents = nl2br(htmlspecialchars(ob_get_contents(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5));
 			ob_clean();
 

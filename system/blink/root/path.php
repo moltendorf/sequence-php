@@ -34,6 +34,13 @@ namespace blink\root {
 		public $cache;
 
 		/**
+		 * A full path to the language system directory.
+		 *
+		 * @var string
+		 */
+		public $language;
+
+		/**
 		 * A full path to the template system directory.
 		 *
 		 * @var string
@@ -64,6 +71,7 @@ namespace blink\root {
 				'root'		=> $this->root		= $settings['root'],
 				'system'	=> $this->system	= realpath($system),
 				'cache'		=> $this->cache		= realpath($system . '/cache'),
+				'language'	=> $this->language	= realpath($system . '/language'),
 				'template'	=> $this->template	= realpath($system . '/template'),
 				'page'		=> $this->page		= realpath($system . '/' . $settings['page']),
 				'content'	=> $this->content	= realpath($system . '/' . $settings['content'])
