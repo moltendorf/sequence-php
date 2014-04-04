@@ -5,14 +5,6 @@
 
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
-		<script type="text/javascript" src="//use.typekit.net/rhu8axb.js"></script>
-		<script type="text/javascript">
-			try {
-				Typekit.load();
-			} catch (e) {
-			}
-		</script>
-
 		<style type="text/css">
 			* {
 				outline-style: none;
@@ -28,15 +20,12 @@
 			}
 
 			body {
-				font-family: "freight-sans-pro";
+				font-family: sans-serif;
 				font-size: 15px;
-				font-weight: 300;
 			}
 
 			h1, h2 {
 				color: #99bbdd;
-
-				font-weight: 300;
 			}
 
 			h1 {
@@ -96,7 +85,7 @@
 			}
 
 			.mono, .trace, .output {
-				font-family: "source-code-pro";
+				font-family: monospace;
 				font-size: 0.8em;
 
 				word-break: break-all;
