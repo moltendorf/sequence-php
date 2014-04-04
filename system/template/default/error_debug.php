@@ -36,12 +36,6 @@
 				margin-top: 24px;
 			}
 
-			.message > h2 {
-				font-size: 1.2em;
-
-				margin: 0;
-			}
-
 			.exception > h1 {
 				font-size: 1.2em;
 
@@ -63,6 +57,12 @@
 				margin-left: 8px;
 				margin-right: 8px;
 				margin-top: 8px;
+			}
+
+			.message > h2 {
+				font-size: 1.2em;
+
+				margin: 0;
 			}
 
 			h1 + h2 {
