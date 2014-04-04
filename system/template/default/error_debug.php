@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
 	<head>
-		<title><?= $lang['ERROR_500'] ?></title>
+		<title><?= $lang['ERROR_' . $status] ?></title>
 
 		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
