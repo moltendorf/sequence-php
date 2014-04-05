@@ -22,12 +22,6 @@ namespace blink\root\database {
 
 		/**
 		 *
-		 * @var b\root
-		 */
-		protected $root;
-
-		/**
-		 *
 		 * @param b\root $root
 		 * @param array  $settings
 		 * @param string $binding

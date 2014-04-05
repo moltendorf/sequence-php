@@ -4,11 +4,7 @@ namespace blink {
 
 	trait broadcaster {
 
-		/**
-		 *
-		 * @var root
-		 */
-		protected $root;
+		use listener;
 
 		/**
 		 *

@@ -10,12 +10,6 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @var b\root
-		 */
-		protected $root;
-
-		/**
-		 *
 		 * @var array
 		 */
 		private $container = [];
@@ -32,15 +26,13 @@ namespace blink\root {
 		 */
 		private $tag = 'en-US';
 
-		/*
-		 * Implementation of \ArrayAccess.
-		 */
-
 		/**
+		 *
 		 * @param b\root $root
+		 * @param string $binding
 		 */
-		public function __construct(b\root $root) {
-			$this->root = $root;
+		public function __construct(b\root $root, $binding = '') {
+			$this->bind($root, $binding);
 
 			if (isset($root->settings['language'])) {
 				$this->tag = $root->settings['language'];
@@ -95,6 +87,10 @@ namespace blink\root {
 			$this->container = call_user_func_array('array_merge', $lang);
 		}
 
+		/*
+		 * Implementation of \ArrayAccess.
+		 */
+
 		/**
 		 *
 		 * @param string $offset
@@ -130,10 +126,6 @@ namespace blink\root {
 			throw new Exception('METHOD_NOT_SUPPORTED');
 		}
 
-		/*
-		 * End implementation of \ArrayAccess.
-		 */
-
 		/**
 		 *
 		 * @param string $offset
@@ -141,6 +133,9 @@ namespace blink\root {
 		public function offsetUnset($offset) {
 			throw new Exception('METHOD_NOT_SUPPORTED');
 		}
+		/*
+		 * End implementation of \ArrayAccess.
+		 */
 	}
 
 	class languageString {

@@ -10,12 +10,6 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @var b\root
-		 */
-		protected $root;
-
-		/**
-		 *
 		 * @var array
 		 */
 		private $container = [];
@@ -27,10 +21,12 @@ namespace blink\root {
 		private $original = [];
 
 		/**
+		 *
 		 * @param b\root $root
+		 * @param string $binding
 		 */
-		public function __construct(b\root $root) {
-			$this->root = $root;
+		public function __construct(b\root $root, $binding = '') {
+			$this->bind($root, $binding);
 
 			$this->container = $root->application->settings;
 
