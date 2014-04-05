@@ -6,6 +6,12 @@ namespace blink {
 
 		/**
 		 *
+		 * @var root
+		 */
+		protected $root;
+
+		/**
+		 *
 		 * @var string
 		 */
 		private $binding;
@@ -18,11 +24,23 @@ namespace blink {
 
 		/**
 		 *
-		 * @param root $root
+		 * @param root   $root
 		 * @param string $binding
 		 */
 		public function __construct(root $root, $binding = '') {
 			$this->bind($root, $binding);
+		}
+
+		/**
+		 *
+		 * @param root   $root
+		 * @param string $binding
+		 */
+		final protected function bind(root $root, $binding = '') {
+			$this->root    = $root;
+			$this->binding = $binding . $this->getBinding();
+
+			$this->listeners = & $this->root->hook->register($this, $this->binding);
 		}
 
 		/**
@@ -34,20 +52,9 @@ namespace blink {
 
 		/**
 		 *
-		 * @param root $root
-		 * @param string $binding
-		 */
-		final protected function bind(root $root, $binding = '') {
-			$this->root = $root;
-			$this->binding = $binding . $this->getBinding();
-
-			$this->listeners = &$this->root->hook->register($this, $this->binding);
-		}
-
-		/**
+		 * @todo Convert this to PHP 5.6+ syntax.
 		 *
 		 * @param string $message
-		 * @param mixed $data,...
 		 */
 		final protected function broadcast($message) {
 			$data = array_slice(func_get_args(), 1);
@@ -60,7 +67,5 @@ namespace blink {
 				}
 			}
 		}
-
 	}
-
 }

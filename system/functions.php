@@ -18,8 +18,9 @@ namespace blink\functions {
 
 	/**
 	 *
-	 * @param string $json
+	 * @param string  $json
 	 * @param boolean $assoc
+	 *
 	 * @return mixed
 	 */
 	function json_decode($json, $assoc = true) {
@@ -29,6 +30,7 @@ namespace blink\functions {
 	/**
 	 *
 	 * @param string $filename
+	 *
 	 * @return mixed
 	 */
 	function file_get_json($filename) {
@@ -40,5 +42,4 @@ namespace blink\functions {
 
 		return false;
 	}
-
 }

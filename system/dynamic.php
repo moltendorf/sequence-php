@@ -30,5 +30,4 @@ namespace blink {
 		// Run.
 		$root->application->routine(__DIR__);
 	}
-
 }

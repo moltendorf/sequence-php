@@ -10,6 +10,12 @@ namespace blink\root {
 
 		/**
 		 *
+		 * @var b\root
+		 */
+		protected $root;
+
+		/**
+		 *
 		 * @var array
 		 */
 		private $container = [];
@@ -21,10 +27,28 @@ namespace blink\root {
 		private $original = [];
 
 		/**
-		 *
-		 * @var b\root
+		 * @param b\root $root
 		 */
-		protected $root;
+		public function __construct(b\root $root) {
+			$this->root = $root;
+
+			$this->container = $root->application->settings;
+
+			$result = $root->database->select([
+				'select' => ['key', 'value'],
+				'from'   => 'settings'
+			]);
+
+			$column = $result->column;
+
+			while ($row = $result->fetch_row()) {
+				$this->container[$row[$column['key']]] = $row[$column['value']];
+			}
+
+			unset($row);
+
+			$this->listen([$this, 'pushAll'], 'close', 'root/application');
+		}
 
 		/*
 		 * Implementation of \ArrayAccess.
@@ -37,18 +61,20 @@ namespace blink\root {
 		 */
 		public function offsetSet($offset, $value) {
 			$offset = (string) $offset;
-			$value = (string) $value;
+			$value  = (string) $value;
 
 			if (isset($this->original[$offset])) {
 				if ($this->original[$offset] == $value) {
 					unset($this->original[$offset]);
 				}
-			} else if (isset($this->container[$offset])) {
-				if ($this->container[$offset] != $value) {
-					$this->original[$offset] = $this->container[$offset];
-				}
 			} else {
-				$this->original[$offset] = false;
+				if (isset($this->container[$offset])) {
+					if ($this->container[$offset] != $value) {
+						$this->original[$offset] = $this->container[$offset];
+					}
+				} else {
+					$this->original[$offset] = false;
+				}
 			}
 
 			$this->container[$offset] = $value;
@@ -57,6 +83,7 @@ namespace blink\root {
 		/**
 		 *
 		 * @param string $offset
+		 *
 		 * @return boolean
 		 */
 		public function offsetExists($offset) {
@@ -66,6 +93,7 @@ namespace blink\root {
 		/**
 		 *
 		 * @param string $offset
+		 *
 		 * @return string
 		 */
 		public function offsetGet($offset) {
@@ -99,30 +127,6 @@ namespace blink\root {
 		 */
 
 		/**
-		 * @param b\root $root
-		 */
-		public function __construct(b\root $root) {
-			$this->root = $root;
-
-			$this->container = $root->application->settings;
-
-			$result = $root->database->select([
-				'select' => ['key', 'value'],
-				'from' => 'settings'
-			]);
-
-			$column = $result->column;
-
-			while ($row = $result->fetch_row()) {
-				$this->container[$row[$column['key']]] = $row[$column['value']];
-			}
-
-			unset($row);
-
-			$this->listen([$this, 'pushAll'], 'close', 'root/application');
-		}
-
-		/**
 		 *
 		 * @param string $offset
 		 */
@@ -136,7 +140,7 @@ namespace blink\root {
 					if (isset($this->container[$offset])) {
 						$database->update([
 							'table' => 'settings',
-							'set' => [
+							'set'   => [
 								'value' => $this->container[$offset]
 							],
 							'where' => [
@@ -145,7 +149,7 @@ namespace blink\root {
 						]);
 					} else {
 						$database->delete([
-							'from' => 'settings',
+							'from'  => 'settings',
 							'where' => [
 								'key' => $offset
 							]
@@ -153,9 +157,9 @@ namespace blink\root {
 					}
 				} else {
 					$database->insert([
-						'into' => 'settings',
+						'into'    => 'settings',
 						'columns' => ['key', 'value'],
-						'values' => [
+						'values'  => [
 							[$offset, $this->container[$offset]]
 						]
 					]);
@@ -178,7 +182,7 @@ namespace blink\root {
 						// do multiple queries. @todo: Improve bulk update code.
 						$database->update([
 							'table' => 'settings',
-							'set' => [
+							'set'   => [
 								'value' => $this->container[$offset]
 							],
 							'where' => [
@@ -187,7 +191,7 @@ namespace blink\root {
 						]);
 					} else {
 						$database->delete([
-							'from' => 'settings',
+							'from'  => 'settings',
 							'where' => [
 								'key' => [$offset]
 							]
@@ -195,14 +199,12 @@ namespace blink\root {
 					}
 				} else {
 					$database->insert([
-						'into' => 'settings',
+						'into'    => 'settings',
 						'columns' => ['key', 'value'],
-						'values' => [[$offset, $this->container[$offset]]]
+						'values'  => [[$offset, $this->container[$offset]]]
 					]);
 				}
 			}
 		}
-
 	}
-
 }

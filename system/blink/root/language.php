@@ -10,6 +10,12 @@ namespace blink\root {
 
 		/**
 		 *
+		 * @var b\root
+		 */
+		protected $root;
+
+		/**
+		 *
 		 * @var array
 		 */
 		private $container = [];
@@ -26,59 +32,8 @@ namespace blink\root {
 		 */
 		private $tag = 'en-US';
 
-		/**
-		 *
-		 * @var b\root
-		 */
-		protected $root;
-
 		/*
 		 * Implementation of \ArrayAccess.
-		 */
-
-		/**
-		 *
-		 * @param string $offset
-		 * @return boolean
-		 */
-		public function offsetExists($offset) {
-			return isset($this->container[(string) $offset]);
-		}
-
-		/**
-		 *
-		 * @param string $offset
-		 * @return string
-		 */
-		public function offsetGet($offset) {
-			$offset = (string) $offset;
-
-			if (isset($this->instance[$offset])) {
-				return $this->instance[$offset];
-			} else {
-				return $this->instance[$offset] = new languageString($this->container, $offset);
-			}
-		}
-
-		/**
-		 *
-		 * @param string $offset
-		 * @param string $value
-		 */
-		public function offsetSet($offset, $value) {
-			throw new Exception('METHOD_NOT_SUPPORTED');
-		}
-
-		/**
-		 *
-		 * @param string $offset
-		 */
-		public function offsetUnset($offset) {
-			throw new Exception('METHOD_NOT_SUPPORTED');
-		}
-
-		/*
-		 * End implementation of \ArrayAccess.
 		 */
 
 		/**
@@ -140,6 +95,52 @@ namespace blink\root {
 			$this->container = call_user_func_array('array_merge', $lang);
 		}
 
+		/**
+		 *
+		 * @param string $offset
+		 *
+		 * @return boolean
+		 */
+		public function offsetExists($offset) {
+			return isset($this->container[(string) $offset]);
+		}
+
+		/**
+		 *
+		 * @param string $offset
+		 *
+		 * @return string
+		 */
+		public function offsetGet($offset) {
+			$offset = (string) $offset;
+
+			if (isset($this->instance[$offset])) {
+				return $this->instance[$offset];
+			} else {
+				return $this->instance[$offset] = new languageString($this->container, $offset);
+			}
+		}
+
+		/**
+		 *
+		 * @param string $offset
+		 * @param string $value
+		 */
+		public function offsetSet($offset, $value) {
+			throw new Exception('METHOD_NOT_SUPPORTED');
+		}
+
+		/*
+		 * End implementation of \ArrayAccess.
+		 */
+
+		/**
+		 *
+		 * @param string $offset
+		 */
+		public function offsetUnset($offset) {
+			throw new Exception('METHOD_NOT_SUPPORTED');
+		}
 	}
 
 	class languageString {
@@ -165,11 +166,11 @@ namespace blink\root {
 		/**
 		 *
 		 * @param language $container
-		 * @param string $offset
+		 * @param string   $offset
 		 */
 		public function __construct(&$container, $offset) {
-			$this->container = &$container;
-			$this->offset = $offset;
+			$this->container = & $container;
+			$this->offset    = $offset;
 		}
 
 		/**
@@ -190,7 +191,5 @@ namespace blink\root {
 
 			return $this->output;
 		}
-
 	}
-
 }

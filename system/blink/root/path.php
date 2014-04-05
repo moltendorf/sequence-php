@@ -64,29 +64,32 @@ namespace blink\root {
 		/**
 		 *
 		 * @param string $system
-		 * @param array $settings
+		 * @param array  $settings
 		 */
 		public function settings($system, $settings) {
 			$paths = [
-				'root'		=> $this->root		= $settings['root'],
-				'system'	=> $this->system	= realpath($system),
-				'cache'		=> $this->cache		= realpath($system . '/cache'),
-				'language'	=> $this->language	= realpath($system . '/language'),
-				'template'	=> $this->template	= realpath($system . '/template'),
-				'page'		=> $this->page		= realpath($system . '/' . $settings['page']),
-				'content'	=> $this->content	= realpath($system . '/' . $settings['content'])
+				'root'     => $settings['root'],
+				'system'   => realpath($system),
+				'cache'    => realpath($system . '/cache'),
+				'language' => realpath($system . '/language'),
+				'template' => realpath($system . '/template'),
+				'page'     => realpath($system . '/' . $settings['page']),
+				'content'  => realpath($system . '/' . $settings['content'])
 			];
 
 			foreach ($paths as $key => $path) {
 				if ($path === false) {
 					throw new \Exception(strtoupper($key) . '_PATH_NOT_FOUND');
 				}
+
+				$this->$key = $path;
 			}
 		}
 
 		/**
 		 *
 		 * @param string $module
+		 *
 		 * @return string|boolean
 		 */
 		public function module($module) {
@@ -98,7 +101,5 @@ namespace blink\root {
 
 			return false;
 		}
-
 	}
-
 }

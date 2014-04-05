@@ -7,13 +7,11 @@ namespace blink {
 		/**
 		 *
 		 * @param callable $method
-		 * @param string $message
-		 * @param string $binding
+		 * @param string   $message
+		 * @param string   $binding
 		 */
 		final protected function listen(callable $method, $message, $binding = null) {
 			$this->root->hook->listen($method, $message, $binding);
 		}
-
 	}
-
 }

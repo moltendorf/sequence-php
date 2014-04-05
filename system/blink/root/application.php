@@ -39,6 +39,7 @@ namespace blink\root {
 		/**
 		 *
 		 * @param string $name
+		 *
 		 * @return mixed
 		 */
 		public function __get($name) {
@@ -116,7 +117,7 @@ namespace blink\root {
 			}
 
 			if ($settings['application']) {
-				$this->settings = &$settings['application'];
+				$this->settings = & $settings['application'];
 			}
 
 			// Set up our paths.
@@ -142,13 +143,15 @@ namespace blink\root {
 					$root->template->error(new \Exception('OUTPUT_BUFFER_LEVEL_DIFFERS'));
 
 					$this->headers();
-				} else if (ob_get_length()) {
-					$root->template->error();
-
-					$this->headers();
 				} else {
-					// This should be the only output statement.
-					$this->parse();
+					if (ob_get_length()) {
+						$root->template->error();
+
+						$this->headers();
+					} else {
+						// This should be the only output statement.
+						$this->parse();
+					}
 				}
 
 				$this->broadcast('close');
@@ -166,7 +169,6 @@ namespace blink\root {
 				header('X-Debug-Execution-Time: ' . number_format(microtime(true) * 1e6 - $start) . utf8_decode('µs'));
 
 				$this->output();
-
 				// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
 			} else {
 				$this->parse();
@@ -184,6 +186,22 @@ namespace blink\root {
 		/**
 		 *
 		 */
+		public function headers() {
+			$this->content = ob_get_contents();
+			ob_clean();
+
+			$digest        = base64_encode(pack('H*', md5($this->content)));
+			$this->content = gzencode($this->content);
+
+			header('Content-Encoding: gzip');
+			header('Content-Length: ' . mb_strlen($this->content, '8bit'));
+			header('Content-MD5: ' . $digest);
+			header('Content-Type: text/html; charset=utf-8');
+		}
+
+		/**
+		 *
+		 */
 		public function parse() {
 			$root = $this->root;
 
@@ -196,28 +214,10 @@ namespace blink\root {
 		/**
 		 *
 		 */
-		public function headers() {
-			$this->content = ob_get_contents();
-			ob_clean();
-
-			$digest = base64_encode(pack('H*', md5($this->content)));
-			$this->content = gzencode($this->content);
-
-			header('Content-Encoding: gzip');
-			header('Content-Length: ' . mb_strlen($this->content, '8bit'));
-			header('Content-MD5: ' . $digest);
-			header('Content-Type: text/html; charset=utf-8');
-		}
-
-		/**
-		 *
-		 */
 		public function output() {
 			ob_end_clean();
 
 			echo $this->content;
 		}
-
 	}
-
 }

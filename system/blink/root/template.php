@@ -59,42 +59,6 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @param string $file
-		 */
-		public function path($file) {
-			if ($this->useCustomizations) {
-				$path = $this->currentDirectory . '/custom/' . $file . '.php';
-
-				if (file_exists($path)) {
-					return $path;
-				}
-			}
-
-			$path = $this->currentDirectory . '/' . $file . '.php';
-
-			if (file_exists($path)) {
-				return $path;
-			}
-
-			if (!$this->isDefaultTemplate) {
-				if ($this->useCustomizations) {
-					$path = $this->defaultDirectory . '/custom/' . $file . '.php';
-
-					if (file_exists($path)) {
-						return $path;
-					}
-				}
-
-				$path = $this->defaultDirectory . '/' . $file . '.php';
-
-				if (file_exists($path)) {
-					return $path;
-				}
-			}
-		}
-
-		/**
-		 *
 		 */
 		public function header() {
 			$this->broadcast('header');
@@ -142,6 +106,44 @@ namespace blink\root {
 			http_response_code($status);
 		}
 
-	}
+		/**
+		 *
+		 * @param string $file
+		 *
+		 * @return string|boolean
+		 */
+		public function path($file) {
+			if ($this->useCustomizations) {
+				$path = $this->currentDirectory . '/custom/' . $file . '.php';
 
+				if (file_exists($path)) {
+					return $path;
+				}
+			}
+
+			$path = $this->currentDirectory . '/' . $file . '.php';
+
+			if (file_exists($path)) {
+				return $path;
+			}
+
+			if (!$this->isDefaultTemplate) {
+				if ($this->useCustomizations) {
+					$path = $this->defaultDirectory . '/custom/' . $file . '.php';
+
+					if (file_exists($path)) {
+						return $path;
+					}
+				}
+
+				$path = $this->defaultDirectory . '/' . $file . '.php';
+
+				if (file_exists($path)) {
+					return $path;
+				}
+			}
+
+			return false;
+		}
+	}
 }

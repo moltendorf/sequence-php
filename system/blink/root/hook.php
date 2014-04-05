@@ -14,23 +14,13 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @param b\root $root
-		 * @param string $binding
-		 */
-		final public function __construct(b\root $root, $binding = '') {
-			$this->root = $root;
-		}
-
-		/*
-		 * End re-implementation of b\bind.
-		 */
-
-		/**
-		 *
 		 * @var array
 		 */
 		protected $bindings = [];
 
+		/*
+		 * End re-implementation of b\bind.
+		 */
 		/**
 		 *
 		 * @var array
@@ -45,8 +35,18 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @param bind $object
+		 * @param b\root $root
 		 * @param string $binding
+		 */
+		final public function __construct(b\root $root, $binding = '') {
+			$this->root = $root;
+		}
+
+		/**
+		 *
+		 * @param bind   $object
+		 * @param string $binding
+		 *
 		 * @return &array
 		 */
 		public function &register($object, $binding) {
@@ -64,7 +64,7 @@ namespace blink\root {
 		/**
 		 *
 		 * @param string $message
-		 * @param array $data
+		 * @param array  $data
 		 */
 		public function broadcast($message, $data) {
 			if (isset($this->global[$message])) {
@@ -77,8 +77,8 @@ namespace blink\root {
 		/**
 		 *
 		 * @param callable $method
-		 * @param string $message
-		 * @param string $binding
+		 * @param string   $message
+		 * @param string   $binding
 		 */
 		public function listen(callable $method, $message, $binding = null) {
 			if ($binding === null) {
@@ -103,7 +103,5 @@ namespace blink\root {
 				}
 			}
 		}
-
 	}
-
 }

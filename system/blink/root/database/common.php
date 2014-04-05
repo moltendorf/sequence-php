@@ -28,52 +28,8 @@ namespace blink\root\database {
 
 		/**
 		 *
-		 * @param array $settings
-		 */
-		abstract protected function connect($settings);
-
-		/**
-		 *
-		 */
-		abstract protected function destroy();
-
-		/**
-		 *
-		 * @param string $query
-		 * @param array|null $columns
-		 * @return result\common|boolean
-		 */
-		abstract public function query($query, $columns = null);
-
-		/**
-		 *
-		 * @param string $table
-		 * @return string
-		 */
-		abstract public function escape_table($table);
-
-		/**
-		 *
-		 * @param string $column
-		 * @return string
-		 */
-		abstract public function escape_column($column);
-
-		/**
-		 *
-		 * @param string $value
-		 * @return string
-		 */
-		abstract public function escape_value($value);
-
-		/*
-		 * Implementation of b\bind.
-		 */
-
-		/**
-		 *
 		 * @param b\root $root
-		 * @param array $settings
+		 * @param array  $settings
 		 * @param string $binding
 		 */
 		final public function __construct(b\root $root, array $settings, $binding = '') {
@@ -91,15 +47,10 @@ namespace blink\root\database {
 		}
 
 		/**
-		 * Override automatic binding.
+		 *
+		 * @param array $settings
 		 */
-		final protected function getBinding() {
-			return 'root/database';
-		}
-
-		/*
-		 * End implementation of b\bind.
-		 */
+		abstract protected function connect($settings);
 
 		/**
 		 *
@@ -114,7 +65,13 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 */
+		abstract protected function destroy();
+
+		/**
+		 *
 		 * @param array $input
+		 *
 		 * @return result\common|boolean
 		 */
 		public function select($input) {
@@ -124,18 +81,20 @@ namespace blink\root\database {
 
 			if (isset($input['select'])) {
 				$columns = [];
-				$select = [];
+				$select  = [];
 
 				foreach ($input['select'] as $column) {
 					if (is_string($column)) {
 						$columns[] = $column;
-						$select[] = $this->escape_column($column);
-					} else if (count($column) == 1) {
-						$columns[] = $column[0];
-						$select[] = $this->escape_column($column[0]);
+						$select[]  = $this->escape_column($column);
 					} else {
-						$columns[] = $column[0];
-						$select[] = $this->escape_column($column[0]) . ' AS ' . $this->escape_column($column[1]);
+						if (count($column) == 1) {
+							$columns[] = $column[0];
+							$select[]  = $this->escape_column($column[0]);
+						} else {
+							$columns[] = $column[0];
+							$select[]  = $this->escape_column($column[0]) . ' AS ' . $this->escape_column($column[1]);
+						}
 					}
 				}
 
@@ -151,7 +110,41 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 * @param string $column
+		 *
+		 * @return string
+		 */
+		abstract public function escape_column($column);
+
+		/*
+		 * Implementation of b\bind.
+		 */
+
+		/**
+		 *
+		 * @param string $table
+		 *
+		 * @return string
+		 */
+		abstract public function escape_table($table);
+
+		/**
+		 *
+		 * @param string     $query
+		 * @param array|null $columns
+		 *
+		 * @return result\common|boolean
+		 */
+		abstract public function query($query, $columns = null);
+
+		/*
+		 * End implementation of b\bind.
+		 */
+
+		/**
+		 *
 		 * @param array $input
+		 *
 		 * @return result\common|boolean
 		 */
 		public function insert($input) {
@@ -188,7 +181,16 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 * @param string $value
+		 *
+		 * @return string
+		 */
+		abstract public function escape_value($value);
+
+		/**
+		 *
 		 * @param array $input
+		 *
 		 * @return result\common|boolean
 		 */
 		public function update($input) {
@@ -226,6 +228,7 @@ namespace blink\root\database {
 		/**
 		 *
 		 * @param array $input
+		 *
 		 * @return result\common|boolean
 		 */
 		public function delete($input) {
@@ -252,6 +255,11 @@ namespace blink\root\database {
 			return $this->query(implode(' ', $query) . ';');
 		}
 
+		/**
+		 * Override automatic binding.
+		 */
+		final protected function getBinding() {
+			return 'root/database';
+		}
 	}
-
 }
