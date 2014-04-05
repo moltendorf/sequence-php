@@ -1,14 +1,6 @@
 <?php
 
 namespace blink {
-	/*
-	 * For debugging purposes.
-	 */
-	if ($_SERVER['REQUEST_URI'] === '/dynamic?info') {
-		phpinfo();
-
-		return;
-	}
 
 	/*
 	 * Start application.
