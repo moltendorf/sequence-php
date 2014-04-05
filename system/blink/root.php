@@ -9,6 +9,7 @@ namespace blink {
 	 * @property-read root\hook            $hook
 	 * @property-read root\handler         $handler
 	 * @property-read root\language        $language
+	 * @property-read root\module          $module
 	 * @property-read root\template        $template
 	 * @property-read root\path            $path
 	 * @property-read root\settings        $settings
