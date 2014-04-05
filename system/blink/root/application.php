@@ -88,7 +88,6 @@ namespace blink\root {
 				error_reporting(-1);
 
 				ini_set('display_errors', 1);
-				ini_set('html_errors', 1);
 
 				foreach (glob($debug . '/*.php') as $file) {
 					// Manually including each file as the namespace the classes are in would cause the autoloader to look in the wrong directory.
