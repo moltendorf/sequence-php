@@ -10,6 +10,12 @@ namespace blink\root\database {
 
 		/**
 		 *
+		 * @var array
+		 */
+		public static $messages = ['connecting', 'connected', 'closing', 'closed'];
+
+		/**
+		 *
 		 * @var string
 		 */
 		protected $prefix = '';

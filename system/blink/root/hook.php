@@ -80,6 +80,8 @@ namespace blink\root {
 		 * @param callable $method
 		 * @param string   $message
 		 * @param string   $binding
+		 *
+		 * @throws
 		 */
 		public function listen(callable $method, $message, $binding = null) {
 			if ($binding === null) {
@@ -90,6 +92,14 @@ namespace blink\root {
 				}
 			} else {
 				if (isset($this->listeners[$binding])) {
+					if (b\debug && isset($this->bindings[$binding][0])) {
+						$object = $this->bindings[$binding][0];
+
+						if (!in_array($message, $object::$messages)) {
+							throw new \Exception('UNDEFINED_MESSAGE: ' . $binding . '::' . $message);
+						}
+					}
+
 					if (isset($this->listeners[$binding][$message])) {
 						$this->listeners[$binding][$message][] = $method;
 					} else {

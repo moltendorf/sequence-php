@@ -10,6 +10,12 @@ namespace blink\root {
 
 		/**
 		 *
+		 * @var array
+		 */
+		public static $messages = ['header', 'body'];
+
+		/**
+		 *
 		 * @var string
 		 */
 		private $defaultDirectory;

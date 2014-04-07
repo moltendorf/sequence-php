@@ -16,6 +16,12 @@ namespace blink\root {
 		 *
 		 * @var array
 		 */
+		public static $messages = ['connect', 'module', 'template', 'close'];
+
+		/**
+		 *
+		 * @var array
+		 */
 		public $settings = [];
 
 		/**
@@ -35,6 +41,15 @@ namespace blink\root {
 		 * @var array
 		 */
 		private $debug = false;
+
+		/**
+		 *
+		 * @param b\root $root
+		 * @param string $binding
+		 */
+		public function __construct(b\root $root, $binding = '') {
+			$this->root = $root;
+		}
 
 		/**
 		 *
@@ -110,6 +125,8 @@ namespace blink\root {
 			}
 
 			unset($debug);
+
+			$this->bind($root);
 
 			// Load our settings.
 			$settings = require $system . '/settings.php';
