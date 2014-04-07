@@ -72,6 +72,14 @@ namespace blink\root {
 			$level = ob_get_level();
 
 			/*
+			 * Set up the error handler so that all errors are handled one at a time in a clean fashion.
+			 */
+
+			set_error_handler(function ($errno, $errstr, $errfile, $errline) {
+				throw new \ErrorException($errstr, 0, $errno, $errfile, $errline);
+			});
+
+			/*
 			 * For debugging purposes.
 			 */
 
@@ -81,13 +89,6 @@ namespace blink\root {
 				define('blink\\debug', true);
 
 				$this->debug = [];
-
-				/*
-				 * Display all errors.
-				 */
-				error_reporting(-1);
-
-				ini_set('display_errors', 1);
 
 				foreach (glob($debug . '/*.php') as $file) {
 					// Manually including each file as the namespace the classes are in would cause the autoloader to look in the wrong directory.
