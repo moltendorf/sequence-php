@@ -43,7 +43,7 @@ namespace blink\root {
 
 			unset($row);
 
-			$this->listen([$this, 'pushAll'], 'close', 'root/application');
+			$this->listen([$this, 'pushAll'], 'closing', 'root/database');
 		}
 
 		/*
