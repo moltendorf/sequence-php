@@ -122,7 +122,7 @@ namespace blink\root {
 		 * @throws
 		 */
 		public function offsetSet($offset, $value) {
-			throw new Exception('METHOD_NOT_SUPPORTED');
+			throw new \Exception('METHOD_NOT_SUPPORTED');
 		}
 
 		/**
@@ -132,7 +132,7 @@ namespace blink\root {
 		 * @throws
 		 */
 		public function offsetUnset($offset) {
-			throw new Exception('METHOD_NOT_SUPPORTED');
+			throw new \Exception('METHOD_NOT_SUPPORTED');
 		}
 		/*
 		 * End implementation of \ArrayAccess.

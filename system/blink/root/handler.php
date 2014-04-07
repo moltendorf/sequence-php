@@ -75,7 +75,7 @@ namespace blink\root {
 				}
 			} else {
 				// 500.
-				throw new Exception('HANDLER_NOT_LOADED_IN_CONFIGURED_ROOT');
+				throw new \Exception('HANDLER_NOT_LOADED_IN_CONFIGURED_ROOT');
 			}
 		}
 
@@ -95,7 +95,7 @@ namespace blink\root {
 					$module->run();
 				} else {
 					// 500.
-					throw new Exception('HANDLER_COULD_NOT_LOAD_REQUESTED_MODULE');
+					throw new \Exception('HANDLER_COULD_NOT_LOAD_REQUESTED_MODULE');
 				}
 			} else {
 				// 404.
