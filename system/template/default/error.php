@@ -31,17 +31,13 @@
 		h1 {
 			font-size: 1.6em;
 
-			margin-left: 32px;
-			margin-right: 32px;
-			margin-top: 24px;
+			margin: 24px 32px 0;
 		}
 
 		h2 {
 			font-size: 1.2em;
 
-			margin-left: 40px;
-			margin-right: 40px;
-			margin-top: 16px;
+			margin: 16px 40px 0;
 		}
 
 		.message > h2 {
@@ -53,15 +49,8 @@
 		div {
 			background-color: #ffffff;
 
-			border-color: #99bbdd;
-			border-style: solid;
-			border-width: 1px;
-
-			margin-bottom: 24px;
-			margin-left: 32px;
-			margin-right: 32px;
-			margin-top: 8px;
-
+			border: 1px solid #99bbdd;
+			margin: 8px 32px 24px;
 			padding: 16px;
 		}
 
@@ -71,25 +60,17 @@
 			}
 
 			h1 {
-				margin-left: 64px;
-				margin-right: 64px;
-				margin-top: 48px;
+				margin: 48px 64px 0;
 			}
 
 			h2 {
-				margin-left: 80px;
-				margin-right: 80px;
-				margin-top: 32px;
+				margin: 32px 80px 0;
 			}
 
 			div {
 				border-width: 2px;
 
-				margin-bottom: 48px;
-				margin-left: 64px;
-				margin-right: 64px;
-				margin-top: 16px;
-
+				margin: 16px 64px 48px;
 				padding: 32px;
 			}
 		}

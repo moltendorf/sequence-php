@@ -31,32 +31,23 @@
 		h1 {
 			font-size: 1.6em;
 
-			margin-left: 32px;
-			margin-right: 32px;
-			margin-top: 24px;
+			margin: 24px 32px 0;
 		}
 
 		.exception > h1 {
 			font-size: 1.2em;
 
-			margin-bottom: 8px;
-			margin-left: 0;
-			margin-right: 0;
-			margin-top: 0;
+			margin: 0 0 8px;
 		}
 
 		h2 {
 			font-size: 1.2em;
 
-			margin-left: 40px;
-			margin-right: 40px;
-			margin-top: 16px;
+			margin: 16px 40px 0;
 		}
 
 		.exception > h2 {
-			margin-left: 8px;
-			margin-right: 8px;
-			margin-top: 8px;
+			margin: 8px 8px 0;
 		}
 
 		.message > h2 {
@@ -72,15 +63,8 @@
 		div {
 			background-color: #ffffff;
 
-			border-color: #99bbdd;
-			border-style: solid;
-			border-width: 1px;
-
-			margin-bottom: 24px;
-			margin-left: 32px;
-			margin-right: 32px;
-			margin-top: 8px;
-
+			border: 1px solid #99bbdd;
+			margin: 8px 32px 24px;
 			padding: 16px;
 		}
 
@@ -92,9 +76,7 @@
 		}
 
 		.trace {
-			margin-left: 0;
-			margin-right: 0;
-			margin-bottom: 0;
+			margin: 8px 0 0;
 		}
 
 		@media (min-resolution: 360dpcm) {
@@ -103,9 +85,7 @@
 			}
 
 			h1 {
-				margin-left: 64px;
-				margin-right: 64px;
-				margin-top: 48px;
+				margin: 48px 64px 0;
 			}
 
 			.exception > h1 {
@@ -113,15 +93,11 @@
 			}
 
 			h2 {
-				margin-left: 80px;
-				margin-right: 80px;
-				margin-top: 32px;
+				margin: 32px 80px 0;
 			}
 
 			.exception > h2 {
-				margin-left: 16px;
-				margin-right: 16px;
-				margin-top: 16px;
+				margin: 16px 16px 0;
 			}
 
 			h1 + h2 {
@@ -131,11 +107,7 @@
 			div {
 				border-width: 2px;
 
-				margin-bottom: 48px;
-				margin-left: 64px;
-				margin-right: 64px;
-				margin-top: 16px;
-
+				margin: 16px 64px 48px;
 				padding: 32px;
 			}
 		}
