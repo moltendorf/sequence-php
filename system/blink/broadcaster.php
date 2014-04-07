@@ -32,7 +32,7 @@ namespace blink {
 		 * @param root   $root
 		 * @param string $binding
 		 */
-		final protected function bind(root $root, $binding = '') {
+		protected function bind(root $root, $binding = '') {
 			$this->root    = $root;
 			$this->binding = $binding . $this->getBinding();
 
@@ -52,7 +52,7 @@ namespace blink {
 		 *
 		 * @param string $message
 		 */
-		final protected function broadcast($message) {
+		protected function broadcast($message) {
 			$data = array_slice(func_get_args(), 1);
 
 			$this->root->hook->broadcast($message, $data);

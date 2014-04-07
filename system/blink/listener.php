@@ -24,7 +24,7 @@ namespace blink {
 		 * @param root   $root
 		 * @param string $binding
 		 */
-		final protected function bind(root $root, $binding = '') {
+		protected function bind(root $root, $binding = '') {
 			$this->root = $root;
 		}
 
@@ -34,7 +34,7 @@ namespace blink {
 		 * @param string   $message
 		 * @param string   $binding
 		 */
-		final protected function listen(callable $method, $message, $binding = null) {
+		protected function listen(callable $method, $message, $binding = null) {
 			$this->root->hook->listen($method, $message, $binding);
 		}
 	}
