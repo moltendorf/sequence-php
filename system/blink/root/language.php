@@ -80,10 +80,7 @@ namespace blink\root {
 				}
 			}
 
-			/**
-			 *
-			 * @todo Convert this to PHP 5.6+ syntax.
-			 */
+			// @todo Convert this to PHP 5.6+ syntax.
 			$this->container = call_user_func_array('array_merge', $lang);
 		}
 
@@ -121,6 +118,8 @@ namespace blink\root {
 		 *
 		 * @param string $offset
 		 * @param string $value
+		 *
+		 * @throws
 		 */
 		public function offsetSet($offset, $value) {
 			throw new Exception('METHOD_NOT_SUPPORTED');
@@ -129,6 +128,8 @@ namespace blink\root {
 		/**
 		 *
 		 * @param string $offset
+		 *
+		 * @throws
 		 */
 		public function offsetUnset($offset) {
 			throw new Exception('METHOD_NOT_SUPPORTED');
@@ -160,10 +161,10 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @param language $container
-		 * @param string   $offset
+		 * @param array  $container
+		 * @param string $offset
 		 */
-		public function __construct(&$container, $offset) {
+		public function __construct(array & $container, $offset) {
 			$this->container = & $container;
 			$this->offset    = $offset;
 		}

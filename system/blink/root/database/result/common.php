@@ -24,9 +24,9 @@ namespace blink\root\database\result {
 
 		/**
 		 *
-		 * @param \mysqli_result $instance
-		 * @param string         $query
-		 * @param array|null     $columns
+		 * @param \PDOStatement $instance
+		 * @param string        $query
+		 * @param array|null    $columns
 		 */
 		public function __construct($instance, $query, $columns = null) {
 			$this->_instance = $instance;

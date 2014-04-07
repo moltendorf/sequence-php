@@ -65,6 +65,8 @@ namespace blink\root {
 		 *
 		 * @param string $system
 		 * @param array  $settings
+		 *
+		 * @throws
 		 */
 		public function settings($system, $settings) {
 			$paths = [

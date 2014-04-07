@@ -4,6 +4,8 @@ namespace blink\functions {
 
 	/**
 	 *
+	 * @todo Convert this to PHP 5.6+ syntax.
+	 *
 	 * @param mixed $variable
 	 */
 	function dump($variable) {

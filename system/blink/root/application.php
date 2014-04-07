@@ -54,6 +54,8 @@ namespace blink\root {
 		/**
 		 *
 		 * @param string $system
+		 *
+		 * @throws
 		 */
 		public function routine($system) {
 			$root = $this->root;

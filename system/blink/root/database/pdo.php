@@ -13,7 +13,7 @@ namespace blink\root\database {
 		 * @param string     $query
 		 * @param array|null $columns
 		 *
-		 * @return result\mysqli|boolean
+		 * @return result\pdo|boolean
 		 */
 		public function query($query, $columns = null) {
 			$result = $this->_instance->query($query);
@@ -58,6 +58,8 @@ namespace blink\root\database {
 		/**
 		 *
 		 * @param array $settings
+		 *
+		 * @throws
 		 */
 		protected function connect($settings) {
 			if (!isset($settings['username'])) {
