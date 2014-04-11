@@ -86,9 +86,9 @@ namespace blink\root {
 		public function listen(callable $method, $message, $binding = null) {
 			if ($binding === null) {
 				if (isset($this->global[$message])) {
-					$this->global[$message][] = [$method];
+					$this->global[$message][] = $method;
 				} else {
-					$this->global[$message] = $method;
+					$this->global[$message] = [$method];
 				}
 			} else {
 				if (isset($this->listeners[$binding])) {
@@ -109,7 +109,7 @@ namespace blink\root {
 					$this->bindings[$binding] = [];
 
 					$this->listeners[$binding] = [
-						$message => $method
+						$message => [$method]
 					];
 				}
 			}
