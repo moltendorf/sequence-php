@@ -79,7 +79,7 @@ namespace blink\root {
 		public function error(\Exception $exception = null) {
 			$lang = $this->root->language;
 
-			$contents = nl2br(htmlspecialchars(ob_get_contents(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5));
+			$contents = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars(ob_get_contents(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
 			ob_clean();
 
 			$status = 500;
@@ -96,7 +96,7 @@ namespace blink\root {
 				$file = $exception->getFile();
 				$line = $exception->getLine();
 
-				$trace = nl2br(htmlspecialchars($exception->getTraceAsString(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5));
+				$trace = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars($exception->getTraceAsString(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
 			}
 
 			if (b\debug) {
