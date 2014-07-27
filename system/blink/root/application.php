@@ -169,7 +169,7 @@ namespace blink\root {
 						$this->headers();
 					} else {
 						// This should be the only output statement.
-						$this->parse();
+						$this->generate();
 					}
 				}
 
@@ -190,7 +190,7 @@ namespace blink\root {
 				$this->output();
 				// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
 			} else {
-				$this->parse();
+				$this->generate();
 				$this->output();
 
 				fastcgi_finish_request();
@@ -221,7 +221,7 @@ namespace blink\root {
 		/**
 		 *
 		 */
-		public function parse() {
+		public function generate() {
 			$root = $this->root;
 
 			$root->template->header();
