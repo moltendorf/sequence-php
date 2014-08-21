@@ -3,6 +3,7 @@
 namespace blink\root {
 
 	use blink as b;
+	use blink\functions as f;
 
 	class template {
 
@@ -12,7 +13,19 @@ namespace blink\root {
 		 *
 		 * @var array
 		 */
-		public static $messages = ['header', 'body'];
+		public static $messages = ['body'];
+
+		/**
+		 *
+		 * @var array
+		 */
+		public $variable;
+
+		/**
+		 *
+		 * @var string
+		 */
+		public $file;
 
 		/**
 		 *
@@ -57,13 +70,17 @@ namespace blink\root {
 			}
 
 			$this->useCustomizations = (boolean) $root->settings['template_custom'];
+
+			$this->clear();
 		}
 
 		/**
 		 *
 		 */
-		public function header() {
-			$this->broadcast('header');
+		public function clear() {
+			$this->variable = [
+				'status' => 200
+			];
 		}
 
 		/**
@@ -71,41 +88,17 @@ namespace blink\root {
 		 */
 		public function body() {
 			$this->broadcast('body');
-		}
 
-		/**
-		 *
-		 */
-		public function error(\Exception $exception = null) {
-			$lang = $this->root->language;
+			$l = $this->root->language;
+			$v = $this->variable;
 
-			$contents = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars(ob_get_contents(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
-			ob_clean();
+			http_response_code($v['status']);
 
-			$status = 500;
+			ob_start();
 
-			if ($exception) {
-				if ($exception instanceof b\StatusException) {
-					$status = $exception->getStatus();
-				}
+			require $this->path($this->file);
 
-				$message = $exception->getMessage();
-
-				$type = get_class($exception);
-
-				$file = $exception->getFile();
-				$line = $exception->getLine();
-
-				$trace = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars($exception->getTraceAsString(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
-			}
-
-			if (b\debug) {
-				require $this->path('error_debug');
-			} else {
-				require $this->path('error');
-			}
-
-			http_response_code($status);
+			return ob_get_clean();
 		}
 
 		/**
@@ -146,6 +139,45 @@ namespace blink\root {
 			}
 
 			return false;
+		}
+
+		/**
+		 *
+		 */
+		public function error(\Exception $exception = null) {
+			$this->clear();
+
+			$v = & $this->variable;
+
+			if ($exception) {
+				$v['exception'] = $exception;
+
+				if ($exception instanceof b\StatusException) {
+					$v['status'] = $exception->getStatus();
+				}
+
+				$v['type']    = get_class($exception);
+				$v['message'] = $exception->getMessage();
+				$v['file']    = $exception->getFile();
+				$v['line']    = $exception->getLine();
+				$v['trace']   = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars($exception->getTraceAsString(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
+			}
+
+			if (ob_get_length()) {
+				$v['contents'] = f\text_format(f\text_normalize(ob_get_contents()));
+
+				//ob_clean();
+			}
+
+			if ($v['status'] == 200) {
+				$v['status'] = 500;
+			}
+
+			if (b\debug) {
+				$this->file = 'error_debug';
+			} else {
+				$this->file = 'error';
+			}
 		}
 	}
 }

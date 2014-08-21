@@ -87,21 +87,5 @@ namespace blink\root {
 				$this->$key = $path;
 			}
 		}
-
-		/**
-		 *
-		 * @param string $module
-		 *
-		 * @return string|boolean
-		 */
-		public function module($module) {
-			$file = $this->store['module'] . '/' . $module . '/load.php';
-
-			if (file_exists($file)) {
-				return $file;
-			}
-
-			return false;
-		}
 	}
 }

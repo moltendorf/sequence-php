@@ -26,6 +26,15 @@ namespace blink\root {
 		 */
 		private $position = 0;
 
+		/**
+		 *
+		 * @param b\root $root
+		 * @param string $binding
+		 */
+		public function __construct(b\root $root, $binding = '') {
+			$this->bind($root, $binding);
+		}
+
 		/*
 		 * Implementation of \ArrayAccess.
 		 */

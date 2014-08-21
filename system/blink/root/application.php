@@ -68,15 +68,29 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @param string $system
-		 *
-		 * @throws
+		 * @param string  $system
+		 * @param boolean $finish
 		 */
-		public function routine($system) {
+		public function routine($system, $finish = true) {
 			$root = $this->root;
 
-			// Store this internally so it doesn't get tampered with.
-			$start = $_SERVER['REQUEST_TIME_FLOAT'] * 1e6;
+			try {
+				$this->setup($system);
+				$this->module($finish);
+				$this->close();
+			} catch (\Exception $exception) {
+				$root->template->error($exception);
+
+				$this->template();
+				$this->output();
+			}
+		}
+
+		/**
+		 *
+		 */
+		public function setup($system) {
+			$root = $this->root;
 
 			/*
 			 * Output buffering is used to prevent accidental output.
@@ -84,9 +98,22 @@ namespace blink\root {
 			 * If the output buffering level is different by the end of the script, an error is thrown.
 			 */
 
+			// Cancel the default output buffer.
+			if (ini_get('output_buffering') && ob_get_level() === 1) {
+				if (ob_get_length()) {
+					$buffer = ob_get_clean();
+				} else {
+					ob_end_clean();
+				}
+			}
+
+			// Start our own output buffer.
 			ob_start();
 
-			$level = ob_get_level();
+			if (isset($buffer)) {
+				echo $buffer;
+			}
+
 
 			/*
 			 * Set up the error handler so that all errors are handled one at a time in a clean fashion.
@@ -124,6 +151,8 @@ namespace blink\root {
 				define('blink\\debug', false);
 			}
 
+			define('blink\\ship', !b\debug);
+
 			unset($debug);
 
 			$this->bind($root);
@@ -131,11 +160,7 @@ namespace blink\root {
 			// Load our settings.
 			$settings = require $system . '/settings.php';
 
-			if ($settings === false) {
-				throw new \Exception('NO_SETTINGS_FILE');
-			}
-
-			if ($settings['application']) {
+			if (isset($settings['application']) && is_array($settings['application'])) {
 				$this->settings = & $settings['application'];
 			}
 
@@ -149,29 +174,55 @@ namespace blink\root {
 
 			$root->database = new $class($root, $settings['database']);
 
+			unset($settings);
+		}
+
+		/**
+		 *
+		 */
+		public function module($finish = true) {
+			$root = $this->root;
+
+			$level = ob_get_level();
+
 			$this->broadcast('module');
 
 			// Parse the request.
 			$root->handler->parse();
+
+			$start = microtime(true) * 1e6;
+
 			$root->handler->load();
+
+			// Calculate the time it took to run the module.
+			$root->template->variable['runtime'] = $time = microtime(true) * 1e6 - $start;
 
 			$this->broadcast('template');
 
-			if (b\debug) {
-				if (ob_get_level() != $level) {
-					$root->template->error(new \Exception('OUTPUT_BUFFER_LEVEL_DIFFERS'));
+			if (b\ship) {
+				$this->template();
+				$this->output();
 
-					$this->headers();
-				} else {
-					if (ob_get_length()) {
-						$root->template->error();
-
-						$this->headers();
-					} else {
-						// This should be the only output statement.
-						$this->generate();
-					}
+				if ($finish && function_exists('fastcgi_finish_request')) {
+					fastcgi_finish_request();
 				}
+
+				$this->broadcast('close');
+
+				// Close connection to the database.
+				$root->database->close();
+			} else {
+				if (ob_get_level() != $level) {
+					throw new \Exception('OUTPUT_BUFFER_LEVEL_DIFFERS');
+				}
+
+				if (ob_get_length()) {
+					throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
+				}
+
+				$this->template();
+
+				header('X-Debug-Execution-Time: ' . number_format($time) . utf8_decode('µs'));
 
 				$this->broadcast('close');
 
@@ -179,55 +230,32 @@ namespace blink\root {
 				$root->database->close();
 
 				if (ob_get_length()) {
-					$root->template->error();
-
-					$this->headers();
+					throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
 				}
-
-				// This will be about as accurate as it can be from within PHP.
-				header('X-Debug-Execution-Time: ' . number_format(microtime(true) * 1e6 - $start) . utf8_decode('µs'));
 
 				$this->output();
 				// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
-			} else {
-				$this->generate();
-				$this->output();
-
-				fastcgi_finish_request();
-
-				$this->broadcast('close');
-
-				// Close connection to the database.
-				$root->database->close();
 			}
 		}
 
 		/**
 		 *
 		 */
-		public function headers() {
-			$this->content = ob_get_contents();
-			ob_clean();
+		public function template() {
+			$this->content = $this->root->template->body();
 
-			$digest        = base64_encode(pack('H*', md5($this->content)));
-			$this->content = gzencode($this->content);
+			// Prevent issues if we're debugging.
+			if (b\ship) {
+				$digest        = base64_encode(pack('H*', md5($this->content)));
+				$this->content = gzencode($this->content, 9);
 
-			header('Content-Encoding: gzip');
-			header('Content-Length: ' . mb_strlen($this->content, '8bit'));
-			header('Content-MD5: ' . $digest);
+				header('Content-Encoding: gzip');
+				header('Content-Length: ' . mb_strlen($this->content, '8bit'));
+				header('Content-MD5: ' . $digest);
+			}
+
 			header('Content-Type: text/html; charset=utf-8');
-		}
-
-		/**
-		 *
-		 */
-		public function generate() {
-			$root = $this->root;
-
-			$root->template->header();
-			$root->template->body();
-
-			$this->headers();
+			header('Last-Modified: ' . (new \DateTime('now', new \DateTimeZone('UTC')))->format('D, d M Y H:i:s T'));
 		}
 
 		/**

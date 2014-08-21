@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
 <head>
-	<title><?= $lang['ERROR_' . $status] ?></title>
+	<title><?= $l['ERROR_' . $v['status']] ?></title>
 
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 	<style type="text/css">
 		* {
@@ -78,10 +78,10 @@
 </head>
 
 <body>
-<h1><?= $lang['ERROR_' . $status] ?></h1>
+<h1><?= $l['ERROR_' . $v['status']] ?></h1>
 
 <div class="message">
-	<h2><?= $lang['ERROR_' . $status . '_MESSAGE'] ?></h2>
+	<h2><?= $l['ERROR_' . $v['status'] . '_MESSAGE'] ?></h2>
 </div>
 </body>
 </html>

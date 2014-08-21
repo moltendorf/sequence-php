@@ -1,9 +1,9 @@
 <!doctype html>
 <html>
 <head>
-	<title><?= $lang['ERROR_' . $status] ?></title>
+	<title><?= $l['ERROR_' . $v['status']] ?></title>
 
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 
 	<style type="text/css">
 		* {
@@ -115,37 +115,37 @@
 </head>
 
 <body>
-<h1><?= $lang['ERROR_' . $status] ?></h1>
+<h1><?= $l['ERROR_' . $v['status']] ?></h1>
 
 <div class="message">
-	<h2><?= $lang['ERROR_' . $status . '_MESSAGE'] ?></h2>
+	<h2><?= $l['ERROR_' . $v['status'] . '_MESSAGE'] ?></h2>
 </div>
 
-<?php if ($exception): ?>
-	<h2><?= $lang['EXCEPTION'] ?></h2>
+<?php if ($v['exception']): ?>
+	<h2><?= $l['EXCEPTION'] ?></h2>
 
 	<div class="exception">
-		<h1><?= $lang[$message] ?></h1>
+		<h1><?= $l[$v['message']] ?></h1>
 
-		<p><?= $lang['TYPE'] ?>: <span class="mono"><?= $type ?></span></p>
+		<p><?= $l['TYPE'] ?>: <span class="mono"><?= $v['type'] ?></span></p>
 
-		<p><?= $lang['MESSAGE'] ?>: <span class="mono"><?= $message ?></span></p>
+		<p><?= $l['MESSAGE'] ?>: <span class="mono"><?= $v['message'] ?></span></p>
 
-		<p><?= $lang['FILE'] ?>: <span class="mono"><?= $file ?>(<?= $line ?>)</span></p>
+		<p><?= $l['FILE'] ?>: <span class="mono"><?= $v['file'] ?>(<?= $v['line'] ?>)</span></p>
 
-		<h2><?= $lang['TRACE'] ?></h2>
+		<h2><?= $l['TRACE'] ?></h2>
 
 		<div class="trace">
-			<?= $trace ?>
+			<?= $v['trace'] ?>
 		</div>
 	</div>
 <?php endif ?>
 
-<?php if ($contents): ?>
-	<h2><?= $lang['OUTPUT'] ?></h2>
+<?php if ($v['contents']): ?>
+	<h2><?= $l['OUTPUT'] ?></h2>
 
 	<div class="output">
-		<?= $contents ?>
+		<?= $v['contents'] ?>
 	</div>
 <?php endif ?>
 </body>
