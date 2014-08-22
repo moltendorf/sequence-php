@@ -160,7 +160,7 @@ namespace blink\root {
 			$settings = require $system . '/settings.php';
 
 			if (isset($settings['application']) && is_array($settings['application'])) {
-				$this->settings = & $settings['application'];
+				$this->settings = $settings['application'];
 			}
 
 			// Set up our paths.
