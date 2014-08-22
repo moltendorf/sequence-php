@@ -144,6 +144,24 @@ namespace blink\root {
 		/**
 		 *
 		 */
+		public function redirect($location, $status = 302) {
+			$this->clear();
+
+			$v = & $this->variable;
+
+			$v['status']   = $status;
+			$v['location'] = $location;
+
+			$this->file = 'redirect';
+
+			if (b\ship) {
+				header('Location: ' . $location);
+			}
+		}
+
+		/**
+		 *
+		 */
 		public function error($status = null) {
 			$this->clear();
 
