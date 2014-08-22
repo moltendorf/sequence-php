@@ -167,39 +167,11 @@ namespace blink\root {
 
 		/**
 		 *
+		 * @todo Improve bulk update code.
 		 */
 		public function pushAll() {
-			$database = $this->root->database;
-
-			foreach ($this->original as $offset => $original) {
-				if ($original !== false) {
-					if (isset($this->container[$offset])) {
-						// I don't have much of an idea on how to do multiple updates in a single query, so we'll just
-						// do multiple queries. @todo: Improve bulk update code.
-						$database->update([
-							'table' => 'settings',
-							'set'   => [
-								'value' => $this->container[$offset]
-							],
-							'where' => [
-								'key' => $offset
-							]
-						]);
-					} else {
-						$database->delete([
-							'from'  => 'settings',
-							'where' => [
-								'key' => [$offset]
-							]
-						]);
-					}
-				} else {
-					$database->insert([
-						'into'    => 'settings',
-						'columns' => ['key', 'value'],
-						'values'  => [[$offset, $this->container[$offset]]]
-					]);
-				}
+			foreach (array_keys($this->original) as $offset) {
+				$this->offsetPush($offset);
 			}
 		}
 	}
