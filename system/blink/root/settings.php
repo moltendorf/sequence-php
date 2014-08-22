@@ -30,16 +30,20 @@ namespace blink\root {
 
 			$this->container = $root->application->settings;
 
-			$result = $root->database->select([
-				'select' => ['key', 'value'],
-				'from'   => 'settings'
-			]);
+			$database = $root->database;
 
-			$column = $result->column;
+			$statement = $database->prepare("
+				select setting_key, setting_value
+				from {$database->table('settings')}
+			");
 
-			while ($row = $result->fetch_row()) {
-				$this->container[$row[$column['key']]] = $row[$column['value']];
+			$statement->execute();
+
+			foreach ($statement->fetchAll() as $row) {
+				$this->container[$row[0]] = $row[1];
 			}
+
+			$statement->closeCursor();
 
 			unset($row);
 
@@ -134,30 +138,36 @@ namespace blink\root {
 
 				if ($this->original[$offset] !== false) {
 					if (isset($this->container[$offset])) {
-						$database->update([
-							'table' => 'settings',
-							'set'   => [
-								'value' => $this->container[$offset]
-							],
-							'where' => [
-								'key' => $offset
-							]
+						$statement = $database->prepare("
+							update {$database->table('settings')}
+							set setting_value = :value
+							where setting_key = :key
+						");
+
+						$statement->execute([
+							':key'   => $offset,
+							':value' => $this->container[$offset]
 						]);
 					} else {
-						$database->delete([
-							'from'  => 'settings',
-							'where' => [
-								'key' => $offset
-							]
+						$statement = $database->prepare("
+							delete from {$database->table('settings')}
+							where setting_key = :key
+						");
+
+						$statement->execute([
+							':key' => $offset
 						]);
 					}
 				} else {
-					$database->insert([
-						'into'    => 'settings',
-						'columns' => ['key', 'value'],
-						'values'  => [
-							[$offset, $this->container[$offset]]
-						]
+					$statement = $database->prepare("
+							insert into {$database->table('settings')}
+									(setting_key,	setting_value)
+							values	(:value,		:key)
+						");
+
+					$statement->execute([
+						':key'   => $offset,
+						':value' => $this->container[$offset]
 					]);
 				}
 
