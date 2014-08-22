@@ -121,7 +121,7 @@
 	<h2><?= $l['ERROR_' . $v['status'] . '_MESSAGE'] ?></h2>
 </div>
 
-<?php if ($v['exception']): ?>
+<?php if (isset($v['exception'])): ?>
 	<h2><?= $l['EXCEPTION'] ?></h2>
 
 	<div class="exception">
@@ -141,7 +141,7 @@
 	</div>
 <?php endif ?>
 
-<?php if ($v['contents']): ?>
+<?php if (isset($v['contents'])): ?>
 	<h2><?= $l['OUTPUT'] ?></h2>
 
 	<div class="output">
