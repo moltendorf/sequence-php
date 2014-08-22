@@ -191,13 +191,12 @@ namespace blink\root {
 
 			if (ob_get_length()) {
 				$v['contents'] = f\text_format(f\text_normalize(ob_get_contents()));
-				//ob_clean();
 			}
 
-			if (b\debug) {
-				$this->file = 'error_debug';
-			} else {
+			if (b\ship) {
 				$this->file = 'error';
+			} else {
+				$this->file = 'error_debug';
 			}
 		}
 	}
