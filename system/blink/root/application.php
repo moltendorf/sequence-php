@@ -179,19 +179,19 @@ namespace blink\root {
 
 			$level = ob_get_level();
 
-			$this->broadcast('module');
-
 			// Parse the request.
-			$root->handler->parse();
+			if ($root->handler->parse()) {
+				$start = microtime(true) * 1e6;
 
-			$start = microtime(true) * 1e6;
+				$this->broadcast('module');
 
-			$root->handler->load();
+				$root->handler->load();
 
-			// Calculate the time it took to run the module.
-			$root->template->variable['runtime'] = $time = microtime(true) * 1e6 - $start;
+				// Calculate the time it took to run the module.
+				$root->template->variable['runtime'] = $time = microtime(true) * 1e6 - $start;
 
-			$this->broadcast('template');
+				$this->broadcast('template');
+			}
 
 			if (b\ship) {
 				$this->template();
@@ -213,7 +213,9 @@ namespace blink\root {
 
 				$this->template();
 
-				header('X-Debug-Execution-Time: ' . number_format($time) . utf8_decode('µs'));
+				if (isset($time)) {
+					header('X-Debug-Execution-Time: ' . number_format($time) . utf8_decode('µs'));
+				}
 
 				$this->broadcast('close');
 
