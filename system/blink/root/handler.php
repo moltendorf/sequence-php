@@ -151,13 +151,17 @@ namespace blink\root {
 							$template->redirect($normalized, 301);
 						}
 					}
-				} else {
-					$template->error(404);
+
+					return true;
 				}
 			} else {
 				// 500.
 				throw new \Exception('HANDLER_NOT_LOADED_IN_CONFIGURED_ROOT');
 			}
+
+			$template->error(404);
+
+			return false;
 		}
 
 		public function load() {
