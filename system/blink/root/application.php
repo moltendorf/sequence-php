@@ -77,7 +77,6 @@ namespace blink\root {
 			try {
 				$this->setup($system);
 				$this->module($finish);
-				$this->close();
 			} catch (\Exception $exception) {
 				$root->template->error($exception);
 
@@ -167,12 +166,7 @@ namespace blink\root {
 			// Set up our paths.
 			$root->path->settings($system, $settings['path']);
 
-			$this->broadcast('connect');
-
-			// Construct the proper database abstraction layer.
-			$class = __NAMESPACE__ . '\\database\\' . (isset($settings['plugin']) ? $settings['plugin'] : 'pdo');
-
-			$root->database = new $class($root, $settings['database']);
+			$root->database->connect($settings['database']);
 
 			unset($settings);
 		}
@@ -208,9 +202,6 @@ namespace blink\root {
 				}
 
 				$this->broadcast('close');
-
-				// Close connection to the database.
-				$root->database->close();
 			} else {
 				if (ob_get_level() != $level) {
 					throw new \Exception('OUTPUT_BUFFER_LEVEL_DIFFERS');
@@ -225,9 +216,6 @@ namespace blink\root {
 				header('X-Debug-Execution-Time: ' . number_format($time) . utf8_decode('µs'));
 
 				$this->broadcast('close');
-
-				// Close connection to the database.
-				$root->database->close();
 
 				if (ob_get_length()) {
 					throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
