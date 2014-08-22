@@ -144,33 +144,36 @@ namespace blink\root {
 		/**
 		 *
 		 */
-		public function error(\Exception $exception = null) {
+		public function error($status = null) {
 			$this->clear();
 
 			$v = & $this->variable;
 
-			if ($exception) {
-				$v['exception'] = $exception;
+			if ($status instanceof \Exception) {
+				$v['exception'] = $status;
 
-				if ($exception instanceof b\StatusException) {
-					$v['status'] = $exception->getStatus();
+				if ($status instanceof b\StatusException) {
+					$v['status'] = $status->getStatus();
+				} else {
+					$v['status'] = 500;
 				}
 
-				$v['type']    = get_class($exception);
-				$v['message'] = $exception->getMessage();
-				$v['file']    = $exception->getFile();
-				$v['line']    = $exception->getLine();
-				$v['trace']   = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars($exception->getTraceAsString(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
+				$v['type']    = get_class($status);
+				$v['message'] = $status->getMessage();
+				$v['file']    = $status->getFile();
+				$v['line']    = $status->getLine();
+				$v['trace']   = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars($status->getTraceAsString(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
+			} else {
+				if (is_int($status)) {
+					$v['status'] = $status;
+				} else {
+					$v['status'] = 404;
+				}
 			}
 
 			if (ob_get_length()) {
 				$v['contents'] = f\text_format(f\text_normalize(ob_get_contents()));
-
 				//ob_clean();
-			}
-
-			if ($v['status'] == 200) {
-				$v['status'] = 500;
 			}
 
 			if (b\debug) {
