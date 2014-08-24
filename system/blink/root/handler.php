@@ -85,24 +85,24 @@ namespace blink\root {
 			$length = strlen($settings['root']);
 
 			if (substr($request, 0, $length) === $settings['root']) {
-				$trimmed = $length > 1 ? substr($request, $length) : $request;
+				$this->normalized = $length > 1 ? substr($request, $length) : $request;
 
-				$length = strlen($trimmed);
+				$length = strlen($this->normalized);
 
-				if (!$length || $trimmed[0] != '/') {
-					$trimmed = '/' . $trimmed;
+				if (!$length || $this->normalized[0] != '/') {
+					$this->normalized = '/' . $this->normalized;
 
-					$length = strlen($trimmed);
+					$length = strlen($this->normalized);
 				}
 
-				if ($length > 1 && $trimmed[$length - 1] == '/') {
-					$trimmed = substr($trimmed, 0, -1);
+				if ($length > 1 && $this->normalized[$length - 1] == '/') {
+					$this->normalized = substr($this->normalized, 0, -1);
 
-					$length = strlen($trimmed);
+					$length = strlen($this->normalized);
 				}
 
 				if ($length > 1) {
-					$segments = explode('/', substr($trimmed, 1));
+					$segments = explode('/', substr($this->normalized, 1));
 				} else {
 					$segments = [];
 				}
@@ -131,28 +131,31 @@ namespace blink\root {
 					}
 				}
 
+				if (strlen($settings['root']) > 1) {
+					$request = $settings['root'] . $this->normalized;
+				} else {
+					$request = $this->normalized;
+				}
+
 				if (isset($selected)) {
 					$this->module     = $selected['module'];
-					$this->request    = substr($trimmed, strlen($selected['path']));
-					$this->normalized = $selected['path'] . $this->request;
+					$this->request    = substr($this->normalized, strlen($selected['path']));
 
 					if (!strlen($this->request)) {
 						$this->request = '/';
 					}
 
-					if ($this->normalized !== null) {
-						if (strlen($settings['root']) > 1) {
-							$normalized = $settings['root'] . $this->normalized;
-						} else {
-							$normalized = $this->normalized;
-						}
-
-						if ($_SERVER['REQUEST_URI'] != $normalized) {
-							$template->redirect($normalized, 301);
-						}
+					if ($_SERVER['REQUEST_URI'] != $request) {
+						$template->redirect($request, 301);
 					}
 
 					return true;
+				} else {
+					if ($_SERVER['REQUEST_URI'] != $request) {
+						$template->redirect($request, 301);
+
+						return true;
+					}
 				}
 			} else {
 				// 500.
