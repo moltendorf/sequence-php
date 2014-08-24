@@ -183,6 +183,8 @@ namespace blink\root {
 			if ($root->handler->parse()) {
 				$start = microtime(true) * 1e6;
 
+				$root->module->load();
+
 				$this->broadcast('module');
 
 				$root->handler->load();

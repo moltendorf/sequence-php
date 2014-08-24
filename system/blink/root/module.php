@@ -6,13 +6,7 @@ namespace blink\root {
 
 	class module implements \ArrayAccess, \Iterator {
 
-		use b\broadcaster;
-
-		/**
-		 *
-		 * @var b\root
-		 */
-		protected $root;
+		use b\listener;
 
 		/**
 		 *
@@ -33,6 +27,26 @@ namespace blink\root {
 		 */
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
+		}
+
+		public function load() {
+			$root     = $this->root;
+			$database = $root->database;
+
+			$statement = $database->prepare("
+				select module_id, module_name
+				from {$database->table('modules')}
+				where module_is_enabled = 1
+			");
+
+			$statement->execute();
+
+			foreach ($statement->fetchAll() as $row) {
+				$class = 'blink\\module\\' . $row[1] . '\\load';
+
+				spl_autoload($class);
+				$this->container[$row[0]] = $this->container[$row[1]] = new $class($root);
+			}
 		}
 
 		/*
