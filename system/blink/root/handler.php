@@ -6,6 +6,8 @@ namespace blink\root {
 
 	class handler {
 
+		use b\listener;
+
 		protected $normalized = null;
 
 		protected $module = null;
@@ -16,16 +18,11 @@ namespace blink\root {
 
 		/**
 		 *
-		 * @var b\root
-		 */
-		protected $root;
-
-		/**
-		 *
 		 * @param b\root $root
+		 * @param string $binding
 		 */
-		public function __construct(b\root $root) {
-			$this->root = $root;
+		public function __construct(b\root $root, $binding = '') {
+			$this->bind($root, $binding);
 
 			$database = $root->database;
 
