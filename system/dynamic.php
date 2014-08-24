@@ -25,7 +25,10 @@ namespace blink {
 		/*
 		 * Create the root.
 		 */
-		$root = new root();
+		$class = 'blink\\root';
+
+		spl_autoload($class);
+		$root = new $class();
 
 		// Run.
 		$root->application->routine(__DIR__);

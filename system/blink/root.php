@@ -23,7 +23,9 @@ namespace blink {
 		 * @return mixed
 		 */
 		public function __get($name) {
-			$class       = 'blink\\root\\' . $name;
+			$class = 'blink\\root\\' . $name;
+
+			spl_autoload($class);
 			$this->$name = new $class($this);
 
 			return $this->$name;
