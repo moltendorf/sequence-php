@@ -94,11 +94,24 @@ namespace blink\root {
 
 			http_response_code($v['status']);
 
-			ob_start();
 
-			require $this->path($this->file);
+			$file = $this->path($this->file);
 
-			return ob_get_clean();
+			if (file_exists($file)) {
+				ob_start();
+
+				try {
+					require $file;
+				} catch (\Exception $exception) {
+					ob_end_clean();
+
+					throw $exception;
+				}
+
+				return ob_get_clean();
+			} else {
+				throw new \Exception('TEMPLATE_FILE_NOT_EXIST');
+			}
 		}
 
 		/**
