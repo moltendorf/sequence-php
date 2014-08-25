@@ -48,6 +48,13 @@ namespace sequence\root {
 		public $template;
 
 		/**
+		 * A full path to the module system directory.
+		 *
+		 * @var string
+		 */
+		public $module;
+
+		/**
 		 * A full path to the page storage directory.
 		 *
 		 * @var string
@@ -75,6 +82,7 @@ namespace sequence\root {
 				'cache'    => realpath($system . '/cache'),
 				'language' => realpath($system . '/language'),
 				'template' => realpath($system . '/template'),
+				'module'   => realpath($system . '/sequence/module'),
 				'page'     => realpath($system . '/' . $settings['page']),
 				'content'  => realpath($system . '/' . $settings['content'])
 			];

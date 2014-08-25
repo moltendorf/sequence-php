@@ -41,6 +41,12 @@ namespace sequence\root {
 
 		/**
 		 *
+		 * @var string
+		 */
+		private $moduleDirectory;
+
+		/**
+		 *
 		 * @var boolean
 		 */
 		private $isDefaultTemplate = false;
@@ -68,6 +74,8 @@ namespace sequence\root {
 
 				$this->currentDirectory = $this->defaultDirectory;
 			}
+
+			$this->moduleDirectory = $root->path->module;
 
 			$this->useCustomizations = (boolean) $root->settings['template_custom'];
 
@@ -145,6 +153,16 @@ namespace sequence\root {
 				}
 
 				$path = $this->defaultDirectory . '/' . $file . '.php';
+
+				if (file_exists($path)) {
+					return $path;
+				}
+			}
+
+			$segments = explode('/', $file);
+
+			if (count($segments) === 2) {
+				$path = $this->moduleDirectory . '/' . $segments[0] . '/template/' . $segments[1] . '.php';
 
 				if (file_exists($path)) {
 					return $path;
