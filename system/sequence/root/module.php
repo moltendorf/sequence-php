@@ -1,8 +1,8 @@
 <?php
 
-namespace blink\root {
+namespace sequence\root {
 
-	use blink as b;
+	use sequence as b;
 
 	class module implements \ArrayAccess, \Iterator {
 
@@ -42,7 +42,7 @@ namespace blink\root {
 			$statement->execute();
 
 			foreach ($statement->fetchAll() as $row) {
-				$class = 'blink\\module\\' . $row[1] . '\\load';
+				$class = 'sequence\\module\\' . $row[1] . '\\load';
 
 				spl_autoload($class);
 				$this->container[$row[0]] = $this->container[$row[1]] = new $class($root);

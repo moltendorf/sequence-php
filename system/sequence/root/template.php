@@ -1,9 +1,9 @@
 <?php
 
-namespace blink\root {
+namespace sequence\root {
 
-	use blink as b;
-	use blink\functions as f;
+	use sequence as b;
+	use sequence\functions as f;
 
 	class template {
 

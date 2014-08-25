@@ -1,6 +1,6 @@
 <?php
 
-namespace blink {
+namespace sequence {
 
 	trait broadcaster {
 

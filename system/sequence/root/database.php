@@ -1,8 +1,8 @@
 <?php
 
-namespace blink\root {
+namespace sequence\root {
 
-	use blink as b;
+	use sequence as b;
 
 	class database extends \PDO {
 		/**

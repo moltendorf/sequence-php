@@ -1,8 +1,8 @@
 <?php
 
-namespace blink\root {
+namespace sequence\root {
 
-	use blink as b;
+	use sequence as b;
 
 	/**
 	 *
@@ -129,7 +129,7 @@ namespace blink\root {
 			$debug = $system . '/debug';
 
 			if (is_dir($debug)) {
-				define('blink\\debug', true);
+				define('sequence\\debug', true);
 
 				$this->debug = [];
 
@@ -137,7 +137,7 @@ namespace blink\root {
 					// Manually including each file as the namespace the classes are in would cause the autoloader to look in the wrong directory.
 					require $file;
 
-					$class = 'blink\\debug\\' . substr($file, strrpos($file, '/') + 1, -4);
+					$class = 'sequence\\debug\\' . substr($file, strrpos($file, '/') + 1, -4);
 
 					if (class_exists($class, false)) {
 						// Instantiate the debug class.
@@ -147,10 +147,10 @@ namespace blink\root {
 
 				unset($class);
 			} else {
-				define('blink\\debug', false);
+				define('sequence\\debug', false);
 			}
 
-			define('blink\\ship', !b\debug);
+			define('sequence\\ship', !b\debug);
 
 			unset($debug);
 

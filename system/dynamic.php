@@ -1,6 +1,6 @@
 <?php
 
-namespace blink {
+namespace sequence {
 
 	/*
 	 * Start application.
@@ -25,7 +25,7 @@ namespace blink {
 		/*
 		 * Create the root.
 		 */
-		$class = 'blink\\root';
+		$class = 'sequence\\root';
 
 		spl_autoload($class);
 		$root = new $class();

@@ -1,6 +1,6 @@
 <?php
 
-namespace blink\root {
+namespace sequence\root {
 
 	class path {
 
