@@ -165,10 +165,7 @@ namespace blink\root {
 		}
 
 		public function load() {
-			$settings = $this->root->settings;
-			$template = $this->root->template;
-
-			$template->error(500);
+			$this->root->module[$this->module]->request($this->request);
 		}
 	}
 }
