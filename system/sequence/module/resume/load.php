@@ -17,6 +17,10 @@ namespace sequence\module\resume {
 			$this->bind($root, $binding);
 		}
 
+		/**
+		 * 
+		 * @param $request
+		 */
 		public function request($request) {
 			$this->root->template->file = 'resume/index';
 		}
