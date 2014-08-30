@@ -31,6 +31,6 @@ namespace sequence {
 		$root = new $class();
 
 		// Run.
-		$root->application->routine(__DIR__);
+		$root->application->routine(__DIR__, $_SERVER['HOME'] . '/settings.php');
 	}
 }

@@ -71,11 +71,11 @@ namespace sequence\root {
 		 * @param string  $system
 		 * @param boolean $finish
 		 */
-		public function routine($system, $finish = true) {
+		public function routine($system, $settings, $finish = true) {
 			$root = $this->root;
 
 			try {
-				$this->setup($system);
+				$this->setup($system, $settings);
 				$this->module($finish);
 			} catch (\Exception $exception) {
 				$root->template->error($exception);
@@ -88,7 +88,7 @@ namespace sequence\root {
 		/**
 		 *
 		 */
-		public function setup($system) {
+		public function setup($system, $settings) {
 			$root = $this->root;
 
 			/*
@@ -157,7 +157,7 @@ namespace sequence\root {
 			$this->bind($root);
 
 			// Load our settings.
-			$settings = require $system . '/settings.php';
+			$settings = require $settings;
 
 			if (isset($settings['application']) && is_array($settings['application'])) {
 				$this->settings = $settings['application'];

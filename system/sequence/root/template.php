@@ -102,7 +102,6 @@ namespace sequence\root {
 
 			http_response_code($v['status']);
 
-
 			$file = $this->path($this->file);
 
 			if (file_exists($file)) {

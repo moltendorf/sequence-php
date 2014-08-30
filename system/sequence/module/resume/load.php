@@ -18,7 +18,7 @@ namespace sequence\module\resume {
 		}
 
 		/**
-		 * 
+		 *
 		 * @param $request
 		 */
 		public function request($request) {
