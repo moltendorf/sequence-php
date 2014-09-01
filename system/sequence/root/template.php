@@ -65,19 +65,22 @@ namespace sequence\root {
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
 
-			$this->defaultDirectory = $root->path->template . '/default';
+			$path     = $root->path;
+			$settings = $root->settings;
 
-			if (isset($root->settings['template'])) {
-				$this->currentDirectory = $root->path->template . '/' . $root->settings['template'];
+			$this->defaultDirectory = $path->template . '/default';
+
+			if (isset($settings['template'])) {
+				$this->currentDirectory = $path->template . '/' . $settings['template'];
 			} else {
 				$this->isDefaultTemplate = true;
 
 				$this->currentDirectory = $this->defaultDirectory;
 			}
 
-			$this->moduleDirectory = $root->path->module;
+			$this->moduleDirectory = $path->module;
 
-			$this->useCustomizations = (boolean) $root->settings['template_custom'];
+			$this->useCustomizations = (boolean) $settings['template_custom'];
 
 			$this->clear();
 		}

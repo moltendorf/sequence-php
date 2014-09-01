@@ -22,7 +22,10 @@ namespace sequence\module\resume {
 		 * @param $request
 		 */
 		public function request($request) {
-			$this->root->template->file = 'resume/index';
+			$root     = $this->root;
+			$template = $root->template;
+
+			$template->file = 'resume/index';
 		}
 	}
 }

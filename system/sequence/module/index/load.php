@@ -18,7 +18,10 @@ namespace sequence\module\index {
 		}
 
 		public function request($request) {
-			$this->root->template->file = 'index/index';
+			$root     = $this->root;
+			$template = $root->template;
+
+			$template->file = 'index/index';
 		}
 	}
 }

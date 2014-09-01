@@ -34,13 +34,16 @@ namespace sequence\root {
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
 
-			if (isset($root->settings['language'])) {
-				$this->tag = $root->settings['language'];
+			$path     = $root->path;
+			$settings = $root->settings;
+
+			if (isset($settings['language'])) {
+				$this->tag = $settings['language'];
 			}
 
 			$lang = [];
 
-			$file = $root->path->language . '/' . $this->tag . '.php';
+			$file = $path->language . '/' . $this->tag . '.php';
 
 			if (file_exists($file)) {
 				$include = require $file;
@@ -52,8 +55,8 @@ namespace sequence\root {
 				unset($include);
 			}
 
-			if (isset($root->settings['template'])) {
-				$file = $root->path->template . '/' . $root->settings['template'] . '/language/' . $this->tag . '.php';
+			if (isset($settings['template'])) {
+				$file = $path->template . '/' . $settings['template'] . '/language/' . $this->tag . '.php';
 
 				if (file_exists($file)) {
 					$include = require $file;
@@ -66,8 +69,8 @@ namespace sequence\root {
 				}
 			}
 
-			if ($root->settings['template_custom']) {
-				$file = $root->path->template . '/' . $root->settings['template'] . '/custom/language/' . $this->tag . '.php';
+			if ($settings['template_custom']) {
+				$file = $path->template . '/' . $settings['template'] . '/custom/language/' . $this->tag . '.php';
 
 				if (file_exists($file)) {
 					$include = require $file;

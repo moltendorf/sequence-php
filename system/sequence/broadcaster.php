@@ -65,9 +65,12 @@ namespace sequence {
 				throw new \Exception('UNDEFINED_MESSAGE: ' . $this->binding . '::' . $message);
 			}
 
+			$root = $this->root;
+			$hook = $root->hook;
+
 			$data = array_slice(func_get_args(), 1);
 
-			$this->root->hook->broadcast($message, $data);
+			$hook->broadcast($message, $data);
 
 			if (isset($this->listeners[$message])) {
 				foreach ($this->listeners[$message] as $method) {

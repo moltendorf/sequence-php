@@ -35,7 +35,10 @@ namespace sequence {
 		 * @param string   $binding
 		 */
 		protected function listen(callable $method, $message, $binding = null) {
-			$this->root->hook->listen($method, $message, $binding);
+			$root = $this->root;
+			$hook = $root->hook;
+
+			$hook->listen($method, $message, $binding);
 		}
 	}
 }

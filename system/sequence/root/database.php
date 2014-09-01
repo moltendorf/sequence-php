@@ -5,6 +5,7 @@ namespace sequence\root {
 	use sequence as b;
 
 	class database extends \PDO {
+
 		/**
 		 *
 		 * @var string
@@ -16,7 +17,6 @@ namespace sequence\root {
 		 * Do nothing.
 		 */
 		public function __construct() {
-
 		}
 
 		/**

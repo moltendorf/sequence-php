@@ -72,12 +72,13 @@ namespace sequence\root {
 		}
 
 		public function parse($request = null) {
+			$root     = $this->root;
+			$settings = $root->settings;
+			$template = $root->template;
+
 			if ($request === null) {
 				$request = preg_replace('/[\\/][\\/]+/', '/', $_SERVER['REQUEST_URI']);
 			}
-
-			$settings = $this->root->settings;
-			$template = $this->root->template;
 
 			$length = strlen($settings['root']);
 
@@ -135,8 +136,8 @@ namespace sequence\root {
 				}
 
 				if (isset($selected)) {
-					$this->module     = $selected['module'];
-					$this->request    = substr($this->normalized, strlen($selected['path']));
+					$this->module  = $selected['module'];
+					$this->request = substr($this->normalized, strlen($selected['path']));
 
 					if (!strlen($this->request)) {
 						$this->request = '/';
@@ -165,7 +166,10 @@ namespace sequence\root {
 		}
 
 		public function load() {
-			$this->root->module[$this->module]->request($this->request);
+			$root   = $this->root;
+			$module = $root->module;
+
+			$module[$this->module]->request($this->request);
 		}
 	}
 }
