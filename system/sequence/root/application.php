@@ -22,6 +22,12 @@ namespace sequence\root {
 		 *
 		 * @var array
 		 */
+		public $errors = [];
+
+		/**
+		 *
+		 * @var array
+		 */
 		public $settings = [];
 
 		/**
@@ -69,35 +75,84 @@ namespace sequence\root {
 		/**
 		 *
 		 * @param string  $system
+		 * @param array   $settings
 		 * @param boolean $finish
+		 *
+		 * @throws mixed
 		 */
 		public function routine($system, $settings, $finish = true) {
-			$root = $this->root;
+			$this->setup($system, $settings);
+
+			// This must be done after setup.
+			$root     = $this->root;
+			$module   = $root->module;
+			$template = $root->template;
 
 			try {
-				$this->setup($system, $settings);
-				$this->module($finish);
-			} catch (\Exception $exception) {
-				$root->template->error($exception);
+				$level = ob_get_level();
 
-				$this->template();
-				$this->output();
+				if ($this->errors) {
+					throw $this->errors[0];
+				}
+
+				$module->load();
+
+				$this->broadcast('module');
+				$this->handler();
+
+				if (b\ship) {
+					$this->generate();
+					$this->output();
+
+					if ($finish && function_exists('fastcgi_finish_request')) {
+						fastcgi_finish_request();
+					}
+
+					$this->broadcast('close');
+				} else {
+					if (ob_get_level() != $level) {
+						throw new \Exception('OUTPUT_BUFFER_LEVEL_DIFFERS');
+					}
+
+					if (ob_get_length()) {
+						throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
+					}
+
+					$this->generate();
+
+					if (isset($time)) {
+						header('X-Debug-Execution-Time: ' . number_format($time) . utf8_decode('µs'));
+					}
+
+					$this->broadcast('close');
+
+					if (ob_get_length()) {
+						throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
+					}
+
+					$this->output();
+					// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
+				}
+			} catch (\Exception $exception) {
+				$template->error($exception);
 			}
 		}
 
-		/**
-		 *
-		 */
-		public function setup($system, $settings) {
-			$root = $this->root;
+
+		public function setup($systemPath, $settingsFile) {
+			$root     = $this->root;
+			$database = $root->database;
+			$path     = $root->path;
 
 			/*
+			 * Set up output buffering.
+			 *
 			 * Output buffering is used to prevent accidental output.
 			 * If there is any output, an error is thrown with the output dumped to the page in debug mode.
 			 * If the output buffering level is different by the end of the script, an error is thrown.
 			 */
 
-			// Cancel the default output buffer.
+			// Cancel the default output buffer (we recommend having it on despite cancelling it).
 			if (ini_get('output_buffering') && ob_get_level() === 1) {
 				if (ob_get_length()) {
 					$buffer = ob_get_clean();
@@ -106,16 +161,18 @@ namespace sequence\root {
 				}
 			}
 
-			// Start our own output buffer.
 			ob_start();
 
 			if (isset($buffer)) {
 				echo $buffer;
+
+				unset($buffer);
 			}
 
-
 			/*
-			 * Set up the error handler so that all errors are handled one at a time in a clean fashion.
+			 * Set up the error handler.
+			 *
+			 * We only deal with exceptions.
 			 */
 
 			set_error_handler(function ($errno, $errstr, $errfile, $errline) {
@@ -123,10 +180,12 @@ namespace sequence\root {
 			});
 
 			/*
-			 * For debugging purposes.
+			 * Set up debugging code.
+			 *
+			 * Include any debug files, define the sequence\debug constant, and define the sequence\ship constant.
 			 */
 
-			$debug = $system . '/debug';
+			$debug = $systemPath . '/debug';
 
 			if (is_dir($debug)) {
 				define('sequence\\debug', true);
@@ -134,7 +193,7 @@ namespace sequence\root {
 				$this->debug = [];
 
 				foreach (glob($debug . '/*.php') as $file) {
-					// Manually including each file as the namespace the classes are in would cause the autoloader to look in the wrong directory.
+					// Manually including each file as the namespace the classes are in would fool the autoloader.
 					require $file;
 
 					$class = 'sequence\\debug\\' . substr($file, strrpos($file, '/') + 1, -4);
@@ -154,19 +213,45 @@ namespace sequence\root {
 
 			unset($debug);
 
+			/*
+			 * Bind this class for broadcasting and listening.
+			 *
+			 * This was performed late as it relies on the sequence\debug and sequence\ship constants to be defined.
+			 */
+
 			$this->bind($root);
 
-			// Load our settings.
-			$settings = require $settings;
+			/*
+			 * Include settings file.
+			 */
+
+			if (file_exists($settingsFile)) {
+				$settings     = require $settingsFile;
+				$settingsPath = dirname(realpath($settingsFile));
+			} else {
+				$this->errors[] = new \Exception('SETTINGS_FILE_NOT_FOUND');
+
+				$settings     = [];
+				$settingsPath = false;
+			}
 
 			if (isset($settings['application']) && is_array($settings['application'])) {
 				$this->settings = $settings['application'];
 			}
 
-			// Set up our paths.
-			$root->path->settings($system, $settings['path']);
+			if (!isset($settings['path']) || !is_array($settings['path'])) {
+				$settings['path'] = [];
+			}
 
-			$root->database->connect($settings['database']);
+			// Set up our paths.
+			$path->settings($systemPath, $settingsPath, $settings['path']);
+
+			if (isset($settings['database']) && is_array($settings['database'])) {
+				// Open database connection.
+				$database->connect($settings['database']);
+			} else {
+				$this->errors[] = new \Exception('DATABASE_CONNECTION_FAILED');
+			}
 
 			unset($settings);
 		}
@@ -174,67 +259,32 @@ namespace sequence\root {
 		/**
 		 *
 		 */
-		public function module($finish = true) {
-			$root = $this->root;
-
-			$level = ob_get_level();
+		public function handler() {
+			$root     = $this->root;
+			$handler  = $root->handler;
+			$template = $root->template;
 
 			// Parse the request.
-			if ($root->handler->parse()) {
+			if ($handler->parse()) {
 				$start = microtime(true) * 1e6;
 
-				$root->module->load();
-
-				$this->broadcast('module');
-
-				$root->handler->load();
+				$handler->load();
 
 				// Calculate the time it took to run the module.
-				$root->template->variable['runtime'] = $time = microtime(true) * 1e6 - $start;
+				$template->variable['runtime'] = $time = microtime(true) * 1e6 - $start;
 
 				$this->broadcast('template');
-			}
-
-			if (b\ship) {
-				$this->template();
-				$this->output();
-
-				if ($finish && function_exists('fastcgi_finish_request')) {
-					fastcgi_finish_request();
-				}
-
-				$this->broadcast('close');
-			} else {
-				if (ob_get_level() != $level) {
-					throw new \Exception('OUTPUT_BUFFER_LEVEL_DIFFERS');
-				}
-
-				if (ob_get_length()) {
-					throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
-				}
-
-				$this->template();
-
-				if (isset($time)) {
-					header('X-Debug-Execution-Time: ' . number_format($time) . utf8_decode('µs'));
-				}
-
-				$this->broadcast('close');
-
-				if (ob_get_length()) {
-					throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
-				}
-
-				$this->output();
-				// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
 			}
 		}
 
 		/**
 		 *
 		 */
-		public function template() {
-			$this->content = $this->root->template->body();
+		public function generate() {
+			$root     = $this->root;
+			$template = $root->template;
+
+			$this->content = $template->body();
 
 			// Prevent issues if we're debugging.
 			if (b\ship) {

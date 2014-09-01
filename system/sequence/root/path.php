@@ -2,22 +2,12 @@
 
 namespace sequence\root {
 
+	use Exception;
+	use sequence\listener;
+
 	class path {
 
-		/**
-		 * The path under the site's configured root this application operates in.
-		 *
-		 * This path is forcefully prefixed to all application level path configuration. No pages can be generated for
-		 * outside of this root. However, aliases can be used to map outside locations to paths within this root. Pages
-		 * that are generated through an alias will be stored at the location within the root. Your webserver should be
-		 * configured to serve the page from the aliased location in the event it exists to prevent this script from
-		 * being run unnecessarily. e.g. a common alias is to map / to /root/ thus when / and /root/ are visited, a page
-		 * at /root/ will be generated and served; if your web server does not look in /root/ when / is visited, then
-		 * this script will be run unnecessarily to serve /root/.
-		 *
-		 * @var string
-		 */
-		public $root;
+		use listener;
 
 		/**
 		 * A full path to the root system directory.
@@ -27,25 +17,11 @@ namespace sequence\root {
 		public $system;
 
 		/**
-		 * A full path to the cache system directory.
-		 *
-		 * @var string
-		 */
-		public $cache;
-
-		/**
 		 * A full path to the language system directory.
 		 *
 		 * @var string
 		 */
 		public $language;
-
-		/**
-		 * A full path to the template system directory.
-		 *
-		 * @var string
-		 */
-		public $template;
 
 		/**
 		 * A full path to the module system directory.
@@ -55,44 +31,109 @@ namespace sequence\root {
 		public $module;
 
 		/**
-		 * A full path to the page storage directory.
+		 * A full path to the template system directory.
 		 *
 		 * @var string
 		 */
-		public $page;
+		public $template;
 
 		/**
-		 * A full path to the static content storage directory.
+		 * A full path to the cache system directory.
 		 *
 		 * @var string
 		 */
-		public $content;
+		public $cache;
 
 		/**
 		 *
-		 * @param string $system
+		 * @param string $systemPath
+		 * @param string $settingsPath
 		 * @param array  $settings
 		 *
-		 * @throws
+		 * @throws Exception
 		 */
-		public function settings($system, $settings) {
+		public function settings($systemPath, $settingsPath, $settings) {
+			$root        = $this->root;
+			$application = $root->application;
+
+			/**
+			 * @param string $path   Path to the directory.
+			 * @param bool   $create Create directory if it does not exist.
+			 *
+			 * @return string
+			 */
+			$directory = function ($path, $create = false) {
+				if (!is_string($path)) {
+					return false;
+				}
+
+				$full = realpath($path);
+
+				if ($full !== false) {
+					return $full;
+				}
+
+				if ($create) {
+					try {
+						mkdir($path, 0755, true);
+					} catch (Exception $exception) {
+						// Discard.
+					}
+
+					return realpath($path);
+				}
+
+				return false;
+			};
+
+			/*
+			 * Configure and test system paths.
+			 */
+
+			$systemPath = $directory($systemPath);
+
 			$paths = [
-				'root'     => $settings['root'],
-				'system'   => realpath($system),
-				'cache'    => realpath($system . '/cache'),
-				'language' => realpath($system . '/language'),
-				'template' => realpath($system . '/template'),
-				'module'   => realpath($system . '/sequence/module'),
-				'page'     => realpath($system . '/' . $settings['page']),
-				'content'  => realpath($system . '/' . $settings['content'])
+				'system'   => $systemPath,
+				'language' => $directory($systemPath . '/language'),
+				'template' => $directory($systemPath . '/template'),
+				'module'   => $directory($systemPath . '/sequence/module')
 			];
 
 			foreach ($paths as $key => $path) {
-				if ($path === false) {
-					throw new \Exception(strtoupper($key) . '_PATH_NOT_FOUND');
+				if ($systemPath === false || $path === false) {
+					$application->errors[] = new Exception(strtoupper($key) . '_PATH_NOT_FOUND');
+
+					$this->$key = false;
+				} else {
+					$this->$key = $path;
+				}
+			}
+
+			/*
+			 * Configure and test application paths.
+			 */
+
+
+			$settingsPath = $directory($settingsPath);
+
+			$paths = [
+				'cache'
+			];
+
+			foreach ($paths as $key) {
+				if ($settingsPath !== false && isset($settings[$key])) {
+					$path = $directory($settingsPath . '/' . $settings[$key], true);
+				} else {
+					$path = false;
 				}
 
-				$this->$key = $path;
+				if ($settingsPath === false || $path === false) {
+					$application->errors[] = new Exception(strtoupper($key) . '_PATH_NOT_FOUND');
+
+					$this->$key = false;
+				} else {
+					$this->$key = $path;
+				}
 			}
 		}
 	}

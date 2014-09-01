@@ -28,26 +28,34 @@ namespace sequence\root {
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
 
-			$this->container = $root->application->settings;
+			$application = $root->application;
 
-			$database = $root->database;
-
-			$statement = $database->prepare("
-				select setting_key, setting_value
-				from {$database->table('settings')}
-			");
-
-			$statement->execute();
-
-			foreach ($statement->fetchAll() as $row) {
-				$this->container[$row[0]] = $row[1];
+			foreach ($application->settings as $key => $value) {
+				$this->container[$key] = $value;
 			}
 
-			$statement->closeCursor();
+			try {
+				$database = $root->database;
 
-			unset($row);
+				$statement = $database->prepare("
+					select setting_key, setting_value
+					from {$database->table('settings')}
+				");
 
-			$this->listen([$this, 'pushAll'], 'closing', 'root/database');
+				$statement->execute();
+
+				foreach ($statement->fetchAll() as $row) {
+					$this->container[$row[0]] = $row[1];
+				}
+
+				$statement->closeCursor();
+
+				unset($row);
+
+				$this->listen([$this, 'pushAll'], 'closing', 'root/database');
+			} catch (\Exception $exception) {
+				$application->errors[] = $exception;
+			}
 		}
 
 		/*
@@ -134,7 +142,8 @@ namespace sequence\root {
 			$offset = (string) $offset;
 
 			if (isset($this->original[$offset])) {
-				$database = $this->root->database;
+				$root     = $this->root;
+				$database = $root->database;
 
 				if ($this->original[$offset] !== false) {
 					if (isset($this->container[$offset])) {
