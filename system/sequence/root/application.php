@@ -135,6 +135,9 @@ namespace sequence\root {
 				}
 			} catch (\Exception $exception) {
 				$template->error($exception);
+
+				$this->generate();
+				$this->output();
 			}
 		}
 
