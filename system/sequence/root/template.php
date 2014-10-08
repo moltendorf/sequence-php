@@ -189,9 +189,10 @@ namespace sequence\root {
 			return false;
 		}
 
-		/**
-		 *
-		 */
+        /**
+         * @param string $location
+         * @param int $status
+         */
 		public function redirect($location, $status = 302) {
 			$this->clear();
 
