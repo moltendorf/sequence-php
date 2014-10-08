@@ -100,28 +100,33 @@ namespace sequence\root {
 		public function body() {
 			$this->broadcast('body');
 
+			$f = null;
 			$l = $this->root->language;
 			$v = $this->variable;
 
+			$f = function ($file) use (&$f, $l, $v) {
+				$path = $this->path($file);
+
+				if ($path !== false) {
+					include $path;
+				} else {
+					throw new \Exception('TEMPLATE_FILE_NOT_EXIST');
+				}
+			};
+
 			http_response_code($v['status']);
 
-			$file = $this->path($this->file);
+			ob_start();
 
-			if (file_exists($file)) {
-				ob_start();
+			try {
+				$f($this->file);
+			} catch (\Exception $exception) {
+				ob_end_clean();
 
-				try {
-					require $file;
-				} catch (\Exception $exception) {
-					ob_end_clean();
-
-					throw $exception;
-				}
-
-				return ob_get_clean();
-			} else {
-				throw new \Exception('TEMPLATE_FILE_NOT_EXIST');
+				throw $exception;
 			}
+
+			return ob_get_clean();
 		}
 
 		/**
