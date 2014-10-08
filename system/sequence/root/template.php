@@ -223,7 +223,7 @@ namespace sequence\root {
 				$v['message'] = $status->getMessage();
 				$v['file']    = $status->getFile();
 				$v['line']    = $status->getLine();
-				$v['trace']   = nl2br(str_replace([' ', "\t"], ['&nbsp;', '&nbsp;&nbsp;&nbsp;&nbsp;'], htmlspecialchars($status->getTraceAsString(), ENT_COMPAT | ENT_DISALLOWED | ENT_HTML5)));
+				$v['trace']   = f\text_format(f\text_normalize($status->getTraceAsString()));
 			} else {
 				if (is_int($status)) {
 					$v['status'] = $status;
