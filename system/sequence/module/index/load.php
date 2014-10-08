@@ -21,7 +21,7 @@ namespace sequence\module\index {
 			$root     = $this->root;
 			$template = $root->template;
 
-			$template->file = 'index/index';
+			$template->file = 'index:index.html';
 		}
 	}
 }

@@ -25,7 +25,7 @@ namespace sequence\module\resume {
 			$root     = $this->root;
 			$template = $root->template;
 
-			$template->file = 'resume/index';
+			$template->file = 'resume:index.html';
 		}
 	}
 }

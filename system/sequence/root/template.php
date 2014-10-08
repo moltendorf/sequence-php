@@ -126,20 +126,32 @@ namespace sequence\root {
 
 		/**
 		 *
-		 * @param string $file
+		 * @param string $input
 		 *
 		 * @return string|boolean
 		 */
-		public function path($file) {
+		public function path($input) {
+			$segments = explode(':', $input);
+
+			if (count($segments) > 1) {
+				list ($module, $file) = $segments;
+
+				$file .= '.php';
+
+				$segment = 'module/' . $module . '/' . $file;
+			} else {
+				$segment = $input . '.php';
+			}
+
 			if ($this->useCustomizations) {
-				$path = $this->currentDirectory . '/custom/' . $file . '.php';
+				$path = $this->currentDirectory . '/custom/' . $segment;
 
 				if (file_exists($path)) {
 					return $path;
 				}
 			}
 
-			$path = $this->currentDirectory . '/' . $file . '.php';
+			$path = $this->currentDirectory . '/' . $segment;
 
 			if (file_exists($path)) {
 				return $path;
@@ -147,24 +159,22 @@ namespace sequence\root {
 
 			if (!$this->isDefaultTemplate) {
 				if ($this->useCustomizations) {
-					$path = $this->defaultDirectory . '/custom/' . $file . '.php';
+					$path = $this->defaultDirectory . '/custom/' . $segment;
 
 					if (file_exists($path)) {
 						return $path;
 					}
 				}
 
-				$path = $this->defaultDirectory . '/' . $file . '.php';
+				$path = $this->defaultDirectory . '/' . $segment;
 
 				if (file_exists($path)) {
 					return $path;
 				}
 			}
 
-			$segments = explode('/', $file);
-
-			if (count($segments) === 2) {
-				$path = $this->moduleDirectory . '/' . $segments[0] . '/template/' . $segments[1] . '.php';
+			if (isset($module)) {
+				$path = $this->moduleDirectory . '/' . $module . '/template/' . $file;
 
 				if (file_exists($path)) {
 					return $path;
@@ -227,9 +237,9 @@ namespace sequence\root {
 			}
 
 			if (b\ship) {
-				$this->file = 'error';
+				$this->file = 'error.html';
 			} else {
-				$this->file = 'error_debug';
+				$this->file = 'error_debug.html';
 			}
 		}
 	}
