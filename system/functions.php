@@ -4,16 +4,12 @@ namespace sequence\functions {
 
 	/**
 	 *
-	 * @todo Convert this to PHP 5.6+ syntax.
-	 *
-	 * @param mixed $variable
+	 * @param mixed ...$variables
 	 */
-	function dump($variable) {
-		$arguments = func_get_args();
-
-		foreach ($arguments as $argument) {
+	function dump(...$variables) {
+		foreach ($variables as $variable) {
 			echo '<pre>';
-			var_dump($argument);
+			var_dump($variable);
 			echo '</pre>';
 		}
 	}

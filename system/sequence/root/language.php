@@ -83,8 +83,7 @@ namespace sequence\root {
 				}
 			}
 
-			// @todo Convert this to PHP 5.6+ syntax.
-			$this->container = call_user_func_array('array_merge', $lang);
+			$this->container = array_merge(...$lang);
 		}
 
 		/*

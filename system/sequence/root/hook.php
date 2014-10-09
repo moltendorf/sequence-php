@@ -69,8 +69,7 @@ namespace sequence\root {
 		public function broadcast($message, $data) {
 			if (isset($this->global[$message])) {
 				foreach ($this->global[$message] as $method) {
-					// @todo Convert this to PHP 5.6+ syntax.
-					call_user_func_array($method, $data);
+					$method(...$data);
 				}
 			}
 		}

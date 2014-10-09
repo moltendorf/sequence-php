@@ -54,13 +54,12 @@ namespace sequence {
 
 		/**
 		 *
-		 * @todo Convert this to PHP 5.6+ syntax.
-		 *
 		 * @param string $message
+		 * @param mixed  $arguments
 		 *
-		 * @throws
+		 * @throws \Exception
 		 */
-		protected function broadcast($message) {
+		protected function broadcast($message, ...$arguments) {
 			if (debug && isset(self::$messages) && !in_array($message, self::$messages)) {
 				throw new \Exception('UNDEFINED_MESSAGE: ' . $this->binding . '::' . $message);
 			}
@@ -68,14 +67,11 @@ namespace sequence {
 			$root = $this->root;
 			$hook = $root->hook;
 
-			$data = array_slice(func_get_args(), 1);
-
-			$hook->broadcast($message, $data);
+			$hook->broadcast($message, $arguments);
 
 			if (isset($this->listeners[$message])) {
 				foreach ($this->listeners[$message] as $method) {
-					// @todo Convert this to PHP 5.6+ syntax.
-					call_user_func_array($method, $data);
+					$method(...$arguments);
 				}
 			}
 		}
