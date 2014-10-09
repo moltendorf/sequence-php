@@ -120,14 +120,22 @@ namespace sequence\root {
 
 					$this->generate();
 
-					if (isset($time)) {
-						header('X-Debug-Execution-Time: ' . number_format($time) . utf8_decode('µs'));
-					}
-
 					$this->broadcast('close');
 
 					if (ob_get_length()) {
 						throw new \Exception('OUTPUT_BUFFER_NOT_EMPTY');
+					}
+
+					if (isset($template->variable['runtime'])) {
+						$runtime = $template->variable['runtime'];
+
+						header('X-Debug-Module-Runtime: ' . number_format($runtime) . utf8_decode('µs'));
+					}
+
+					if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+						$runtime = microtime(true) * 1e6 - $_SERVER['REQUEST_TIME_FLOAT'] * 1e6;
+
+						header('X-Debug-Total-Runtime: ' . number_format($runtime) . utf8_decode('µs'));
 					}
 
 					$this->output();
@@ -274,7 +282,7 @@ namespace sequence\root {
 				$handler->load();
 
 				// Calculate the time it took to run the module.
-				$template->variable['runtime'] = $time = microtime(true) * 1e6 - $start;
+				$template->variable['runtime'] = microtime(true) * 1e6 - $start;
 
 				$this->broadcast('template');
 			}
