@@ -12,7 +12,7 @@ namespace sequence\root {
 		 *
 		 * @var array
 		 */
-		private $container = [];
+		private $container = null;
 
 		/**
 		 *
@@ -166,8 +166,8 @@ namespace sequence\root {
 		 * @param array  $container
 		 * @param string $offset
 		 */
-		public function __construct(array & $container, $offset) {
-			$this->container = & $container;
+		public function __construct(& $container, $offset) {
+			$this->container = &$container;
 			$this->offset    = $offset;
 		}
 
