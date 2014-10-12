@@ -76,7 +76,7 @@ namespace sequence\root {
 			$lang = [];
 
 			$load = function ($file) use (& $lang) {
-				$file .=  '.php';
+				$file .= '.php';
 
 				if (file_exists($file)) {
 					$include = require $file;
