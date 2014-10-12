@@ -47,7 +47,7 @@ namespace sequence\root {
 					$segments = [];
 				}
 
-				$branch = & $this->tree;
+				$branch = &$this->tree;
 
 				foreach ($segments as $segment) {
 					if (!isset($branch['branches'])) {
@@ -58,7 +58,7 @@ namespace sequence\root {
 						$branch['branches'][$segment] = [];
 					}
 
-					$branch = & $branch['branches'][$segment];
+					$branch = &$branch['branches'][$segment];
 				}
 
 				$branch['module'] = $row[1];
