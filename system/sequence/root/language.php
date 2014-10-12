@@ -33,6 +33,11 @@ namespace sequence\root {
 		 */
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
+			$this->load();
+		}
+
+		public function load() {
+			$root = $this->root;
 
 			$path     = $root->path;
 			$settings = $root->settings;
@@ -43,20 +48,8 @@ namespace sequence\root {
 
 			$lang = [];
 
-			$file = $path->language . '/' . $this->tag . '.php';
-
-			if (file_exists($file)) {
-				$include = require $file;
-
-				if (is_array($include)) {
-					$lang[] = $include;
-				}
-
-				unset($include);
-			}
-
-			if (isset($settings['template'])) {
-				$file = $path->template . '/' . $settings['template'] . '/language/' . $this->tag . '.php';
+			$load = function ($file) use (& $lang) {
+				$file .=  '.php';
 
 				if (file_exists($file)) {
 					$include = require $file;
@@ -65,22 +58,20 @@ namespace sequence\root {
 						$lang[] = $include;
 					}
 
-					unset($include);
+					unset($file, $include);
 				}
+			};
+
+			// Base language file.
+			$load($path->language . '/' . $this->tag);
+
+			// Template language files.
+			if (isset($settings['template'])) {
+				$load($path->template . '/' . $settings['template'] . '/language/' . $this->tag);
 			}
 
 			if ($settings['template_custom']) {
-				$file = $path->template . '/' . $settings['template'] . '/custom/language/' . $this->tag . '.php';
-
-				if (file_exists($file)) {
-					$include = require $file;
-
-					if (is_array($include)) {
-						$lang[] = $include;
-					}
-
-					unset($include);
-				}
+				$load($path->template . '/' . $settings['template'] . '/custom/language/' . $this->tag);
 			}
 
 			$this->container = array_merge(...$lang);
