@@ -100,11 +100,11 @@ namespace sequence\root {
 		public function body() {
 			$this->broadcast('body');
 
-			$f = null;
+			$f = null; // We pass a reference of $f to itself, so we need to define it here.
 			$l = $this->root->language;
 			$v = $this->variable;
 
-			$f = function ($file) use (&$f, $l, $v) {
+			$f = function ($file) use (& $f, $l, $v) {
 				$path = $this->path($file);
 
 				if ($path !== false) {
