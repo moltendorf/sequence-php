@@ -6,7 +6,13 @@ namespace sequence\root {
 
 	class module implements \ArrayAccess, \Iterator {
 
-		use b\listener;
+		use b\broadcaster;
+
+		/**
+		 *
+		 * @var array
+		 */
+		public static $messages = ['ready'];
 
 		/**
 		 *
@@ -16,9 +22,27 @@ namespace sequence\root {
 
 		/**
 		 *
+		 * @var array
+		 */
+		private $enabled = [];
+
+		/**
+		 *
+		 * @var array
+		 */
+		private $lookup = [];
+
+		/**
+		 *
 		 * @var int
 		 */
 		private $position = 0;
+
+		/**
+		 *
+		 * @var bool
+		 */
+		private $ready = false;
 
 		/**
 		 *
@@ -29,6 +53,10 @@ namespace sequence\root {
 			$this->bind($root, $binding);
 		}
 
+		/**
+		 *
+		 * @throws \Exception
+		 */
 		public function load() {
 			$root     = $this->root;
 			$database = $root->database;
@@ -45,8 +73,29 @@ namespace sequence\root {
 				$class = 'sequence\\module\\' . $row[1] . '\\load';
 
 				spl_autoload($class);
-				$this->container[$row[0]] = $this->container[$row[1]] = new $class($root);
+				$this->container[$row[0]] = $this->lookup[$row[1]] = new $class($root);
+
+				$this->enabled[] = $row[1];
 			}
+
+			$this->ready = true;
+			$this->broadcast('ready');
+		}
+
+		/**
+		 *
+		 * @return array
+		 */
+		public function enabled() {
+			return $this->enabled;
+		}
+
+		/**
+		 *
+		 * @return bool
+		 */
+		public function ready() {
+			return $this->ready;
 		}
 
 		/*
@@ -60,7 +109,7 @@ namespace sequence\root {
 		 * @return boolean
 		 */
 		public function offsetExists($offset) {
-			return isset($this->container[(string) $offset]);
+			return isset($this->lookup[(string) $offset]);
 		}
 
 		/**
@@ -72,14 +121,10 @@ namespace sequence\root {
 		public function offsetGet($offset) {
 			$offset = (string) $offset;
 
-			if (isset($this->container[$offset])) {
-				return $this->container[$offset];
+			if (isset($this->lookup[$offset])) {
+				return $this->lookup[$offset];
 			} else {
-				if (b\debug) {
-					return '{LANG: ' . $offset . '}';
-				} else {
-					return $offset;
-				}
+				return null;
 			}
 		}
 

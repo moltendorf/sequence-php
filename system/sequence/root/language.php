@@ -6,7 +6,13 @@ namespace sequence\root {
 
 	class language implements \ArrayAccess {
 
-		use b\listener;
+		use b\broadcaster;
+
+		/**
+		 *
+		 * @var array
+		 */
+		public static $messages = ['ready'];
 
 		/**
 		 *
@@ -28,17 +34,38 @@ namespace sequence\root {
 
 		/**
 		 *
+		 * @var bool
+		 */
+		private $ready = false;
+
+		/**
+		 *
 		 * @param b\root $root
 		 * @param string $binding
 		 */
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
-			$this->load();
+
+			$module = $root->module;
+
+			if ($module->ready()) {
+				$this->load();
+			}
+
+			$this->listen([$this, 'load'], 'ready', 'root/module');
 		}
 
+		/**
+		 *
+		 */
 		public function load() {
+			if ($this->ready) {
+				return;
+			}
+
 			$root = $this->root;
 
+			$module   = $root->module;
 			$path     = $root->path;
 			$settings = $root->settings;
 
@@ -65,6 +92,11 @@ namespace sequence\root {
 			// Base language file.
 			$load($path->language . '/' . $this->tag);
 
+			// Module language files.
+			foreach ($module->enabled() as $name) {
+				$load($path->module . '/' . $name . '/language/' . $this->tag);
+			}
+
 			// Template language files.
 			if (isset($settings['template'])) {
 				$load($path->template . '/' . $settings['template'] . '/language/' . $this->tag);
@@ -75,6 +107,17 @@ namespace sequence\root {
 			}
 
 			$this->container = array_merge(...$lang);
+
+			$this->ready = true;
+			$this->broadcast('ready');
+		}
+
+		/**
+		 *
+		 * @return bool
+		 */
+		public function ready() {
+			return $this->ready;
 		}
 
 		/*
