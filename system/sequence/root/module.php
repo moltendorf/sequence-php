@@ -60,10 +60,11 @@ namespace sequence\root {
 		public function load() {
 			$root     = $this->root;
 			$database = $root->database;
+			$prefix   = $database->prefix();
 
 			$statement = $database->prepare("
 				select module_id, module_name
-				from {$database->table('modules')}
+				from {$prefix}modules
 				where module_is_enabled = 1
 			");
 

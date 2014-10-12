@@ -25,13 +25,15 @@ namespace sequence\root {
 			$this->bind($root, $binding);
 
 			$database = $root->database;
+			$prefix   = $database->prefix();
 
 			$statement = $database->prepare("
 				select path_root, module_name, path_is_prefix, path_alias
-				from {$database->table('paths')}
-				join {$database->table('modules')}
+				from {$prefix}paths
+				join {$prefix}modules
 					using (module_id)
-				where path_is_enabled = 1
+				where	module_is_enabled = 1
+					and	path_is_enabled = 1
 			");
 
 			$statement->execute();

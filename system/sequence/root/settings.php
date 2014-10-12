@@ -36,10 +36,11 @@ namespace sequence\root {
 
 			try {
 				$database = $root->database;
+				$prefix   = $database->prefix();
 
 				$statement = $database->prepare("
 					select setting_key, setting_value
-					from {$database->table('settings')}
+					from {$prefix}settings
 				");
 
 				$statement->execute();
@@ -144,11 +145,12 @@ namespace sequence\root {
 			if (isset($this->original[$offset])) {
 				$root     = $this->root;
 				$database = $root->database;
+				$prefix   = $database->prefix();
 
 				if ($this->original[$offset] !== false) {
 					if (isset($this->container[$offset])) {
 						$statement = $database->prepare("
-							update {$database->table('settings')}
+							update {$prefix}settings
 							set setting_value = :value
 							where setting_key = :key
 						");
@@ -159,7 +161,7 @@ namespace sequence\root {
 						]);
 					} else {
 						$statement = $database->prepare("
-							delete from {$database->table('settings')}
+							delete from {$prefix}settings
 							where setting_key = :key
 						");
 
@@ -169,7 +171,7 @@ namespace sequence\root {
 					}
 				} else {
 					$statement = $database->prepare("
-							insert into {$database->table('settings')}
+							insert into {$prefix}settings
 									(setting_key,	setting_value)
 							values	(:value,		:key)
 						");

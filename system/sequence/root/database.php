@@ -10,7 +10,7 @@ namespace sequence\root {
 		 *
 		 * @var string
 		 */
-		protected $prefix = '';
+		public $prefix = 'sequence__';
 
 		/**
 		 *
@@ -87,8 +87,12 @@ namespace sequence\root {
 			return $result;
 		}
 
-		public function table($table) {
-			return $this->prefix . $table;
+		/**
+		 *
+		 * @return string
+		 */
+		public function prefix() {
+			return $this->prefix;
 		}
 	}
 }
