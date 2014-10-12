@@ -143,10 +143,24 @@ namespace sequence\root {
 		public function offsetGet($offset) {
 			$offset = (string) $offset;
 
-			if (isset($this->instance[$offset])) {
-				return $this->instance[$offset];
+			if ($this->ready) {
+				if (isset($this->container[$offset])) {
+					return $this->container[$offset];
+				} else {
+					if (b\debug) {
+						$output = '{LANG: ' . $offset . '}';
+					} else {
+						$output = $offset;
+					}
+
+					return $this->container[$offset] = $output;
+				}
 			} else {
-				return $this->instance[$offset] = new languageString($this->container, $offset);
+				if (isset($this->instance[$offset])) {
+					return $this->instance[$offset];
+				} else {
+					return $this->instance[$offset] = new languageString($this->ready, $this->container, $offset);
+				}
 			}
 		}
 
@@ -197,10 +211,18 @@ namespace sequence\root {
 
 		/**
 		 *
+		 * @var bool
+		 */
+		private $ready;
+
+		/**
+		 *
+		 * @param bool   $ready
 		 * @param array  $container
 		 * @param string $offset
 		 */
-		public function __construct(& $container, $offset) {
+		public function __construct(& $ready, & $container, $offset) {
+			$this->ready     = &$ready;
 			$this->container = &$container;
 			$this->offset    = $offset;
 		}
@@ -209,15 +231,25 @@ namespace sequence\root {
 		 *
 		 */
 		public function __toString() {
+			static $output = null;
+
 			if ($this->output === null) {
 				if (isset($this->container[$this->offset])) {
 					$this->output = $this->container[$this->offset];
 				} else {
-					if (b\debug) {
-						$this->output = '{LANG: ' . $this->offset . '}';
-					} else {
-						$this->output = $this->offset;
+					if ($output == null) {
+						if (b\debug) {
+							$output = '{LANG: ' . $this->offset . '}';
+						} else {
+							$output = $this->offset;
+						}
 					}
+
+					if ($this->ready) {
+						$this->output = $this->container[$this->offset] = $output;
+					}
+
+					return $output;
 				}
 			}
 
