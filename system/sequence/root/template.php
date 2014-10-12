@@ -80,7 +80,7 @@ namespace sequence\root {
 
 			$this->moduleDirectory = $path->module;
 
-			$this->useCustomizations = (boolean) $settings['template_custom'];
+			$this->useCustomizations = (boolean) $settings['template.customizations'];
 
 			$this->clear();
 		}

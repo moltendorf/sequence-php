@@ -102,7 +102,7 @@ namespace sequence\root {
 				$load($path->template . '/' . $settings['template'] . '/language/' . $this->tag);
 			}
 
-			if ($settings['template_custom']) {
+			if ($settings['template.customizations']) {
 				$load($path->template . '/' . $settings['template'] . '/custom/language/' . $this->tag);
 			}
 
