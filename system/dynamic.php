@@ -12,15 +12,21 @@ namespace sequence {
 		 * Pre-configuration.
 		 */
 
-		// We use UTC for everything internally.
-		date_default_timezone_set('UTC');
+		$systemPath = __DIR__;
+		$homePath   = $_SERVER['HOME'] . '/system';
+
+		// Attempt to auto-load files from
+		set_include_path(implode(PATH_SEPARATOR, [$homePath, $systemPath]));
 
 		// Classes are arranged by their namespace.
 		spl_autoload_extensions('.php');
 		spl_autoload_register();
 
+		// We use UTC for everything internally.
+		date_default_timezone_set('UTC');
+
 		// Include additional functions.
-		require __DIR__ . '/functions.php';
+		require $systemPath . '/functions.php';
 
 		/*
 		 * Create the root.
@@ -31,6 +37,6 @@ namespace sequence {
 		$root = new $class();
 
 		// Run.
-		$root->application->routine(__DIR__, $_SERVER['HOME'] . '/settings.php');
+		$root->application->routine($systemPath, $homePath);
 	}
 }

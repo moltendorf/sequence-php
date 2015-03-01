@@ -74,14 +74,14 @@ namespace sequence\root {
 
 		/**
 		 *
-		 * @param string  $system
-		 * @param array   $settings
+		 * @param string  $systemPath
+		 * @param array   $homePath
 		 * @param boolean $finish
 		 *
 		 * @throws mixed
 		 */
-		public function routine($system, $settings, $finish = true) {
-			$this->setup($system, $settings);
+		public function routine($systemPath, $homePath, $finish = true) {
+			$this->setup($systemPath, $homePath);
 
 			// This must be done after setup.
 			$root     = $this->root;
@@ -153,8 +153,13 @@ namespace sequence\root {
 			}
 		}
 
-
-		public function setup($systemPath, $settingsFile) {
+		/**
+		 * @param $systemPath
+		 * @param $homePath
+		 *
+		 * @throws \Exception
+		 */
+		public function setup($systemPath, $homePath) {
 			$root     = $this->root;
 			$database = $root->database;
 			$path     = $root->path;
@@ -243,24 +248,23 @@ namespace sequence\root {
 			$this->bind($root);
 
 			/*
-			 * Include settings file.
+			 * Include settings files.
 			 */
+
+			$settingsFile = $homePath . '/settings.php';
 
 			if (is_file($settingsFile)) {
 				try {
 					$settings     = include $settingsFile;
-					$settingsPath = dirname(realpath($settingsFile));
 				} catch (\Exception $exception) {
 					$this->errors[] = $exception;
 
-					$settings     = [];
-					$settingsPath = false;
+					$settings = [];
 				}
 			} else {
 				$this->errors[] = new \Exception('SETTINGS_FILE_NOT_FOUND');
 
-				$settings     = [];
-				$settingsPath = false;
+				$settings = [];
 			}
 
 			if (isset($settings['application']) && is_array($settings['application'])) {
@@ -274,7 +278,7 @@ namespace sequence\root {
 			}
 
 			// Set up our paths.
-			$path->settings($systemPath, $settingsPath, $settings['path']);
+			$path->settings($systemPath, $homePath, $settings['path']);
 
 			if (isset($settings['database']) && is_array($settings['database'])) {
 				try {
