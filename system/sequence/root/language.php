@@ -45,14 +45,6 @@ namespace sequence\root {
 		 */
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
-
-			$module = $root->module;
-
-			if ($module->ready()) {
-				$this->load();
-			}
-
-			$this->listen([$this, 'load'], 'ready', 'root/module');
 		}
 
 		/**

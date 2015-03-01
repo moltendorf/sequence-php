@@ -85,11 +85,14 @@ namespace sequence\root {
 
 			// This must be done after setup.
 			$root     = $this->root;
+			$language = $root->language;
 			$module   = $root->module;
 			$template = $root->template;
 
 			try {
 				$level = ob_get_level();
+
+				$language->load();
 
 				if ($this->errors) {
 					throw $this->errors[0];
@@ -249,6 +252,8 @@ namespace sequence\root {
 			if (isset($settings['application']) && is_array($settings['application'])) {
 				$this->settings = $settings['application'];
 			}
+
+			$this->settings += require $systemPath . '/settings.php';
 
 			if (!isset($settings['path']) || !is_array($settings['path'])) {
 				$settings['path'] = [];
