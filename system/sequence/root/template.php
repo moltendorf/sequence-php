@@ -70,8 +70,8 @@ namespace sequence\root {
 
 			$this->defaultDirectory = $path->template . '/default';
 
-			if (isset($settings['template'])) {
-				$this->currentDirectory = $path->template . '/' . $settings['template'];
+			if (isset($settings['template.default'])) {
+				$this->currentDirectory = $path->template . '/' . $settings['template.default'];
 			} else {
 				$this->isDefaultTemplate = true;
 
