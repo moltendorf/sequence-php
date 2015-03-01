@@ -208,14 +208,20 @@ namespace sequence\root {
 				$this->debug = [];
 
 				foreach (glob($debug . '/*.php') as $file) {
-					// Manually including each file as the namespace the classes are in would fool the autoloader.
-					require $file;
+					if (is_file($file)) {
+						try {
+							// Manually including each file as the namespace the classes are in would fool the autoloader.
+							include $file;
 
-					$class = 'sequence\\debug\\' . substr($file, strrpos($file, '/') + 1, -4);
+							$class = 'sequence\\debug\\' . substr($file, strrpos($file, '/') + 1, -4);
 
-					if (class_exists($class, false)) {
-						// Instantiate the debug class.
-						$this->debug[] = new $class($root);
+							if (class_exists($class, false)) {
+								// Instantiate the debug class.
+								$this->debug[] = new $class($root);
+							}
+						} catch (\Exception $exception) {
+							$this->errors[] = $exception;
+						}
 					}
 				}
 
@@ -240,9 +246,16 @@ namespace sequence\root {
 			 * Include settings file.
 			 */
 
-			if (file_exists($settingsFile)) {
-				$settings     = require $settingsFile;
-				$settingsPath = dirname(realpath($settingsFile));
+			if (is_file($settingsFile)) {
+				try {
+					$settings     = include $settingsFile;
+					$settingsPath = dirname(realpath($settingsFile));
+				} catch (\Exception $exception) {
+					$this->errors[] = $exception;
+
+					$settings     = [];
+					$settingsPath = false;
+				}
 			} else {
 				$this->errors[] = new \Exception('SETTINGS_FILE_NOT_FOUND');
 
