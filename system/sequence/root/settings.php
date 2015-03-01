@@ -35,25 +35,27 @@ namespace sequence\root {
 			}
 
 			try {
-				$database = $root->database;
-				$prefix   = $database->prefix();
+				if ($root->database) {
+					$database = $root->database;
+					$prefix   = $database->prefix();
 
-				$statement = $database->prepare("
-					select setting_key, setting_value
-					from {$prefix}settings
-				");
+					$statement = $database->prepare("
+						select setting_key, setting_value
+						from {$prefix}settings
+					");
 
-				$statement->execute();
+					$statement->execute();
 
-				foreach ($statement->fetchAll() as $row) {
-					$this->container[$row[0]] = $row[1];
+					foreach ($statement->fetchAll() as $row) {
+						$this->container[$row[0]] = $row[1];
+					}
+
+					$statement->closeCursor();
+
+					unset($row);
+
+					$this->listen([$this, 'pushAll'], 'closing', 'root/database');
 				}
-
-				$statement->closeCursor();
-
-				unset($row);
-
-				$this->listen([$this, 'pushAll'], 'closing', 'root/database');
 			} catch (\Exception $exception) {
 				$application->errors[] = $exception;
 			}

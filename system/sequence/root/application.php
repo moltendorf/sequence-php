@@ -264,8 +264,12 @@ namespace sequence\root {
 			$path->settings($systemPath, $settingsPath, $settings['path']);
 
 			if (isset($settings['database']) && is_array($settings['database'])) {
-				// Open database connection.
-				$database->connect($settings['database']);
+				try {
+					// Open database connection.
+					$database->connect($settings['database']);
+				} catch (\Exception $exception) {
+					$this->errors[] = $exception;
+				}
 			} else {
 				$this->errors[] = new \Exception('DATABASE_CONNECTION_FAILED');
 			}
