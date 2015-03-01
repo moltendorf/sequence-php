@@ -92,13 +92,14 @@ namespace sequence\root {
 			try {
 				$level = ob_get_level();
 
-				$language->load();
-
 				if ($this->errors) {
+					$language->load();
+
 					throw $this->errors[0];
 				}
 
 				$module->load();
+				$language->load();
 
 				$this->broadcast('module');
 				$this->handler();
