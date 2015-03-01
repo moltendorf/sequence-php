@@ -48,8 +48,6 @@ namespace sequence\functions {
 	 * @return string
 	 */
 	function text_normalize($text, $tab = 4) {
-		echo $text;
-
 		// Normalize all line breaks to line feeds, then split the text into an array at each line break.
 		$text = explode("\n", str_replace(["\r\n", "\r"], "\n", $text));
 
