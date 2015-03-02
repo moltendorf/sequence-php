@@ -8,6 +8,8 @@ namespace sequence\root {
 
 		use b\listener;
 
+		public $navigation = [];
+
 		protected $normalized = null;
 
 		protected $module = null;
@@ -28,12 +30,14 @@ namespace sequence\root {
 			$prefix   = $database->prefix();
 
 			$statement = $database->prepare("
-				select path_root, module_name, module_display, path_is_prefix, path_alias
+				select path_root, module_name, module_display, path_is_prefix, path_alias, path_order
 				from {$prefix}paths
 				join {$prefix}modules
 					using (module_id)
 				where	module_is_enabled = 1
 					and	path_is_enabled = 1
+				order by
+					path_order asc
 			");
 
 			$statement->execute();
@@ -71,6 +75,15 @@ namespace sequence\root {
 				}
 
 				unset($branch);
+
+				// Check if this path is to be included in the navigation.
+				if ($row[5]) {
+					$this->navigation[] = [
+						'module' => $row[1],
+					    'display' => $row[2],
+						'path' => $path
+					];
+				}
 			}
 		}
 
