@@ -66,7 +66,7 @@ namespace sequence\root {
 				$branch['path']    = $path;
 				$branch['prefix']  = (boolean) $row[3];
 
-				if (strlen($row[3])) {
+				if (strlen($row[4])) {
 					$branch['alias'] = $row[4];
 				}
 
