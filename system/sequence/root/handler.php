@@ -28,7 +28,7 @@ namespace sequence\root {
 			$prefix   = $database->prefix();
 
 			$statement = $database->prepare("
-				select path_root, module_name, path_is_prefix, path_alias
+				select path_root, module_name, module_display, path_is_prefix, path_alias
 				from {$prefix}paths
 				join {$prefix}modules
 					using (module_id)
@@ -61,12 +61,13 @@ namespace sequence\root {
 					$branch = &$branch['branches'][$segment];
 				}
 
-				$branch['module'] = $row[1];
-				$branch['path']   = $path;
-				$branch['prefix'] = (boolean) $row[2];
+				$branch['module']  = $row[1];
+				$branch['display'] = $row[2];
+				$branch['path']    = $path;
+				$branch['prefix']  = (boolean) $row[3];
 
 				if (strlen($row[3])) {
-					$branch['alias'] = $row[3];
+					$branch['alias'] = $row[4];
 				}
 
 				unset($branch);
@@ -140,6 +141,9 @@ namespace sequence\root {
 				if (isset($selected)) {
 					$this->module  = $selected['module'];
 					$this->request = substr($this->normalized, strlen($selected['path']));
+
+					$template->variable['module.name']    = $selected['module'];
+					$template->variable['module.display'] = $selected['display'];
 
 					if (!strlen($this->request)) {
 						$this->request = '/';
