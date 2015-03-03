@@ -79,9 +79,9 @@ namespace sequence\root {
 				// Check if this path is to be included in the navigation.
 				if ($row[5]) {
 					$this->navigation[] = [
-						'module' => $row[1],
-					    'display' => $row[2],
-						'path' => $path
+						'module'  => $row[1],
+						'display' => $row[2],
+						'path'    => $path
 					];
 				}
 			}
@@ -153,6 +153,7 @@ namespace sequence\root {
 
 				if (isset($selected)) {
 					$this->module  = $selected['module'];
+					$this->path    = $selected['path'];
 					$this->request = substr($this->normalized, strlen($selected['path']));
 
 					$template->variable['module.name']    = $selected['module'];
@@ -188,7 +189,7 @@ namespace sequence\root {
 			$root   = $this->root;
 			$module = $root->module;
 
-			$module[$this->module]->request($this->request);
+			$module[$this->module]->request($this->request, $this->path);
 		}
 	}
 }
