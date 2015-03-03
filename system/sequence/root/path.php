@@ -47,12 +47,13 @@ namespace sequence\root {
 		/**
 		 *
 		 * @param string $systemPath
-		 * @param string $settingsPath
+		 * @param string $homePath
+		 * @param string $webPath
 		 * @param array  $settings
 		 *
 		 * @throws Exception
 		 */
-		public function settings($systemPath, $settingsPath, $settings) {
+		public function settings($systemPath, $homePath, $webPath, $settings) {
 			$root        = $this->root;
 			$application = $root->application;
 
@@ -93,6 +94,8 @@ namespace sequence\root {
 			$systemPath = $directory($systemPath);
 
 			$paths = [
+				'web'      => $webPath,
+				'home'     => $homePath,
 				'system'   => $systemPath,
 				'language' => $directory($systemPath . '/language'),
 				'template' => $directory($systemPath . '/template'),
@@ -113,8 +116,7 @@ namespace sequence\root {
 			 * Configure and test application paths.
 			 */
 
-
-			$settingsPath = $directory($settingsPath);
+			$settingsPath = $directory($homePath);
 
 			$paths = [
 				'cache'
