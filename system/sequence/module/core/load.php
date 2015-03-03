@@ -16,8 +16,13 @@ namespace sequence\module\core {
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
 
-			$s = $root->settings;
-			$v = &$root->template->variable;
+			$this->listen([$this, 'template'], 'template', 'root/application');
+		}
+
+		public function template() {
+			$root = $this->root;
+			$s    = $root->settings;
+			$v    = &$root->template->variable;
 
 			// Site display.
 
@@ -60,9 +65,13 @@ namespace sequence\module\core {
 			$handler = $root->handler;
 
 			if ($handler->navigation) {
+				$active = $root->handler->module();
+
 				$v['core.navigation'] = [];
 
 				foreach ($handler->navigation as $module) {
+					$module['active'] = ($active == $module['module']);
+
 					$v['core.navigation'][] = $module;
 				}
 			} else {
