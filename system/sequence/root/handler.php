@@ -191,5 +191,9 @@ namespace sequence\root {
 
 			$module[$this->module]->request($this->request, $this->path);
 		}
+
+		public function module() {
+			return $this->module;
+		}
 	}
 }
