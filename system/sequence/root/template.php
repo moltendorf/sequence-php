@@ -102,9 +102,10 @@ namespace sequence\root {
 
 			$f = null; // We pass a reference of $f to itself, so we need to define it here.
 			$l = $this->root->language;
+			$s = $this->root->settings;
 			$v = $this->variable;
 
-			$f = function ($file) use (& $f, $l, $v) {
+			$f = function ($file) use (& $f, $l, $s, $v) {
 				$path = $this->path($file);
 
 				if ($path !== false) {
