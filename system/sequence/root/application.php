@@ -76,12 +76,13 @@ namespace sequence\root {
 		 *
 		 * @param string  $systemPath
 		 * @param array   $homePath
+		 * @param array   $webPath
 		 * @param boolean $finish
 		 *
 		 * @throws mixed
 		 */
-		public function routine($systemPath, $homePath, $finish = true) {
-			$this->setup($systemPath, $homePath);
+		public function routine($systemPath, $homePath, $webPath, $finish = true) {
+			$this->setup($systemPath, $homePath, $webPath);
 
 			// This must be done after setup.
 			$root     = $this->root;
@@ -156,10 +157,11 @@ namespace sequence\root {
 		/**
 		 * @param $systemPath
 		 * @param $homePath
+		 * @param $webPath
 		 *
 		 * @throws \Exception
 		 */
-		public function setup($systemPath, $homePath) {
+		public function setup($systemPath, $homePath, $webPath) {
 			$root     = $this->root;
 			$database = $root->database;
 			$path     = $root->path;
@@ -278,7 +280,7 @@ namespace sequence\root {
 			}
 
 			// Set up our paths.
-			$path->settings($systemPath, $homePath, $settings['path']);
+			$path->settings($systemPath, $homePath, $webPath, $settings['path']);
 
 			if (isset($settings['database']) && is_array($settings['database'])) {
 				try {

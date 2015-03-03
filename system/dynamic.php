@@ -13,7 +13,8 @@ namespace sequence {
 		 */
 
 		$systemPath = __DIR__;
-		$homePath   = $_SERVER['HOME'] . '/system';
+		$homePath = $_SERVER['HOME'] . '/system';
+		$webPath = $_SERVER['HOME'] . '/live';
 
 		// Attempt to auto-load files from
 		set_include_path(implode(PATH_SEPARATOR, [$homePath, $systemPath]));
@@ -37,6 +38,6 @@ namespace sequence {
 		$root = new $class();
 
 		// Run.
-		$root->application->routine($systemPath, $homePath);
+		$root->application->routine($systemPath, $homePath, $webPath);
 	}
 }
