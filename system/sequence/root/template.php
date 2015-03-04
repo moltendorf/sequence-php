@@ -202,7 +202,7 @@ namespace sequence\root {
 			$v['status']   = $status;
 			$v['location'] = $location;
 
-			$this->file = 'redirect';
+			$this->file = 'redirect.html';
 
 			if (b\ship) {
 				header('Location: ' . $location);
