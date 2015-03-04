@@ -17,6 +17,6 @@ return [
 	'OUTPUT'                      => 'Output',
 	'OUTPUT_BUFFER_NOT_EMPTY'     => 'Unexpected output occurred.',
 	'OUTPUT_BUFFER_LEVEL_DIFFERS' => 'Unexpected output buffering level change.',
-	'POWERED_BY'                  => 'Powered by Sequence &copy; 2014 -' . date('Y'),
+	'POWERED_BY'                  => 'Powered by Sequence &copy; 2014-' . date('Y'),
 	'COPYRIGHT'                   => 'Copyright &copy;'
 ];
