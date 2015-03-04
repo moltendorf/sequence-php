@@ -165,6 +165,8 @@ namespace sequence\root {
 
 					if ($_SERVER['REQUEST_URI'] != $request) {
 						$template->redirect($request, 301);
+
+						return false;
 					}
 
 					return true;
@@ -172,7 +174,7 @@ namespace sequence\root {
 					if ($_SERVER['REQUEST_URI'] != $request) {
 						$template->redirect($request, 301);
 
-						return true;
+						return false; // False is returned even without this. I just left it here for clarity.
 					}
 				}
 			} else {
