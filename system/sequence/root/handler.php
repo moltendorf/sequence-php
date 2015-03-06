@@ -30,7 +30,7 @@ namespace sequence\root {
 			$prefix   = $database->prefix();
 
 			$statement = $database->prepare("
-				select path_root, module_name, module_display, path_is_prefix, path_alias, path_order
+				select path_root, module_name, module_display, path_alias, path_is_prefix, path_order
 				from {$prefix}paths
 				join {$prefix}modules
 					using (module_id)
@@ -65,23 +65,20 @@ namespace sequence\root {
 					$branch = &$branch['branches'][$segment];
 				}
 
+				$branch['path']    = $path;
 				$branch['module']  = $row[1];
 				$branch['display'] = $row[2];
-				$branch['path']    = $path;
-				$branch['prefix']  = (boolean) $row[3];
-
-				if (strlen($row[4])) {
-					$branch['alias'] = $row[4];
-				}
+				$branch['alias']   = $row[3];
+				$branch['prefix']  = (boolean) $row[4];
 
 				unset($branch);
 
 				// Check if this path is to be included in the navigation.
 				if ($row[5]) {
 					$this->navigation[] = [
+						'path'    => $path,
 						'module'  => $row[1],
-						'display' => $row[2],
-						'path'    => $path
+						'display' => $row[2]
 					];
 				}
 			}
@@ -154,7 +151,7 @@ namespace sequence\root {
 				if (isset($selected)) {
 					$this->module  = $selected['module'];
 					$this->path    = $selected['path'];
-					$this->request = substr($this->normalized, strlen($selected['path']));
+					$this->request = $selected['alias'] . substr($this->normalized, strlen($selected['path']));
 
 					$template->variable['module.name']    = $selected['module'];
 					$template->variable['module.display'] = $selected['display'];
