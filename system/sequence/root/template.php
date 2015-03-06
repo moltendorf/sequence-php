@@ -31,31 +31,19 @@ namespace sequence\root {
 		 *
 		 * @var string
 		 */
-		private $defaultDirectory;
-
-		/**
-		 *
-		 * @var string
-		 */
-		private $currentDirectory;
-
-		/**
-		 *
-		 * @var string
-		 */
-		private $moduleDirectory;
+		private $current;
 
 		/**
 		 *
 		 * @var boolean
 		 */
-		private $isDefaultTemplate = false;
+		private $default = false;
 
 		/**
 		 *
 		 * @var boolean
 		 */
-		private $useCustomizations = false;
+		private $customizations = false;
 
 		/**
 		 *
@@ -65,22 +53,16 @@ namespace sequence\root {
 		public function __construct(b\root $root, $binding = '') {
 			$this->bind($root, $binding);
 
-			$path     = $root->path;
 			$settings = $root->settings;
 
-			$this->defaultDirectory = $path->template . '/default';
-
 			if (isset($settings['template.default'])) {
-				$this->currentDirectory = $path->template . '/' . $settings['template.default'];
+				$this->current = $settings['template.default'];
 			} else {
-				$this->isDefaultTemplate = true;
-
-				$this->currentDirectory = $this->defaultDirectory;
+				$this->current = 'default';
+				$this->default = true;
 			}
 
-			$this->moduleDirectory = $path->module;
-
-			$this->useCustomizations = (boolean) $settings['template.customizations'];
+			$this->customizations = (boolean) $settings['template.customizations'];
 
 			$this->clear();
 		}
@@ -106,12 +88,12 @@ namespace sequence\root {
 			$v = $this->variable;
 
 			$f = function ($file) use (& $f, $l, $s, $v) {
-				$path = $this->path($file);
+				$path = $this->file($file);
 
 				if ($path !== false) {
 					include $path;
 				} else {
-					throw new \Exception('TEMPLATE_FILE_NOT_EXIST');
+					throw new \Exception('TEMPLATE_FILE_NOT_EXIST: ' . $file);
 				}
 			};
 
@@ -136,68 +118,101 @@ namespace sequence\root {
 		 *
 		 * @return string|boolean
 		 */
-		public function path($input) {
+		public function file($input) {
+			$root = $this->root;
+			$path = $root->path;
+
 			$segments = explode(':', $input);
 
 			if (count($segments) > 1) {
-				list ($module, $file) = $segments;
+				list ($module, $template) = $segments;
 
-				$file .= '.php';
+				$template .= '.php';
 
-				$segment = 'module/' . $module . '/' . $file;
+				$segment = 'module/' . $module . '/' . $template;
 			} else {
-				$segment = $input . '.php';
+				$template = $segment = $input . '.php';
 			}
 
-			if ($this->useCustomizations) {
-				$path = $this->currentDirectory . '/custom/' . $segment;
+			$check = function ($base, $template) use ($segment) {
+				$path = $base . '/template/' . $template;
 
-				if (file_exists($path)) {
-					return $path;
-				}
-			}
+				if ($this->customizations) {
+					$file = $path . '/custom/' . $segment;
 
-			$path = $this->currentDirectory . '/' . $segment;
-
-			if (file_exists($path)) {
-				return $path;
-			}
-
-			if (!$this->isDefaultTemplate) {
-				if ($this->useCustomizations) {
-					$path = $this->defaultDirectory . '/custom/' . $segment;
-
-					if (file_exists($path)) {
-						return $path;
+					if (file_exists($file)) {
+						return $file;
 					}
 				}
 
-				$path = $this->defaultDirectory . '/' . $segment;
+				$file = $path . '/' . $segment;
 
-				if (file_exists($path)) {
-					return $path;
+				if (file_exists($file)) {
+					return $file;
+				}
+
+				return false;
+			};
+
+			if ($file = $check($path->home, $this->current)) {
+				return $file;
+			}
+
+			if ($file = $check($path->system, $this->current)) {
+				return $file;
+			}
+
+			if (!$this->default) {
+				if ($file = $check($path->home, 'default')) {
+					return $file;
+				}
+
+				if ($file = $check($path->system, 'default')) {
+					return $file;
 				}
 			}
 
 			if (isset($module)) {
-				$path = $this->moduleDirectory . '/' . $module . '/template/' . $file;
+				$check = function ($base) use ($module, $template) {
+					$path = $base . '/sequence/module/' . $module . '/template';
 
-				if (file_exists($path)) {
-					return $path;
+					if ($this->customizations) {
+						$file = $path . '/custom/' . $template;
+
+						if (file_exists($file)) {
+							return $file;
+						}
+					}
+
+					$file = $path . '/' . $template;
+
+					if (file_exists($file)) {
+						return $file;
+					}
+
+					return false;
+				};
+
+				if ($file = $check($path->home)) {
+					return $file;
+				}
+
+				if ($file = $check($path->system)) {
+					return $file;
 				}
 			}
 
 			return false;
 		}
 
-        /**
-         * @param string $location
-         * @param int $status
-         */
+		/**
+		 * @param string $location
+		 * @param int    $status
+		 */
 		public function redirect($location, $status = 302) {
 			$this->clear();
 
-			$v = & $this->variable;
+			$v = &$this->variable;
 
 			$v['status']   = $status;
 			$v['location'] = $location;
@@ -210,12 +225,12 @@ namespace sequence\root {
 		}
 
 		/**
-		 *
+		 * @param \Exception $status
 		 */
 		public function error($status = null) {
 			$this->clear();
 
-			$v = & $this->variable;
+			$v = &$this->variable;
 
 			if ($status instanceof \Exception) {
 				$v['exception'] = $status;
