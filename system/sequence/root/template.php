@@ -87,13 +87,11 @@ namespace sequence\root {
 			$s = $this->root->settings;
 			$v = $this->variable;
 
-			$f = function ($file) use (& $f, $l, $s, $v) {
-				$path = $this->file($file);
-
-				if ($path !== false) {
-					include $path;
+			$f = function ($template) use (& $f, $l, $s, $v) {
+				if ($file = $this->file($template)) {
+					include $file;
 				} else {
-					throw new \Exception('TEMPLATE_FILE_NOT_EXIST: ' . $file);
+					throw new \Exception('TEMPLATE_FILE_NOT_EXIST');
 				}
 			};
 
