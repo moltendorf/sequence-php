@@ -81,7 +81,7 @@
 <h1><?= $l['STATUS_' . $v['status']] ?></h1>
 
 <div class="message">
-	<h2><?= $l['STATUS_' . $v['status'] . '_MESSAGE'] ?> <a href="<?= $v['location'] ?>"><?= $_SERVER['HTTP_HOST'] ?><?= $v['location'] ?></a></h2>
+	<h2><?= $l['STATUS_' . $v['status'] . '_MESSAGE'] ?> <a href="<?= $v['location'] ?>"><?= $v['display'] ?></a></h2>
 </div>
 </body>
 </html>
