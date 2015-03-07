@@ -223,7 +223,7 @@ namespace sequence\root {
 		}
 
 		/**
-		 * @param \Exception $status
+		 * @param int|\Exception $status
 		 */
 		public function error($status = null) {
 			$this->clear();
