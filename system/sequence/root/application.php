@@ -336,7 +336,7 @@ namespace sequence\root {
 				header('Content-MD5: ' . $digest);
 			}
 
-			header('Content-Type: text/html; charset=utf-8');
+			header('Content-Type: ' . $template->type());
 			header('Last-Modified: ' . (new \DateTime('now', new \DateTimeZone('UTC')))->format('D, d M Y H:i:s T'));
 		}
 

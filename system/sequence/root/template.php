@@ -31,6 +31,12 @@ namespace sequence\root {
 		 *
 		 * @var string
 		 */
+		public $type;
+
+		/**
+		 *
+		 * @var string
+		 */
 		private $current;
 
 		/**
@@ -108,6 +114,17 @@ namespace sequence\root {
 			}
 
 			return ob_get_clean();
+		}
+
+		/**
+		 *
+		 */
+		public function type() {
+			if (isset($this->type)) {
+				return $this->type;
+			}
+
+			return 'text/' . substr($this->file, strrpos($this->file, '.') + 1) . '; charset=utf-8';
 		}
 
 		/**
