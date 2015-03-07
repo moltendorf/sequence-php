@@ -19,9 +19,10 @@ namespace sequence\module\resume {
 
 		/**
 		 *
-		 * @param $request
+		 * @param string $request
+		 * @param string $request_root
 		 */
-		public function request($request) {
+		public function request($request, $request_root) {
 			$root     = $this->root;
 			$template = $root->template;
 
