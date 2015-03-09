@@ -233,19 +233,21 @@ namespace sequence\root {
 			$v['location'] = $location;
 
 			if (($scheme = parse_url($location, PHP_URL_SCHEME)) != '') {
-				$v['display'] = substr($location, strlen($scheme) + 3);
+				$display = substr($location, strlen($scheme) + 3);
 			} elseif (substr($location, 0, 2) == '//') {
-				$v['display'] = substr($location, 2);
+				$display = substr($location, 2);
 			} elseif (substr($location, 0, 1) == '/') {
 				$host = $_SERVER['HTTP_HOST'];
 
-				$v['display'] = $host . $location;
+				$display = $host . $location;
 			} else {
 				$host     = $_SERVER['HTTP_HOST'];
 				$document = $_SERVER['DOCUMENT_URI'];
 
-				$v['display'] = $host . substr($document, 0, strrpos($document, '/') + 1) . $location;
+				$display = $host . substr($document, 0, strrpos($document, '/') + 1) . $location;
 			}
+
+			$v['display'] = preg_replace('/[\\/]$/', '', $display);
 
 			$this->file = 'redirect.html';
 
