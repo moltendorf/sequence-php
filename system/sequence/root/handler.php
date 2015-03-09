@@ -185,10 +185,15 @@ namespace sequence\root {
 		}
 
 		public function load() {
-			$root   = $this->root;
-			$module = $root->module;
+			$root     = $this->root;
+			$module   = $root->module;
+			$template = $root->template;
 
-			$module[$this->module]->request($this->request, $this->path);
+			$status = $module[$this->module]->request($this->request, $this->path);
+
+			if ($status !== null) {
+				$template->variable['status'] = $status;
+			}
 		}
 
 		public function module() {
