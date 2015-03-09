@@ -117,7 +117,7 @@ namespace sequence\root {
 		 *
 		 * @param string $offset
 		 *
-		 * @return string
+		 * @return b\module|null
 		 */
 		public function offsetGet($offset) {
 			$offset = (string) $offset;
