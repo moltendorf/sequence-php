@@ -90,7 +90,13 @@ namespace sequence\root {
 			$template = $root->template;
 
 			if ($request === null) {
-				$request = preg_replace('/[\\/][\\/]+/', '/', $_SERVER['REQUEST_URI']);
+				$request = '/' . preg_replace([
+					'/^[\\/]+|[!"&\'\\-.\\/:;=?@\\\\_]+$/',
+					'/[\\/][\\/]+/'
+				], [
+					'',
+					'/'
+				], $_SERVER['REQUEST_URI']);
 			}
 
 			$length = strlen($settings['root']);
