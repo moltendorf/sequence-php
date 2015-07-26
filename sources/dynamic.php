@@ -2,11 +2,6 @@
 
 namespace sequence {
 
-	/*
-	 * Start application.
-	 */
-	main();
-
 	/**
 	 * Main function.
 	 * Created and called to keep all variables out of global scope.
@@ -41,9 +36,7 @@ namespace sequence {
 		$class = 'sequence\\root';
 
 		spl_autoload($class);
-		$root = new $class($systemPath, $homePath);
 
-		// Run.
-		$root->application->routine();
+		return new $class($systemPath, $homePath);
 	}
 }
