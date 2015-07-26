@@ -68,17 +68,25 @@ namespace sequence\root {
 		 * @param string       $message
 		 * @param null         $reason
 		 * @param array        $style
-		 * @param boolean      $generate
+		 * @param array        $options
 		 *
 		 * @throws exception
 		 */
-		public function send($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], $generate = true) {
-			$arguments = func_get_args();
-
+		public function send($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], array $options = []) {
 			$root     = $this->root;
 			$settings = $root->settings;
 
-			$encoded = $settings['email_from_'.array_shift($arguments)];
+			if (is_string($to)) {
+				$to = [$to];
+			}
+
+			foreach ($to as $key => $value) {
+				if (!Validate::email(is_string($key) ? $key : $value)) {
+					throw new exception('INVALID_EMAIL_TO');
+				}
+			}
+
+			$encoded = $settings["email_from_$from"];
 
 			if (isset($encoded)) {
 				$decoded = f\json_decode($encoded);
@@ -98,27 +106,17 @@ namespace sequence\root {
 						}
 					}
 				}
-			}
-
-			if (isset($from)) {
-				$to = array_shift($arguments);
-
-				if (is_string($to)) {
-					$to = [$to];
-				}
-
-				foreach ($to as $key => $value) {
-					if (!Validate::email(is_string($key) ? $key : $value)) {
-						throw new exception('INVALID_EMAIL_TO');
-					}
-				}
-
-				array_unshift($arguments, $to, $from);
-
-				$this->queue[] = $arguments;
 			} else {
-				throw new exception('INVALID_EMAIL_FROM');
+				if (!Validate::email($from)) {
+					throw new exception('INVALID_EMAIL_FROM');
+				}
 			}
+
+			$options += [
+				'generate' => true
+			];
+
+			$this->queue[] = [$to, $from, $subject, $message, $reason, $style, $options];
 		}
 
 		/**
@@ -159,11 +157,11 @@ namespace sequence\root {
 				 * @param string      $message
 				 * @param string|null $reason
 				 * @param array       $style
-				 * @param boolean     $generate
+				 * @param array       $options
 				 *
 				 * @throws exception
 				 */
-				$process = function ($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], $generate = true)
+				$process = function ($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], array $options = [])
 				use ($database, $template, $prefix, $converter, $mailer, &$lookup, &$tokens) {
 					list($name, $email) = $to;
 
@@ -202,7 +200,7 @@ namespace sequence\root {
 							$id = $database->lastInsertId();
 						}
 
-						if ($generate) {
+						if ($options['generate']) {
 							$token = openssl_random_pseudo_bytes(144);
 
 							$tokens[] = $id;
