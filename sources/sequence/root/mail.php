@@ -68,10 +68,11 @@ namespace sequence\root {
 		 * @param string       $message
 		 * @param null         $reason
 		 * @param array        $style
+		 * @param boolean      $generate
 		 *
 		 * @throws exception
 		 */
-		public function send($to, $from, $subject, $message, $reason = null, $style = ['mail.html']) {
+		public function send($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], $generate = true) {
 			$arguments = func_get_args();
 
 			$root     = $this->root;
@@ -158,10 +159,11 @@ namespace sequence\root {
 				 * @param string      $message
 				 * @param string|null $reason
 				 * @param array       $style
+				 * @param boolean     $generate
 				 *
 				 * @throws exception
 				 */
-				$process = function ($to, $from, $subject, $message, $reason = null, $style = ['mail.html'])
+				$process = function ($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], $generate = true)
 				use ($database, $template, $prefix, $converter, $mailer, &$lookup, &$tokens) {
 					list($name, $email) = $to;
 
@@ -200,13 +202,17 @@ namespace sequence\root {
 							$id = $database->lastInsertId();
 						}
 
-						$token = openssl_random_pseudo_bytes(144);
+						if ($generate) {
+							$token = openssl_random_pseudo_bytes(144);
 
-						$tokens[] = $id;
-						$tokens[] = bin2hex($token);
-						$tokens[] = $reason;
+							$tokens[] = $id;
+							$tokens[] = bin2hex($token);
+							$tokens[] = $reason;
 
-						$lookup[$email] = [$id, $token];
+							$lookup[$email] = [$id, $token];
+						} else {
+							$lookup[$email] = [$id];
+						}
 					}
 
 					$to = is_string($name) ? [$email => $name] : $email;
