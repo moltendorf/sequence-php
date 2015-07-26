@@ -41,9 +41,9 @@ namespace sequence {
 		$class = 'sequence\\root';
 
 		spl_autoload($class);
-		$root = new $class();
+		$root = new $class($systemPath, $homePath);
 
 		// Run.
-		$root->application->routine($systemPath, $homePath);
+		$root->application->routine();
 	}
 }

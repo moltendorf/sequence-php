@@ -52,156 +52,11 @@ namespace sequence\root {
 		 * Basic constructor. Store reference of root class instance.
 		 *
 		 * @param s\root $root
-		 * @param string $binding
+		 * @param string $systemPath
+		 * @param array  $homePath
 		 */
-		public function __construct(s\root $root, $binding = '') {
+		public function __construct(s\root $root, $systemPath, $homePath) {
 			$this->root = $root;
-		}
-
-		/**
-		 * Get a private value.
-		 *
-		 * @param string $name
-		 *
-		 * @return mixed
-		 */
-		public function __get($name) {
-			switch ($name) {
-			case 'debug':
-				return $this->debug;
-			}
-
-			return null;
-		}
-
-		/**
-		 * Bind all classes in root to application identity.
-		 *
-		 * @return string
-		 */
-		protected function getBinding() {
-			return 'application';
-		}
-
-		/**
-		 * Start main routine.
-		 * Run setup method. Load language strings. Parse the request address. Run the module(s). Configure the status
-		 * and content-type. Generate, compress and send the output. Perform database updates and maintenance.
-		 *
-		 * @param string  $systemPath
-		 * @param array   $homePath
-		 * @param boolean $finish
-		 */
-		public function routine($systemPath, $homePath, $finish = true) {
-			$this->setup($systemPath, $homePath);
-
-			// This must be done after setup.
-			$root     = $this->root;
-			$language = $root->language;
-			$handler  = $root->handler;
-			$module   = $root->module;
-			$template = $root->template;
-
-			try {
-				$level = ob_get_level();
-
-				if ($this->errors) {
-					$language->load();
-
-					throw $this->errors[0];
-				}
-
-				$module->load();
-				$language->load();
-
-				// Parse the request.
-				if ($handler->parse()) {
-					$start = microtime(true)*1e6;
-
-					$handler->request();
-
-					// Calculate the time it took to run the module.
-					$template->add(['runtime' => $runtime = microtime(true)*1e6 - $start]);
-				}
-
-				if (s\ship) {
-					$this->generate();
-
-					ob_end_clean();
-					echo $this->content;
-
-					if ($finish && function_exists('fastcgi_finish_request')) {
-						fastcgi_finish_request();
-					}
-
-					$this->broadcast('close');
-				} else {
-					if (ob_get_level() != $level) {
-						throw new exception('OUTPUT_BUFFER_LEVEL_DIFFERS');
-					}
-
-					if (ob_get_length()) {
-						throw new exception('OUTPUT_BUFFER_NOT_EMPTY');
-					}
-
-					$this->generate();
-					$this->broadcast('close');
-
-					if (ob_get_length()) {
-						throw new exception('OUTPUT_BUFFER_NOT_EMPTY');
-					}
-
-					if (isset($runtime)) {
-						if ($runtime > 1e3) {
-							$runtime = number_format($runtime/1e3).'ms';
-						} else {
-							$runtime = number_format($runtime).utf8_decode('µs');
-						}
-
-						header("X-Debug-Module-Runtime: $runtime");
-					}
-
-					ob_end_clean();
-
-					if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
-						$runtime = microtime(true)*1e6 - $_SERVER['REQUEST_TIME_FLOAT']*1e6;
-
-						// Create an extra header warning when runtime is greater than 100ms.
-						if ($runtime > 1e5) {
-							header('X-Debug-Warning-Runtime: Runtime is over 100ms!');
-						}
-
-						if ($runtime > 1e3) {
-							$runtime = number_format($runtime/1e3).'ms';
-						} else {
-							$runtime = number_format($runtime).utf8_decode('µs');
-						}
-
-						header("X-Debug-Total-Runtime: $runtime");
-					}
-
-					echo $this->content;
-					// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
-				}
-			} catch (exception $exception) {
-				$handler->error($exception);
-
-				$this->generate();
-
-				ob_end_clean();
-				echo $this->content;
-			}
-		}
-
-		/**
-		 * Check and configure output buffering. Load debug files (if present). Load and configure package + instance
-		 * settings. Configure paths. Connect to the database.
-		 *
-		 * @param $systemPath
-		 * @param $homePath
-		 */
-		public function setup($systemPath, $homePath) {
-			$root = $this->root;
 
 			/*
 			 * Set up output buffering.
@@ -353,6 +208,136 @@ namespace sequence\root {
 			unset($settings);
 
 			$this->broadcast('ready');
+		}
+
+		/**
+		 * Get a private value.
+		 *
+		 * @param string $name
+		 *
+		 * @return mixed
+		 */
+		public function __get($name) {
+			switch ($name) {
+			case 'debug':
+				return $this->debug;
+			}
+
+			return null;
+		}
+
+		/**
+		 * Bind all classes in root to application identity.
+		 *
+		 * @return string
+		 */
+		protected function getBinding() {
+			return 'application';
+		}
+
+		/**
+		 * Start main routine.
+		 * Run setup method. Load language strings. Parse the request address. Run the module(s). Configure the status
+		 * and content-type. Generate, compress and send the output. Perform database updates and maintenance.
+		 *
+		 * @param boolean $finish
+		 */
+		public function routine($finish = true) {
+			$root     = $this->root;
+			$language = $root->language;
+			$handler  = $root->handler;
+			$module   = $root->module;
+			$template = $root->template;
+
+			try {
+				$level = ob_get_level();
+
+				if ($this->errors) {
+					$language->load();
+
+					throw $this->errors[0];
+				}
+
+				$module->load();
+				$language->load();
+
+				// Parse the request.
+				if ($handler->parse()) {
+					$start = microtime(true)*1e6;
+
+					$handler->request();
+
+					// Calculate the time it took to run the module.
+					$template->add(['runtime' => $runtime = microtime(true)*1e6 - $start]);
+				}
+
+				if (s\ship) {
+					$this->generate();
+
+					ob_end_clean();
+					echo $this->content;
+
+					if ($finish && function_exists('fastcgi_finish_request')) {
+						fastcgi_finish_request();
+					}
+
+					$this->broadcast('close');
+				} else {
+					if (ob_get_level() != $level) {
+						throw new exception('OUTPUT_BUFFER_LEVEL_DIFFERS');
+					}
+
+					if (ob_get_length()) {
+						throw new exception('OUTPUT_BUFFER_NOT_EMPTY');
+					}
+
+					$this->generate();
+					$this->broadcast('close');
+
+					if (ob_get_length()) {
+						throw new exception('OUTPUT_BUFFER_NOT_EMPTY');
+					}
+
+					if (isset($runtime)) {
+						if ($runtime > 1e3) {
+							$runtime = number_format($runtime/1e3).'ms';
+						} else {
+							$runtime = number_format($runtime).utf8_decode('µs');
+						}
+
+						header("X-Debug-Module-Runtime: $runtime");
+					}
+
+					ob_end_clean();
+
+					if (isset($_SERVER['REQUEST_TIME_FLOAT'])) {
+						$runtime = microtime(true)*1e6 - $_SERVER['REQUEST_TIME_FLOAT']*1e6;
+
+						// Create an extra header warning when runtime is greater than 100ms.
+						if ($runtime > 1e5) {
+							header('X-Debug-Warning-Runtime: Runtime is over 100ms!');
+						}
+
+						if ($runtime > 1e3) {
+							$runtime = number_format($runtime/1e3).'ms';
+						} else {
+							$runtime = number_format($runtime).utf8_decode('µs');
+						}
+
+						header("X-Debug-Total-Runtime: $runtime");
+					}
+
+					echo $this->content;
+					// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
+				}
+			} catch (exception $exception) {
+				$handler->error($exception);
+
+				$this->generate();
+
+				ob_end_clean();
+				echo $this->content;
+			}
 		}
 
 		/**
