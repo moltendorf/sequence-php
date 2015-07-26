@@ -112,8 +112,25 @@ namespace sequence\root {
 				}
 			}
 
+			if (isset($options['replyTo'])) {
+				$replyTo = $options['replyTo'];
+
+				if (is_string($replyTo)) {
+					$replyTo = [$replyTo];
+				}
+
+				foreach ($replyTo as $key => $value) {
+					if (!Validate::email(is_string($key) ? $key : $value)) {
+						throw new exception('INVALID_EMAIL_REPLYTO');
+					}
+				}
+
+				$options['replyTo'] = $replyTo;
+			}
+
 			$options += [
-				'generate' => true
+				'generate' => true,
+				'replyTo'  => false
 			];
 
 			$this->queue[] = [$to, $from, $subject, $message, $reason, $style, $options];
@@ -220,6 +237,10 @@ namespace sequence\root {
 					$envelope->setTo($to);
 					$envelope->setSubject($subject);
 					$envelope->setBody($message);
+
+					if ($options['replyTo']) {
+						$envelope->setReplyTo($options['replyTo']);
+					}
 
 					ob_start();
 
