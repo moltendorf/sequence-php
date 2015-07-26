@@ -243,7 +243,7 @@ namespace sequence\root {
 					}
 				}
 
-				if ($count = count($tokens)/2) {
+				if ($count = count($tokens)/3) {
 					$statement = $database->prepare("
 						replace into {$prefix}email_tokens (user_id, token_id, token_reason) values
 						".implode(",\n", array_fill(0, $count, '(?, UNHEX(?), ?)'))."
