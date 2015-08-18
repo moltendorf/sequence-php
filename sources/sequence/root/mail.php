@@ -243,7 +243,11 @@ namespace sequence\root {
 					ob_start();
 
 					try {
-						$template->set(['message' => $converter->convertToHtml($message)]);
+						$template->set([
+							'subject' => $subject,
+							'message' => $converter->convertToHtml($message)
+						]);
+
 						$template->load($template->file(array_shift($options['style'])), ...$options['style']);
 
 						$envelope->addPart(ob_get_clean(), 'text/html');
