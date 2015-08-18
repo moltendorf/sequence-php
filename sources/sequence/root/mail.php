@@ -66,13 +66,11 @@ namespace sequence\root {
 		 * @param string       $from
 		 * @param string       $subject
 		 * @param string       $message
-		 * @param null         $reason
-		 * @param array        $style
 		 * @param array        $options
 		 *
 		 * @throws exception
 		 */
-		public function send($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], array $options = []) {
+		public function send($to, $from, $subject, $message, array $options = []) {
 			$root     = $this->root;
 			$settings = $root->settings;
 
@@ -129,11 +127,13 @@ namespace sequence\root {
 			}
 
 			$options += [
+				'style'    => ['mail.html'],
 				'generate' => true,
+				'reason'   => null,
 				'replyTo'  => false
 			];
 
-			$this->queue[] = [$to, $from, $subject, $message, $reason, $style, $options];
+			$this->queue[] = [$to, $from, $subject, $message, $options];
 		}
 
 		/**
@@ -168,17 +168,15 @@ namespace sequence\root {
 				$tokens = [];
 
 				/**
-				 * @param string      $to
-				 * @param string      $from
-				 * @param string      $subject
-				 * @param string      $message
-				 * @param string|null $reason
-				 * @param array       $style
-				 * @param array       $options
+				 * @param string $to
+				 * @param string $from
+				 * @param string $subject
+				 * @param string $message
+				 * @param array  $options
 				 *
 				 * @throws exception
 				 */
-				$process = function ($to, $from, $subject, $message, $reason = null, $style = ['mail.html'], array $options = [])
+				$process = function ($to, $from, $subject, $message, array $options = [])
 				use ($database, $template, $prefix, $converter, $mailer, &$lookup, &$tokens) {
 					list($name, $email) = $to;
 
@@ -222,7 +220,7 @@ namespace sequence\root {
 
 							$tokens[] = $id;
 							$tokens[] = bin2hex($token);
-							$tokens[] = $reason;
+							$tokens[] = $options['reason'];
 
 							$lookup[$email] = [$id, $token];
 						} else {
@@ -246,7 +244,7 @@ namespace sequence\root {
 
 					try {
 						$template->set(['message' => $converter->convertToHtml($message)]);
-						$template->load($template->file(array_shift($style)), ...$style);
+						$template->load($template->file(array_shift($options['style'])), ...$options['style']);
 
 						$envelope->addPart(ob_get_clean(), 'text/html');
 					} catch (exception $exception) {
