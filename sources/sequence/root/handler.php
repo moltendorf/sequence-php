@@ -767,11 +767,12 @@ namespace sequence\root {
 		 * Generate a redirect page.
 		 *
 		 * @param string      $location
+		 * @param int|null    $status
 		 * @param null|string $title
 		 * @param null|string $message
-		 * @param int|null    $status
+		 * @param int         $delay
 		 */
-		public function redirect($location, $title = null, $message = null, $status = 302, $delay = 15) {
+		public function redirect($location, $status = 302, $title = null, $message = null, $delay = 15) {
 			$root     = $this->root;
 			$template = $root->template;
 
