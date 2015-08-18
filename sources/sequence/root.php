@@ -30,7 +30,8 @@ namespace sequence {
 		 * @param array  $homePath
 		 */
 		public function __construct($systemPath, $homePath) {
-			$this->application = new application($this, $systemPath, $homePath);
+			$this->application = new application($this);
+			$this->application->setup($systemPath, $homePath);
 		}
 
 		/**

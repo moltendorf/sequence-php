@@ -52,11 +52,18 @@ namespace sequence\root {
 		 * Basic constructor. Store reference of root class instance.
 		 *
 		 * @param s\root $root
+		 */
+		public function __construct(s\root $root) {
+			$this->root = $root;
+		}
+
+		/**
+		 *
 		 * @param string $systemPath
 		 * @param array  $homePath
 		 */
-		public function __construct(s\root $root, $systemPath, $homePath) {
-			$this->root = $root;
+		public function setup($systemPath, $homePath) {
+			$root = $this->root;
 
 			/*
 			 * Set up output buffering.
