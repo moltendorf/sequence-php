@@ -5,6 +5,8 @@ namespace sequence {
 	/**
 	 * Main function.
 	 * Created and called to keep all variables out of global scope.
+	 *
+	 * @return root
 	 */
 	function main() {
 		/*
