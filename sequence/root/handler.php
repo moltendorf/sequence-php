@@ -2,10 +2,9 @@
 
 namespace sequence\root {
 
+	use exception;
 	use sequence as s;
 	use sequence\functions as f;
-
-	use exception;
 
 	class handler {
 
@@ -154,9 +153,11 @@ namespace sequence\root {
 
 				// Check if this path is to be included in the navigation.
 				if ($row[5]) {
-					$this->navigation[] = ['path'    => $path,
-					                       'module'  => $row[1],
-					                       'display' => $row[2]];
+					$this->navigation[] = [
+						'path'    => $path,
+						'module'  => $row[1],
+						'display' => $row[2]
+					];
 				}
 			}
 		}
@@ -305,11 +306,15 @@ namespace sequence\root {
 
 			if (isset($selected)) {
 				$this->modules = [$selected['module']];
-				$this->request = [$selected['alias'].substr($normalized, strlen($selected['path'])),
-				                  $path.$selected['path']];
+				$this->request = [
+					$selected['alias'].substr($normalized, strlen($selected['path'])),
+					$path.$selected['path']
+				];
 
-				$template->add(['module_name'    => $selected['module'],
-				                'module_display' => $selected['display']]);
+				$template->add([
+					'module_name'    => $selected['module'],
+					'module_display' => $selected['display']
+				]);
 
 				if ($_SERVER['REQUEST_URI'] != $path.$normalized) {
 					$this->redirect($path.$normalized);
@@ -464,6 +469,10 @@ namespace sequence\root {
 
 						break;
 					}
+
+					$this->error($status);
+
+					break;
 
 				case 401:
 				case 403:
@@ -755,9 +764,11 @@ namespace sequence\root {
 					$title   = $language['INFO'];
 				}
 
-				$template->set(['title'             => $title,
-				                'message'           => $message,
-				                'redirect_location' => null]);
+				$template->set([
+					'title'             => $title,
+					'message'           => $message,
+					'redirect_location' => null
+				]);
 			});
 		}
 
@@ -825,10 +836,12 @@ namespace sequence\root {
 						$message = $language[$message];
 					}
 
-					$template->set(['title'             => $title,
-					                'message'           => $message,
-					                'redirect_location' => $location,
-					                'redirect_display'  => preg_replace('/[\\/]$/', '', $display)]);
+					$template->set([
+						'title'             => $title,
+						'message'           => $message,
+						'redirect_location' => $location,
+						'redirect_display'  => preg_replace('/[\\/]$/', '', $display)
+					]);
 				});
 			}
 		}
@@ -842,9 +855,11 @@ namespace sequence\root {
 			$root     = $this->root;
 			$template = $root->template;
 
-			$template->set(['title'             => null,
-			                'message'           => null,
-			                'redirect_location' => null]);
+			$template->set([
+				'title'             => null,
+				'message'           => null,
+				'redirect_location' => null
+			]);
 
 			$this->typeRaw = null;
 
@@ -863,12 +878,14 @@ namespace sequence\root {
 
 				if (s\debug) {
 					do {
-						$exception[] = ['instance' => $status,
-						                'class'    => get_class($status),
-						                'message'  => $status->getMessage(),
-						                'file'     => $status->getFile(),
-						                'line'     => $status->getLine(),
-						                'trace'    => f\text_format(f\text_normalize(f\trace_text($status->getTrace())))];
+						$exception[] = [
+							'instance' => $status,
+							'class'    => get_class($status),
+							'message'  => $status->getMessage(),
+							'file'     => $status->getFile(),
+							'line'     => $status->getLine(),
+							'trace'    => f\text_format(f\text_normalize(f\trace_text($status->getTrace())))
+						];
 					} while ($status = $status->getPrevious());
 
 					$template->set(['error_exceptions' => $exception]);
