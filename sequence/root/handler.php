@@ -506,9 +506,8 @@ namespace sequence\root {
 		/**
 		 * Set the current template file.
 		 *
-		 * @param         $name
-		 * @param boolean $customizations Override use customizations.
-		 * @param string  $style          Override current style.
+		 * @param string|false|array $input
+		 * @param callable           $method
 		 *
 		 * @return string|false|null
 		 */
@@ -565,9 +564,8 @@ namespace sequence\root {
 		/**
 		 * Set the current template file directly.
 		 *
-		 * @param string  $file
-		 * @param boolean $customizations Override use customizations.
-		 * @param string  $style          Override current style.
+		 * @param string|false|array $input
+		 * @param callable           $method
 		 *
 		 * @return string|false
 		 */
