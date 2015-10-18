@@ -742,14 +742,14 @@ namespace sequence\root {
 			 * Load all current template scripts.
 			 */
 
-			$this->loadSet($set, $find($this->style), $folder);
+			$this->loadSet($set, $find($this->style), "($this->style style)/template/$folder");
 
 			/*
 			 * Load all current template module scripts.
 			 */
 
 			foreach ($module->getLoaded() as $name => $instance) {
-				$this->loadSet($set, $find($this->style, "module/$name"), "$name:$folder");
+				$this->loadSet($set, $find($this->style, "module/$name"), "($name module)/template/$folder");
 			}
 
 			$this->outputSet($set);
