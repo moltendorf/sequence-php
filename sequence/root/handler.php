@@ -339,51 +339,60 @@ namespace sequence\root {
 		 *
 		 * @return bool
 		 */
-			$root   = $this->root;
-			$module = $root->module;
 		public function parseQuery($module) {
+			$root     = $this->root;
+			$module   = $root->module;
+			$settings = $root->settings;
 
-			$limit = ini_get('memory_limit');
+			$limit = $settings['query_limit'];
 
-			$quantifier = substr($limit, -1);
-			$limit      = (int)substr($limit, 0, -1);
+			if ($limit === null) {
+				$limit = ini_get('memory_limit');
 
-			switch ($quantifier) {
-			case 'k':
-			case 'K':
-				// Hopefully this is more than 4MiB.
-				$limit *= 2**10;
-				break;
+				$quantifier = substr($limit, -1);
+				$limit      = (int)substr($limit, 0, -1);
 
-			case 'M':
-			case 'm':
-				$limit *= 2**20;
-				break;
+				switch ($quantifier) {
+				case 'k':
+				case 'K':
+					// Hopefully this is more than 4MiB.
+					$limit *= 2**10;
+					break;
 
-			case 'g':
-			case 'G':
-				$limit *= 2**30;
-				break;
+				case 'M':
+				case 'm':
+					$limit *= 2**20;
+					break;
 
-			case 't':
-			case 'T':
-				// Wow.
-				$limit *= 2**40;
-				break;
+				case 'g':
+				case 'G':
+					$limit *= 2**30;
+					break;
 
-			case '-':
-				$limit = 128*2**20;
-				break;
+				case 't':
+				case 'T':
+					// Wow.
+					$limit *= 2**40;
+					break;
 
-			default:
-				$limit = $limit*10 + (int)$quantifier;
-			}
+				case '-':
+					$limit = 128*2**20;
+					break;
 
-			if ($limit > 16*2**20) {
-				// Limit it to 1/4 of memory limit floored to 4MiB chunks (this should be around 32MiB on default installs).
-				$limit = floor($limit/4/(4*2**20))*4*2**20;
+				default:
+					$limit = $limit*10 + (int)$quantifier;
+				}
+
+				if ($limit > 16*2**20) {
+					// Limit it to 1/4 of memory limit floored to 4MiB chunks (this should be around 32MiB on default installs).
+					$limit = floor($limit/4/(4*2**20))*4*2**20;
+				} else {
+					$limit = 4*2**20; // 4MiB minimum limit.
+				}
+
+				$settings->offsetStore('query_limit', $limit);
 			} else {
-				$limit = 4*2**20; // 4MiB minimum limit.
+				$limit = (int)$limit;
 			}
 
 			$this->query = f\json_decode(file_get_contents('php://input', false, null, 0, $limit + 1));
