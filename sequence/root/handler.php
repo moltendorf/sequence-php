@@ -15,7 +15,7 @@ namespace sequence\root {
 		 *
 		 * @var array
 		 */
-		const messages = ['module'];
+		const messages = ['module', 'query'];
 
 		/**
 		 * Array of content types.
