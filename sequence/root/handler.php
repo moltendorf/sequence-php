@@ -436,11 +436,20 @@ namespace sequence\root {
 			if (isset($this->query)) {
 				$this->broadcast('query');
 
+				$response = [];
+
 				foreach ($this->query as $name => $input) {
 					$response[$name] = $module[$name]->query($input);
 
 					unset($this->query[$name]);
 				}
+
+				$this->setMethod(function () use ($response) {
+					echo json_encode((object)$response);
+				});
+
+				$this->setStatus(200);
+				$this->setType('json');
 			} else {
 				$name = $this->modules[0];
 				$this->broadcast("module:$name");
