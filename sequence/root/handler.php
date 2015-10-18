@@ -528,7 +528,7 @@ namespace sequence\root {
 		 * Set the method to generate the output.
 		 *
 		 * @param callable $method
-		 * @param array    $arguments
+		 * @param array $arguments
 		 */
 		public function setMethod($method, $arguments = []) {
 			$this->method = [$method, $arguments];
@@ -538,7 +538,7 @@ namespace sequence\root {
 		 * Set the current template file.
 		 *
 		 * @param string|false|array $input
-		 * @param callable           $method
+		 * @param callable $method
 		 *
 		 * @return string|false|null
 		 */
@@ -596,7 +596,7 @@ namespace sequence\root {
 		 * Set the current template file directly.
 		 *
 		 * @param string|false|array $input
-		 * @param callable           $method
+		 * @param callable $method
 		 *
 		 * @return string|false
 		 */
@@ -663,7 +663,7 @@ namespace sequence\root {
 		/**
 		 * Set the current content type based on file extension.
 		 *
-		 * @param string      $type
+		 * @param string $type
 		 * @param string|null $charset
 		 *
 		 * @throws exception
@@ -797,11 +797,11 @@ namespace sequence\root {
 		/**
 		 * Generate a redirect page.
 		 *
-		 * @param string      $location
-		 * @param int|null    $status
+		 * @param string $location
+		 * @param int|null $status
 		 * @param null|string $title
 		 * @param null|string $message
-		 * @param int         $delay
+		 * @param int $delay
 		 */
 		public function redirect($location, $status = 302, $title = null, $message = null, $delay = 15) {
 			$root     = $this->root;

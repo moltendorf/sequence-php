@@ -652,7 +652,7 @@ namespace sequence\root {
 		 * Brainstorming:
 		 *
 		 * 1.   Load all master scripts.
-		 * 2.   Load all master scripts for all for all loaded modules.
+		 * 2.   Load all master scripts for all loaded modules.
 		 * 3.   Load all current template scripts.
 		 * 4.   Load all customization template scripts.
 		 * 4.   Load all current template scripts for all loaded modules.
