@@ -334,10 +334,14 @@ namespace sequence\root {
 
 		/**
 		 * Parse the query.
+		 *
+		 * @param $module
+		 *
+		 * @return bool
 		 */
-		public function parseQuery() {
 			$root   = $this->root;
 			$module = $root->module;
+		public function parseQuery($module) {
 
 			$limit = ini_get('memory_limit');
 
