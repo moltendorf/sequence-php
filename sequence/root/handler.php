@@ -383,11 +383,11 @@ namespace sequence\root {
 					$limit = $limit*10 + (int)$quantifier;
 				}
 
-				if ($limit > 16*2**20) {
-					// Limit it to 1/4 of memory limit floored to 4MiB chunks (this should be around 32MiB on default installs).
-					$limit = floor($limit/4/(4*2**20))*4*2**20;
+				if ($limit > 64*2**10) {
+					// Limit it to 1/16 of memory limit (this should be around 8MiB on default installs).
+					$limit = floor($limit/16);
 				} else {
-					$limit = 4*2**20; // 4MiB minimum limit.
+					$limit = 64*2**10; // 64KiB minimum limit.
 				}
 
 				$settings->offsetStore('query_limit', $limit);
