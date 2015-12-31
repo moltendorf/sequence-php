@@ -225,6 +225,10 @@ namespace sequence\root {
 			$this->data = $input + $this->data;
 		}
 
+		public function get() {
+			return $this->data;
+		}
+
 		/**
 		 * Clear all template variables.
 		 */
