@@ -163,9 +163,9 @@ namespace sequence\module\core {
 
 			if (isset($v['page_title'])) {
 				$title = $v['page_title'];
-			} else if (isset($v['module_display'])) {
+			} elseif (isset($v['module_display'])) {
 				$title = $v['module_display'];
-			} else if (isset($v['module_name'])) {
+			} elseif (isset($v['module_name'])) {
 				$title = $v['module_name'];
 			} else {
 				goto title_suffix;
@@ -241,16 +241,18 @@ namespace sequence\module\core {
 
 			$stylesheet = "/static/style/$style.css";
 
-			$template->add(['core_display'           => $display,
-			                'core_tagline'           => $tagline,
-			                'core_title'             => $title,
-			                'core_copyright'         => $copyright,
-			                'core_copyright_display' => $copyright_display,
-			                'core_copyright_date'    => $copyright_date,
-			                'core_root'              => $s['root'],
-			                'core_navigation'        => $modules,
-			                'core_script'            => $script,
-			                'core_stylesheet'        => $stylesheet]);
+			$template->add([
+				'core_display'           => $display,
+				'core_tagline'           => $tagline,
+				'core_title'             => $title,
+				'core_copyright'         => $copyright,
+				'core_copyright_display' => $copyright_display,
+				'core_copyright_date'    => $copyright_date,
+				'core_root'              => $s['root'],
+				'core_navigation'        => $modules,
+				'core_script'            => $script,
+				'core_stylesheet'        => $stylesheet
+			]);
 		}
 	}
 }
