@@ -139,6 +139,8 @@ namespace sequence\module\core {
 			$s        = $root->settings;
 			$template = $root->template;
 
+			$v = $template->get();
+
 			// Site display.
 
 			if (isset($s['site_display'])) {
@@ -154,6 +156,25 @@ namespace sequence\module\core {
 			} else {
 				$tagline = false;
 			}
+
+			// Site title.
+
+			$title = '';
+
+			if (isset($v['page_title'])) {
+				$title = $v['page_title'];
+			} else if (isset($v['module_display'])) {
+				$title = $v['module_display'];
+			} else if (isset($v['module_name'])) {
+				$title = $v['module_name'];
+			} else {
+				goto title_suffix;
+			}
+
+			$title .= ' // ';
+
+			title_suffix:
+			$title .= $display;
 
 			// Copyright display.
 
@@ -222,6 +243,7 @@ namespace sequence\module\core {
 
 			$template->add(['core_display'           => $display,
 			                'core_tagline'           => $tagline,
+			                'core_title'             => $title,
 			                'core_copyright'         => $copyright,
 			                'core_copyright_display' => $copyright_display,
 			                'core_copyright_date'    => $copyright_date,
