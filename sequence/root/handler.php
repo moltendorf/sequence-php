@@ -218,7 +218,7 @@ namespace sequence\root {
 
 			// Check if the request is for the query interface.
 			if (substr("/$normalized/", 0, $length) === $query) {
-				return $this->parseQuery(substr("/$normalized", $length));
+				return $this->parseQuery();
 			}
 
 			$length = strlen($normalized);
@@ -333,84 +333,118 @@ namespace sequence\root {
 		}
 
 		/**
-		 * Parse the query.
-		 *
-		 * @param $module
+		 * Parse a query.
 		 *
 		 * @return bool
 		 */
-		public function parseQuery($module) {
+		public function parseQuery() {
 			$root     = $this->root;
 			$module   = $root->module;
 			$settings = $root->settings;
 
 			$limit = $settings['query_limit'];
+			$raw_limit = $settings['query_raw_limit'];
 
-			if ($limit === null) {
-				$limit = ini_get('memory_limit');
+			if ($limit === null || $raw_limit === null) {
+				$max = ini_get('memory_limit');
 
-				$quantifier = substr($limit, -1);
-				$limit      = (int)substr($limit, 0, -1);
+				$quantifier = substr($max, -1);
+				$max      = (int)substr($max, 0, -1);
 
 				switch ($quantifier) {
 				case 'k':
 				case 'K':
 					// Hopefully this is more than 4MiB.
-					$limit *= 2**10;
+					$max *= 2**10;
 					break;
 
 				case 'M':
 				case 'm':
-					$limit *= 2**20;
+					$max *= 2**20;
 					break;
 
 				case 'g':
 				case 'G':
-					$limit *= 2**30;
+					$max *= 2**30;
 					break;
 
 				case 't':
 				case 'T':
 					// Wow.
-					$limit *= 2**40;
+					$max *= 2**40;
 					break;
 
 				case '-':
-					$limit = 128*2**20;
+					$max = 128*2**20;
 					break;
 
 				default:
-					$limit = $limit*10 + (int)$quantifier;
+					$max = $max*10 + (int)$quantifier;
 				}
 
-				if ($limit > 64*2**10) {
-					// Limit it to 1/16 of memory limit (this should be around 8MiB on default installs).
-					$limit = floor($limit/16);
-				} else {
-					$limit = 64*2**10; // 64KiB minimum limit.
+				if ($limit === null) {
+					if ($max > 2**20) {
+						// Limit normal queries to 1/16 of memory limit (this should be around 8MiB on default installs).
+						$limit = floor($max/16);
+					} else {
+						$limit = 64*2**10; // 64KiB minimum limit.
+					}
+
+					$settings->offsetStore('query_limit', $limit);
 				}
 
-				$settings->offsetStore('query_limit', $limit);
+				if ($raw_limit === null) {
+					if ($max > 512*2**10) {
+						// Limit raw queries to 1/4 of memory limit (this should be around 32MiB on default installs).
+						$raw_limit = floor($max/4);
+					} else {
+						$raw_limit = 64*2**10; // 64KiB minimum limit.
+					}
+
+					$settings->offsetStore('query_raw_limit', $limit);
+				}
 			} else {
 				$limit = (int)$limit;
+				$raw_limit = (int)$raw_limit;
 			}
 
-			$this->query = f\json_decode(file_get_contents('php://input', false, null, 0, $limit + 1));
+			if (isset($_GET['module'])) {
+				$name = $_GET['module'];
 
-			if (!is_array($this->query)) {
-				$this->query = [];
-			}
-
-			ksort($this->query);
-
-			$this->modules = [];
-
-			// Check if this module is enabled.
-			foreach (array_keys($this->query) as $name) {
 				if (isset($module[$name])) {
 					$this->modules[] = $name;
+
+					if (isset($_GET['raw']) && $_GET['raw'] === '') {
+						// Fetch input without processing it.
+						$this->query = [
+							$name => file_get_contents('php://input', false, null, 0, $raw_limit + 1)
+						];
+					} else {
+						$this->query = [
+							$name => f\json_decode(file_get_contents('php://input', false, null, 0, $limit + 1))
+						];
+					}
 				} else {
-					unset($this->query[$name]);
+					$this->query = null;
+				}
+			} else {
+				$this->query = f\json_decode(file_get_contents('php://input', false, null, 0, $limit + 1));
+
+				if (!is_array($this->query)) {
+					$this->query = [];
+				}
+
+				ksort($this->query);
+
+				$this->modules = [];
+
+				// Check if this module is enabled.
+				foreach (array_keys($this->query) as $name) {
+					if (isset($module[$name])) {
+						$this->modules[] = $name;
+					} else {
+						unset($this->query[$name]);
+					}
 				}
 			}
 
