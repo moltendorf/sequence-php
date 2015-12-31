@@ -16,8 +16,7 @@
 <script src="//code.jquery.com/jquery-2.1.3.min.js" defer></script>
 <script src="<?= $v['core_script'] ?>" defer></script>
 
-<title><?= (isset($v['module_name']) ? (isset($v['module_display']) ? $v['module_display'] : $v['module_name']).' // ' : '').
-	$v['core_display'] ?></title>
+<title><?= $v['core_title'] ?></title>
 </head>
 
 <body>
