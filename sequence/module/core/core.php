@@ -185,8 +185,6 @@ namespace sequence\module\core {
 
 			// Navigation data.
 
-			$v['core_root'] = $s['root'];
-
 			$navigation = $handler->getNavigation();
 
 			if ($navigation) {
