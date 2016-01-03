@@ -6,7 +6,7 @@
 	//                     x      y      blur   spread      R  G  B  Opacity
 	'style_shadow'     => '0.1rem 0.1rem 0.4rem 0.1rem rgba(0, 0, 0, 0.45)',
 	//                      foreground background
-	'style_textcolor'  => ['#000000', '#ffffff'], // Black on white.
+	'style_textcolor'  => ['#000000', '#ffffff', '#eeeeee'], // Black on white.
 	//                      default    hover      visited    visited+hover
 	'style_linkcolor'  => ['#3377dd', '#5599ff', '#5555bb', '#9999ff'],
 	//                      default    active     hover
