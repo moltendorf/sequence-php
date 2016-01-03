@@ -13,7 +13,11 @@
 <script src="//use.typekit.net/rhu8axb.js"></script>
 <script>try{Typekit.load();}catch(e){}</script>
 
-<script src="//code.jquery.com/jquery-2.1.3.min.js" defer></script>
+<?php if (sequence\ship): ?>
+    <script src="//code.jquery.com/jquery-2.1.4.min.js" defer></script>
+<?php else: ?>
+    <script src="//code.jquery.com/jquery-2.1.4.js" defer></script>
+<?php endif; ?>
 <script src="<?= $v['core_script'] ?>" defer></script>
 
 <title><?= $v['core_title'] ?></title>
