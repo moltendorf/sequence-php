@@ -36,14 +36,15 @@ namespace sequence {
 		 * Register a class to receive messages from a binding or globally.
 		 *
 		 * @param callable    $method
-		 * @param             $message
+		 * @param string      $message
 		 * @param null|string $binding
+		 * @param integer     $priority
 		 */
-		protected function listen(callable $method, $message, $binding = null) {
+		protected function listen(callable $method, $message, $binding = null, $priority = 0) {
 			$root = $this->root;
 			$hook = $root->hook;
 
-			$hook->listen($method, $message, $binding);
+			$hook->listen($method, $message, $binding, $priority);
 		}
 	}
 }

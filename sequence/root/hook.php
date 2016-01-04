@@ -80,15 +80,19 @@ namespace sequence\root {
 		public function broadcast($base, $message, $arguments) {
 			if (isset($base)) {
 				if (isset($this->global[$base])) {
-					foreach ($this->global[$base] as $method) {
-						$method($message, ...$arguments);
+					foreach ($this->global[$base] as $priority) {
+						foreach ($priority as $method) {
+							$method($message, ...$arguments);
+						}
 					}
 				}
 			}
 
 			if (isset($this->global[$message])) {
-				foreach ($this->global[$message] as $method) {
-					$method($message, ...$arguments);
+				foreach ($this->global[$message] as $priority) {
+					foreach ($priority as $method) {
+						$method($message, ...$arguments);
+					}
 				}
 			}
 		}
@@ -96,13 +100,14 @@ namespace sequence\root {
 		/**
 		 * Register a class to receive messages from a binding.
 		 *
-		 * @param callable $method
-		 * @param string   $message
-		 * @param string   $binding
+		 * @param callable    $method
+		 * @param string      $message
+		 * @param null|string $binding
+		 * @param integer     $priority
 		 *
 		 * @throws exception
 		 */
-		public function listen(callable $method, $message, $binding = null) {
+		public function listen(callable $method, $message, $binding = null, $priority = 0) {
 			if (isset($binding)) {
 				if (isset($this->listeners[$binding])) {
 					if (s\debug && count($this->bindings[$binding])) {
@@ -122,22 +127,32 @@ namespace sequence\root {
 					}
 
 					if (isset($this->listeners[$binding][$message])) {
-						$this->listeners[$binding][$message][] = $method;
+						if (isset($this->listeners[$binding][$message][$priority])) {
+							$this->listeners[$binding][$message][$priority][] = $method;
+						} else {
+							$this->listeners[$binding][$message][$priority] = [$method];
+
+							ksort($this->listeners[$binding][$message]);
+						}
 					} else {
-						$this->listeners[$binding][$message] = [$method];
+						$this->listeners[$binding][$message] = [$priority => [$method]];
 					}
 				} else {
 					$this->bindings[$binding] = [];
 
-					$this->listeners[$binding] = [
-						$message => [$method]
-					];
+					$this->listeners[$binding] = [$message => [$priority => [$method]]];
 				}
 			} else {
 				if (isset($this->global[$message])) {
-					$this->global[$message][] = $method;
+					if (isset($this->global[$message][$priority])) {
+						$this->global[$message][$priority][] = $method;
+					} else {
+						$this->global[$message][$priority] = [$method];
+
+						ksort($this->global[$message]);
+					}
 				} else {
-					$this->global[$message] = [$method];
+					$this->global[$message] = [$priority => [$method]];
 				}
 			}
 		}

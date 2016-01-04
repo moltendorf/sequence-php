@@ -80,8 +80,10 @@ namespace sequence {
 				$hook->broadcast($base, $message, $arguments);
 
 				if (isset($this->listeners[$base])) {
-					foreach ($this->listeners[$base] as $method) {
-						$method($message, ...$arguments);
+					foreach ($this->listeners[$base] as $priority) {
+						foreach ($priority as $method) {
+							$method($message, ...$arguments);
+						}
 					}
 				}
 			} else {
@@ -94,8 +96,10 @@ namespace sequence {
 			}
 
 			if (isset($this->listeners[$message])) {
-				foreach ($this->listeners[$message] as $method) {
-					$method($message, ...$arguments);
+				foreach ($this->listeners[$message] as $priority) {
+					foreach ($priority as $method) {
+						$method($message, ...$arguments);
+					}
 				}
 			}
 		}
