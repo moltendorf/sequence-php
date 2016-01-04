@@ -19,7 +19,7 @@ namespace sequence\root {
 		 *
 		 * @var array
 		 */
-		const messages = ['ready', 'close'];
+		const messages = ['ready', 'output', 'close'];
 
 		/**
 		 * Errors that occurred during setup.
@@ -40,7 +40,7 @@ namespace sequence\root {
 		 *
 		 * @var string
 		 */
-		protected $content;
+		public $content;
 
 		/**
 		 *
@@ -355,6 +355,8 @@ namespace sequence\root {
 			$handler = $root->handler;
 
 			$this->content = $handler->output();
+
+			$this->broadcast('output', $this);
 
 			// Prevent issues if we're debugging.
 			if (s\ship) {
