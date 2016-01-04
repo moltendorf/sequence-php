@@ -46,6 +46,7 @@ namespace sequence\root {
 		 */
 		public function __construct(s\root $root, $binding = '') {
 			$this->bind($root, $binding);
+			$this->clear();
 
 			$application = $root->application;
 			$settings    = $root->settings;
@@ -225,6 +226,24 @@ namespace sequence\root {
 			$this->data = $input + $this->data;
 		}
 
+		/**
+		 * Add a script to this page.
+		 */
+		public function script($script, $defer = true) {
+			$key = $defer ? 'scripts_deferred' : 'scripts';
+
+			if (is_array($script)) {
+				$this->data[$key][] = $script;
+			} else {
+				$this->data[$key][] = ['src' => $script];
+			}
+		}
+
+		/**
+		 * Get a copy of template variables.
+		 *
+		 * @return array
+		 */
 		public function get() {
 			return $this->data;
 		}
@@ -233,7 +252,10 @@ namespace sequence\root {
 		 * Clear all template variables.
 		 */
 		public function clear() {
-			$this->data = [];
+			$this->data = [
+				'scripts'          => [],
+				'scripts_deferred' => []
+			];
 		}
 
 		/**
