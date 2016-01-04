@@ -32,6 +32,7 @@ namespace sequence\module\account {
 		 * @return array
 		 */
 		public function request($request, $request_root) {
+			$this->root->template->script('/static/script/module/account/account.js');
 		}
 
 		/**
