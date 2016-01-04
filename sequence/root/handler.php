@@ -443,6 +443,7 @@ namespace sequence\root {
 					if (isset($module[$name])) {
 						$this->modules[] = $name;
 					} else {
+						// Remove queries to disabled modules.
 						unset($this->query[$name]);
 					}
 				}
