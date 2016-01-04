@@ -22,6 +22,11 @@
                         <label for="account-input-remember-me"><?= $l['ACCOUNT_REMEMBER_ME'] ?></label>
                     </div>
 
+                    <div class="account-appear-offline input-checkbox">
+                        <input id="account-input-appear-offline" name="account-appear-offline" type="checkbox" />
+                        <label for="account-input-appear-offline"><?= $l['ACCOUNT_APPEAR_OFFLINE'] ?></label>
+                    </div>
+
                     <input name="account-log-in" class="input-button" type="submit"
                            value="<?= $l['ACCOUNT_LOG_IN'] ?>" />
                 </div>
