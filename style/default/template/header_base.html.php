@@ -10,8 +10,6 @@
 
 <link rel="stylesheet" href="<?= $v['core_stylesheet'] ?>"/>
 
-<script src="//use.typekit.net/rhu8axb.js"></script>
-<script>try{Typekit.load();}catch(e){}</script>
 <?php foreach($v['scripts'] as $script): ?>
     <?php if (isset($script['src'])): ?>
         <script src="<?= $script['src'] ?>"></script>
