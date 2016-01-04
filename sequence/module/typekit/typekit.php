@@ -44,10 +44,14 @@ namespace sequence\module\typekit {
 		 */
 		public function template() {
 			$root     = $this->root;
-			$template = $root->template;
+			$settings = $root->settings;
 
-			$template->script('//use.typekit.net/rhu8axb.js', false, -10);
-			$template->script(['body' => 'try{Typekit.load();}catch(e){}'], false, -10);
+			if (isset($settings['typekit_kit_id'])) {
+				$template = $root->template;
+
+				$template->script("//use.typekit.net/$settings[typekit_kit_id].js", false, -10);
+				$template->script(['body' => 'try{Typekit.load();}catch(e){}'], false, -10);
+			}
 		}
 	}
 }
