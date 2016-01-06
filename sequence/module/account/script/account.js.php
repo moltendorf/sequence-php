@@ -4,3 +4,5 @@
  * Author      : Matthew Oltendorf (matthew@oltendorf.net)
  * Description : Account management scripts.
  */
+
+"use strict";

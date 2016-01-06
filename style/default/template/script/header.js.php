@@ -4,3 +4,5 @@
  * Author      : Matthew Oltendorf (matthew@oltendorf.net)
  * Description : Main script for <?= $v['style'] ?> style.
  */
+
+"use strict";
