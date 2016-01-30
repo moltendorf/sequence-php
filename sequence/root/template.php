@@ -453,7 +453,11 @@ namespace sequence\root {
 				if (isset($config['priority'])) {
 					$priority = (integer)$config['priority'];
 				} else {
-					$priority = 0;
+					ob_end_clean();
+
+					// End of output buffering.
+
+					continue;
 				}
 
 				$config = null;
