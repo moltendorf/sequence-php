@@ -17,7 +17,11 @@ namespace sequence\module\typekit {
 		public function __construct(s\root $root, $binding = '') {
 			$this->bind($root, $binding);
 
-			$this->listen([$this, 'template'], 'template', 'application', -10);
+			$settings = $root->settings;
+
+			if (isset($settings['typekit_kit_id'])) {
+				$this->listen([$this, 'template'], 'template', 'application', -10);
+			}
 		}
 
 		/**
@@ -45,13 +49,10 @@ namespace sequence\module\typekit {
 		public function template() {
 			$root     = $this->root;
 			$settings = $root->settings;
+			$template = $root->template;
 
-			if (isset($settings['typekit_kit_id'])) {
-				$template = $root->template;
-
-				$template->script("//use.typekit.net/$settings[typekit_kit_id].js", false);
-				$template->script(['body' => 'try{Typekit.load();}catch(e){}'], false);
-			}
+			$template->script("//use.typekit.net/$settings[typekit_kit_id].js", false);
+			$template->script('/static/script/module/typekit/typekit.js', false);
 		}
 	}
 }
