@@ -1,6 +1,12 @@
 <?php
 
 namespace sequence {
+
+	/**
+	 * Current version.
+	 */
+	const version = '0.1';
+
 	use sequence\root\application;
 
 	/**
