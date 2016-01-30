@@ -129,6 +129,15 @@ namespace sequence\root {
 		}
 
 		/**
+		 * Get all variables in json format.
+		 *
+		 * @return string
+		 */
+		public function json() {
+			return json_encode($this->container);
+		}
+
+		/**
 		 * Get the language string. Alias of offsetGet.
 		 *
 		 * @param string  $offset
