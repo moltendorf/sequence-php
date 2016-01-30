@@ -211,7 +211,7 @@ namespace sequence\root {
 			if (isset($settings['query'])) {
 				$query = $settings['query'];
 			} else {
-				$query = '/query/';
+				$settings['query'] = $query = '/query/';
 			}
 
 			$length = strlen($query);
