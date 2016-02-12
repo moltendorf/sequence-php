@@ -66,7 +66,7 @@ namespace sequence\root {
 				$this->tag = $settings['language'];
 			}
 
-			$segment = "language/$this->tag.php";
+			$segment = "language/$this->tag";
 
 			if (isset($settings['template_default'])) {
 				$default  = false;
@@ -83,12 +83,16 @@ namespace sequence\root {
 				$root = $this->root;
 				$path = $root->path;
 
-				if (is_file($file = "$path->home$base/$segment")) {
-					$this->container += require $file;
+				if (is_dir($directory = "$path->home$base/$segment")) {
+					foreach (glob("$directory/*.php") as $file) {
+						$this->container += require $file;
+					}
 				}
 
-				if (is_file($file = "$path->system$base/$segment")) {
-					$this->container += require $file;
+				if (is_dir($directory = "$path->system$base/$segment")) {
+					foreach (glob("$directory/*.php") as $file) {
+						$this->container += require $file;
+					}
 				}
 			};
 
