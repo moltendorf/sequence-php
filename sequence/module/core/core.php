@@ -237,6 +237,11 @@ namespace sequence\module\core {
 			// Script.
 			$script = "/static/style/$style.js";
 
+			$script_data = [
+				'query'   => $s['query'],
+				'version' => s\version
+			];
+
 			// Stylesheet.
 
 			$stylesheet = "/static/style/$style.css";
@@ -251,7 +256,9 @@ namespace sequence\module\core {
 				'core_root'              => $s['root'],
 				'core_navigation'        => $modules,
 				'core_script'            => $script,
-				'core_stylesheet'        => $stylesheet
+				'core_script_data'       => json_encode($script_data),
+				'core_stylesheet'        => $stylesheet,
+				'core_version'           => s\version,
 			]);
 		}
 	}
