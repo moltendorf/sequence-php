@@ -22,5 +22,7 @@ return [
 	'POWERED_BY'                  => 'Powered by Sequence &copy; 2014-'.date('Y'),
 	'COPYRIGHT'                   => 'Copyright &copy;',
 	'BLANK_PAGE'                  => 'Blank Page',
-	'BLANK_PAGE_MESSAGE'          => 'This page was intentionally left blank.'
+	'BLANK_PAGE_MESSAGE'          => 'This page was intentionally left blank.',
+	'CONSOLE_INITIALIZE'          => 'Hiya! Welcome to Sequence (version '.sequence\version.'). Checking parameters...',
+	'CONSOLE_LANGUAGE_NOT_EXIST'  => 'Language variable does not exist: "%1$s".',
 ];
