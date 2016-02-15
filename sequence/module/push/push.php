@@ -124,9 +124,11 @@ namespace sequence\module\push {
 					push_channel = :channel
 			");
 
-			$statement->execute(['device'       => $input['device'],
-			                     'notification' => $input['notification'],
-			                     'channel'      => $input['channel']]);
+			$statement->execute([
+				'device'       => $input['device'],
+				'notification' => $input['notification'],
+				'channel'      => $input['channel']
+			]);
 
 			return 200;
 		}
@@ -149,8 +151,10 @@ namespace sequence\module\push {
 						and push_notification = :notification
 				");
 
-				$statement->execute(['device'       => $input['device'],
-				                     'notification' => $input['notification']]);
+				$statement->execute([
+					'device'       => $input['device'],
+					'notification' => $input['notification']
+				]);
 			} else {
 				if (isset($input['channel']) && filter_var($input['channel'], FILTER_VALIDATE_URL)) {
 					$trusted = 'notify.windows.com';
@@ -168,8 +172,10 @@ namespace sequence\module\push {
 						and push_channel = :channel
 				");
 
-					$statement->execute(['notification' => $input['notification'],
-					                     'channel'      => $input['channel']]);
+					$statement->execute([
+						'notification' => $input['notification'],
+						'channel'      => $input['channel']
+					]);
 				} else {
 					return 404;
 				}
@@ -291,14 +297,16 @@ namespace sequence\module\push {
 								values (:status, UNHEX(:device), :notification, :channel, :request_headers, :request_body, :response_headers, :response_body)
 							");
 
-							$statement->execute(['status'           => $code,
-							                     'device'           => $row[0],
-							                     'notification'     => $notification,
-							                     'channel'          => $row[1],
-							                     'request_headers'  => implode("\n", $headers),
-							                     'request_body'     => $content,
-							                     'response_headers' => implode("\n", $http_response_header),
-							                     'response_body'    => isset($response) ? $response : '']);
+							$statement->execute([
+								'status'           => $code,
+								'device'           => $row[0],
+								'notification'     => $notification,
+								'channel'          => $row[1],
+								'request_headers'  => implode("\n", $headers),
+								'request_body'     => $content,
+								'response_headers' => implode("\n", $http_response_header),
+								'response_body'    => isset($response) ? $response : ''
+							]);
 						}
 
 						break;
