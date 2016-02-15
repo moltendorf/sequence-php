@@ -33,8 +33,6 @@
 	<?php foreach ($v['scripts_deferred'] as $script): ?>
 		<?php if (isset($script['src'])): ?>
 			<script src="<?= $script['src'] ?>" defer></script>
-		<?php else: ?>
-			<script defer><?= $script['body'] ?></script>
 		<?php endif; ?>
 	<?php endforeach; ?>
 
