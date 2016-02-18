@@ -38,6 +38,10 @@ namespace sequence {
 		public function __construct($systemPath, $homePath) {
 			$this->application = new application($this);
 			$this->application->setup($systemPath, $homePath);
+
+			if (!isset($this->database)) {
+				$this->database = null;
+			}
 		}
 
 		/**

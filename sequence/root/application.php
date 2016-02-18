@@ -165,9 +165,6 @@ namespace sequence\root {
 
 			$this->bind($root);
 
-			$database = $root->database;
-			$path     = $root->path;
-
 			/*
 			 * Include settings files.
 			 */
@@ -198,11 +195,15 @@ namespace sequence\root {
 				$settings['path'] = [];
 			}
 
+			$path = $root->path;
+
 			// Set up our paths.
 			$path->settings($systemPath, $homePath, $settings['path']);
 
 			if (isset($settings['database']) && is_array($settings['database'])) {
 				try {
+					$database = $root->database;
+
 					// Open database connection.
 					$database->connect($settings['database']);
 				} catch (exception $exception) {
@@ -250,20 +251,31 @@ namespace sequence\root {
 		 * @param boolean $finish
 		 */
 		public function routine($finish = true) {
-			$root     = $this->root;
-			$language = $root->language;
-			$handler  = $root->handler;
-			$module   = $root->module;
-			$template = $root->template;
+			$root = $this->root;
 
 			try {
 				$level = ob_get_level();
+
+				$language = $root->language;
 
 				if ($this->errors) {
 					$language->load();
 
 					throw $this->errors[0];
 				}
+
+				/*
+				 * Load all major core components.
+				 * ...something breaks when it shouldn't when we load these on demand...something to do with messaging?
+				 */
+
+				$handler  = $root->handler;
+				$module   = $root->module;
+				$template = $root->template;
+
+				/*
+				 * Load all modules and language files.
+				 */
 
 				$module->load();
 				$language->load();
@@ -338,6 +350,8 @@ namespace sequence\root {
 					// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
 				}
 			} catch (exception $exception) {
+				$handler = $root->handler;
+
 				$handler->error($exception);
 
 				$this->generate();

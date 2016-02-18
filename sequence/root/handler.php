@@ -94,7 +94,6 @@ namespace sequence\root {
 		public function __construct(s\root $root, $binding = '') {
 			$this->bind($root, $binding);
 
-			$database = $root->database;
 			$path     = $root->path;
 
 			$types = require "$path->system/types.php";
@@ -105,9 +104,12 @@ namespace sequence\root {
 				}
 			}
 
-			$prefix = $database->getPrefix();
+			$database = $root->database;
 
-			$statement = $database->prepare("
+			if (isset($database)) {
+				$prefix = $database->getPrefix();
+
+				$statement = $database->prepare("
 				select path_root, module_name, module_display, path_alias, path_is_prefix, path_order
 				from {$prefix}paths
 				join {$prefix}modules
@@ -118,46 +120,47 @@ namespace sequence\root {
 					path_order asc
 			");
 
-			$statement->execute();
+				$statement->execute();
 
-			foreach ($statement->fetchAll() as $row) {
-				$path = substr($row[0], 1);
+				foreach ($statement->fetchAll() as $row) {
+					$path = substr($row[0], 1);
 
-				if (strlen($path) > 0) {
-					$segments = explode('/', $path);
-				} else {
-					$segments = [];
-				}
-
-				$branch = &$this->tree;
-
-				foreach ($segments as $segment) {
-					if (!isset($branch['branches'])) {
-						$branch['branches'] = [];
+					if (strlen($path) > 0) {
+						$segments = explode('/', $path);
+					} else {
+						$segments = [];
 					}
 
-					if (!isset($branch['branches'][$segment])) {
-						$branch['branches'][$segment] = [];
+					$branch = &$this->tree;
+
+					foreach ($segments as $segment) {
+						if (!isset($branch['branches'])) {
+							$branch['branches'] = [];
+						}
+
+						if (!isset($branch['branches'][$segment])) {
+							$branch['branches'][$segment] = [];
+						}
+
+						$branch = &$branch['branches'][$segment];
 					}
 
-					$branch = &$branch['branches'][$segment];
-				}
+					$branch['path']    = "$path/";
+					$branch['module']  = $row[1];
+					$branch['display'] = $row[2];
+					$branch['alias']   = $row[3];
+					$branch['prefix']  = (boolean)$row[4];
 
-				$branch['path']    = "$path/";
-				$branch['module']  = $row[1];
-				$branch['display'] = $row[2];
-				$branch['alias']   = $row[3];
-				$branch['prefix']  = (boolean)$row[4];
+					unset($branch);
 
-				unset($branch);
-
-				// Check if this path is to be included in the navigation.
-				if ($row[5]) {
-					$this->navigation[] = [
-						'path'    => $path,
-						'module'  => $row[1],
-						'display' => $row[2]
-					];
+					// Check if this path is to be included in the navigation.
+					if ($row[5]) {
+						$this->navigation[] = [
+							'path'    => $path,
+							'module'  => $row[1],
+							'display' => $row[2]
+						];
+					}
 				}
 			}
 		}
