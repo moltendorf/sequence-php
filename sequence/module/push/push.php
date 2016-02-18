@@ -221,6 +221,39 @@ namespace sequence\module\push {
 			$database = $root->database;
 			$prefix   = $database->getPrefix();
 
+			$token   = $settings["push_token_slack_$notification"];
+			$payload = $settings["push_payload_slack_$notification"];
+
+			if ($token !== null && $payload !== null) {
+				$content = 'payload='.json_encode(f\json_decode($payload) + ['text' => $message]);
+
+				$headers = [
+					'Content-Length: '.strlen($content)
+				];
+
+				try {
+					$context = stream_context_create([
+						'http' => [
+							'method'           => 'POST',
+							'protocol_version' => '1.1',
+							'header'           => implode("\r\n", $headers)."\r\n",
+							'content'          => $content
+						]
+					]);
+
+					$handle = fopen($token, 'rb', false, $context);
+
+					if ($handle) {
+						stream_get_contents($handle); // Discard response.
+						fclose($handle);
+					}
+				} catch (\Exception $exception) {
+					// Ignore.
+				}
+			}
+
+			unset($token);
+
 			$token = $settings['push_token_wns'];
 
 			if ($token === null) {
