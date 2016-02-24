@@ -154,7 +154,7 @@ namespace sequence\module\core {
 			if (isset($s['site_tagline'])) {
 				$tagline = $s['site_tagline'];
 			} else {
-				$tagline = false;
+				$tagline = null;
 			}
 
 			// Site title.
@@ -199,9 +199,9 @@ namespace sequence\module\core {
 					$copyright_date = '';
 				}
 			} else {
-				$copyright         = false;
-				$copyright_display = false;
-				$copyright_date    = false;
+				$copyright         = null;
+				$copyright_display = null;
+				$copyright_date    = null;
 			}
 
 			// Navigation data.
@@ -223,7 +223,7 @@ namespace sequence\module\core {
 					$modules[] = $module;
 				}
 			} else {
-				$modules = false;
+				$modules = null;
 			}
 
 			// Style.
