@@ -244,7 +244,8 @@ namespace sequence\module\core {
 
 			// Stylesheet.
 
-			$stylesheet = "/static/style/$style.css";
+			$stylesheet       = "/static/style/$style.css";
+			$stylesheet_print = "/static/style/$style/print.css";
 
 			$template->add([
 				'core_display'           => $display,
@@ -258,6 +259,7 @@ namespace sequence\module\core {
 				'core_script'            => $script,
 				'core_script_data'       => json_encode($script_data),
 				'core_stylesheet'        => $stylesheet,
+				'core_stylesheet_print'  => $stylesheet_print,
 				'core_version'           => s\version,
 			]);
 		}

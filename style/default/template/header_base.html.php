@@ -14,6 +14,11 @@
 		<link rel="stylesheet" href="<?= $v['core_stylesheet'] ?>"/>
 	<?php endif ?>
 
+	<?php if (isset($v['core_stylesheet_print'])): ?>
+		<link rel="stylesheet"<?php if (empty($v['print'])): ?> media="print"<?php endif ?>
+					href="<?= $v['core_stylesheet_print'] ?>"/>
+	<?php endif ?>
+
 	<?php foreach ($v['scripts'] as $script): ?>
 		<?php if (isset($script['src'])): ?>
 			<script src="<?= $script['src'] ?>"></script>
