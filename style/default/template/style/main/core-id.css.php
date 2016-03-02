@@ -68,6 +68,10 @@
 	display   : block;
 }
 
+#footer-powered-by > a {
+	color : <?= $v['style_footer'] ?>;
+}
+
 #info p + p {
 	margin-top : 0;
 }

@@ -19,7 +19,7 @@ return [
 	'OUTPUT'                      => 'Output',
 	'OUTPUT_BUFFER_NOT_EMPTY'     => 'Unexpected output occurred.',
 	'OUTPUT_BUFFER_LEVEL_DIFFERS' => 'Unexpected output buffering level change.',
-	'POWERED_BY'                  => 'Powered by Sequence &copy; 2014-'.date('Y'),
+	'POWERED_BY'                  => 'Powered by <a href="https://sequence.software/">Sequence</a> &copy; 2014-'.date('Y'),
 	'COPYRIGHT'                   => 'Copyright &copy;',
 	'BLANK_PAGE'                  => 'Blank Page',
 	'BLANK_PAGE_MESSAGE'          => 'This page was intentionally left blank.',
