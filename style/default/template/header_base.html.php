@@ -4,6 +4,8 @@
 	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1"/>
 
+	<title><?= $v['core_title'] ?? $_SERVER['HTTP_HOST'] ?></title>
+
 	<link rel="shortcut icon" href="/favicon.ico" type="image/vnd.microsoft.icon"/>
 	<link rel="shortcut icon" href="/favicon.png" type="image/png"/>
 	<link rel="shortcut icon" href="/favicon.gif" type="image/gif"/>
@@ -35,8 +37,6 @@
 			<script src="<?= $script['src'] ?>" defer></script>
 		<?php endif; ?>
 	<?php endforeach; ?>
-
-	<title><?= $v['core_title'] ?? $_SERVER['HTTP_HOST'] ?></title>
 </head>
 
 <body>
