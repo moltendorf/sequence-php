@@ -47,7 +47,10 @@
 		}
 	}
 
-	/* Drop to fluid width with small page header. */
+	/*
+	 * Drop to fluid width with small page header. We do this regardless of attempting to preserve the desktop layout or
+	 * not as it's just simply nicer on smaller screens, and no more difficult to navigate.
+	 */
 	@media (max-width: 870px) {
 		#site-header {
 			margin-top: 0 !important;
@@ -83,7 +86,12 @@
 		}
 	}
 
-	@media (orientation: landscape) {
+	/*
+	 * Target:
+	 *  - average to large phones in landscape
+	 */
+	@media (orientation: landscape) and (max-device-width: 1279px) {
+		/* Provide desktop-esque website. */
 		@media (max-width: 870px) {
 			:root {
 				font-size: 1.16vw;
@@ -91,7 +99,12 @@
 		}
 	}
 
-	@media (orientation: portrait), (max-width: 700px) {
+	/* Target:
+	 *  - desktop/laptop/tablet/television in all orientations
+	 *  - average to large phones in portrait
+	 *  - very small phones in all orientations
+	 */
+	@media (orientation: portrait), (min-device-width: 1279px), (max-width: 650px) {
 		@media (max-width: 870px) {
 			:root {
 				font-size: 10px;
