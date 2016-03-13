@@ -28,7 +28,7 @@ namespace sequence\module\robots {
 			$domain = $_SERVER['HTTP_HOST'];
 
 			if (isset($settings['robots_domains']) && !in_array($domain, explode(',', $settings['robots_domains']))) {
-				$this->rules = ['*' => ['disallow' => ['/']]];
+				$this->rules = ['*' => ['disallow' => ['/'], 'noindex' => ['/']]];
 			}
 
 			header('Cache-Control: s-maxage=14400, max-age=14400');
