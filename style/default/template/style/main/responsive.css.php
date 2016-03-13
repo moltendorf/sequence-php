@@ -104,7 +104,7 @@
 	 *  - average to large phones in portrait
 	 *  - very small phones in all orientations
 	 */
-	@media (orientation: portrait), (min-device-width: 1279px), (max-width: 650px) {
+	@media (orientation: portrait), (min-device-width: 1280px), (max-width: 650px) {
 		@media (max-width: 870px) {
 			:root {
 				font-size: 10px;
