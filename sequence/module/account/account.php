@@ -32,7 +32,7 @@ namespace sequence\module\account {
 		 * @return array
 		 */
 		public function request($request, $request_root) {
-			$this->root->template->script('/static/script/module/account/account.js');
+			$this->listen([$this, 'template'], 'template', 'application');
 		}
 
 		/**
@@ -42,6 +42,10 @@ namespace sequence\module\account {
 		 * @return array
 		 */
 		public function query($query) {
+		}
+
+		public function template() {
+			$this->root->template->addModule('module/account/account');
 		}
 	}
 }
