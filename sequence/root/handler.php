@@ -591,12 +591,12 @@ namespace sequence\root {
 			list($name, $customizations, $style) = array_pad($input, 3, null);
 
 			if ($name !== false) {
-				$file = $template->file($name, $customizations, $style);
+				$file = $template->file($name, $prefix);
 
 				/**
 				 * Load the current template file.
 				 */
-				$this->setMethod(function () use ($name, $file, $customizations, $style, $method) {
+				$this->setMethod(function () use ($name, $prefix, $file, $customizations, $style, $method) {
 					$root     = $this->root;
 					$template = $root->template;
 
@@ -608,7 +608,7 @@ namespace sequence\root {
 						$method();
 					}
 
-					$template->load($file, $customizations, $style);
+					$template->load($file, $prefix);
 				});
 
 				return $file;

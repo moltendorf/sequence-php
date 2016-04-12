@@ -1,4 +1,4 @@
-<?php $f('header.html') ?>
+<?php $f(':header.html') ?>
 <article id="account-module" class="fancy-box">
     <fieldset>
         <div class="account-log-in">
@@ -49,4 +49,4 @@
         </div>
     </fieldset>
 </article>
-<?php $f('footer.html') ?>
+<?php $f(':footer.html') ?>

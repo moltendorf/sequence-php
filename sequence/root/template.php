@@ -262,10 +262,11 @@ namespace sequence\root {
 		 * Load the template file.
 		 *
 		 * @param         $file
+		 * @param         $prefix
 		 *
 		 * @return string
 		 */
-		public function load($file) {
+		public function load($file, &$prefix = "") {
 			$root    = $this->root;
 			$handler = $root->handler;
 
@@ -361,7 +362,9 @@ namespace sequence\root {
 			 *
 			 * @throws exception
 			 */
-			$f = function ($file) use (&$config, $l, $s, $v) {
+			$f = function ($file) use (&$config, $l, $s, $v, $prefix) {
+				$stack = [$prefix];
+
 				/** @noinspection PhpUnusedLocalVariableInspection */
 				/**
 				 * Load template file.
@@ -370,9 +373,14 @@ namespace sequence\root {
 				 *
 				 * @throws exception
 				 */
-				$f = function ($name) use (&$f, $l, $s, $v) {
-					if ($file = $this->file($name)) {
+				$f = function ($name) use (&$f, $l, $s, $v, &$stack) {
+					$prefix = $stack[count($stack) - 1];
+					if ($file = $this->file($name, $prefix)) {
+						array_push($stack, $prefix);
+
 						include $file;
+
+						array_pop($stack);
 					} else {
 						throw new exception('TEMPLATE_FILE_NOT_FOUND');
 					}
@@ -508,22 +516,38 @@ namespace sequence\root {
 		 * Locate a template file.
 		 *
 		 * @param string $name
+		 * @param string $prefix (optional) if set, this will default to a location if one is not specified.
 		 *
 		 * @return string|false
 		 */
-		public function file($name) {
+		public function file($name, &$prefix = "") {
 			$root = $this->root;
 			$path = $root->path;
+
+			if (strpos($name, ':') === false) {
+				$name = $prefix.$name;
+			}
+
+			if (($index = strrpos($name, '/')) !== false || ($index = strrpos($name, ':')) !== false) {
+				$prefix = substr($name, 0, $index + 1);
+			} else {
+				$prefix = "";
+			}
 
 			$segments = explode(':', $name);
 
 			if (count($segments) > 1) {
 				list ($module, $name) = $segments;
 
-				$name .= '.php';
-
-				$segment = "module/$module/$name";
+				if ($module !== '') {
+					$name .= '.php';
+					$segment = "module/$module/$name";
+				} else {
+					$prefix = "";
+					$name = $segment = "$name.php";
+				}
 			} else {
+				$prefix = "";
 				$name = $segment = "$name.php";
 			}
 
