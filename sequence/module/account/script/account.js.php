@@ -5,4 +5,26 @@
  * Description : Account management scripts.
  */
 
-"use strict";
+/**
+ * @type Account
+ */
+var account;
+
+(function () {
+	let tag = "[account]";
+
+	//import { Module } from '../../module';
+
+	//import { sequence } from '../../sequence';
+
+	class Account extends Module {
+		constructor() {
+			super();
+
+			this.requireWebSocket = true;
+		}
+	}
+
+	//export { account, account as default };
+	window.account = new Account();
+})();
