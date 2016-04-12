@@ -40,6 +40,7 @@ namespace sequence {
 			$this->application->setup($systemPath, $homePath);
 
 			if (!isset($this->database)) {
+				// Define it so that the magic function does not define it for us.
 				$this->database = null;
 			}
 		}

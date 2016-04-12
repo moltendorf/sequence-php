@@ -347,6 +347,7 @@ namespace sequence\root {
 					}
 
 					echo $this->content;
+
 					// We do not call fastcgi_finish_request() to ensure every bit of detail makes its way out.
 				}
 			} catch (exception $exception) {
