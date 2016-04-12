@@ -37,6 +37,14 @@
 		<script src="<?= $v['core_script'] ?>" defer></script>
 	<?php endif ?>
 
+	<?php foreach ($v['modules_inline'] as $code): ?>
+		<script><?= $code ?></script>
+	<?php endforeach ?>
+
+	<?php foreach ($v['modules'] as $module): ?>
+		<script src="<?= $module ?>.js" defer></script>
+	<?php endforeach ?>
+
 	<?php foreach ($v['scripts_deferred'] as $script): ?>
 		<?php if (isset($script['src'])): ?>
 			<script src="<?= $script['src'] ?>" defer></script>

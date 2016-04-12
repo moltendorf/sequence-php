@@ -240,6 +240,21 @@ namespace sequence\root {
 		}
 
 		/**
+		 * Add a module to this page.
+		 */
+		public function addModule($module) {
+			// @todo fix hard coded path.
+			$this->data['modules'][] = "/static/script/$module";
+		}
+
+		/**
+		 * Add a module to this page.
+		 */
+		public function addModuleInline($code) {
+			$this->data['modules_inline'][] = $code;
+		}
+
+		/**
 		 * Get a copy of template variables.
 		 *
 		 * @return array
@@ -254,7 +269,9 @@ namespace sequence\root {
 		public function clear() {
 			$this->data = [
 				'scripts'          => [],
-				'scripts_deferred' => []
+				'scripts_deferred' => [],
+				'modules'          => [],
+				'modules_inline'   => []
 			];
 		}
 
