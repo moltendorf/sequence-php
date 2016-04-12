@@ -53,6 +53,15 @@
 	float      : right;
 }
 
+#site-sub-nav {
+	text-align : center;
+
+	float      : right;
+	clear      : right;
+
+	margin-top : 0.4rem;
+}
+
 #footer-wrap {
 	text-align     : center;
 

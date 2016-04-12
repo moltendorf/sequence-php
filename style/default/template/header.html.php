@@ -9,7 +9,18 @@
 		<?php if (isset($v['core_navigation'])): ?>
 			<nav id="site-nav">
 				<?php foreach ($v['core_navigation'] as $m): ?>
-					<a class="site-nav<?= $m['active'] ? ' active' : '' ?>" href="<?= $m['path'] ?>"><?= $m['display'] ?></a>
+					<a class="site-nav<?= $m['active'] ? ' active' : '' ?>" href="<?= ($v['core_root'] ?? '/').$m['path'] ?>">
+						<?= $m['display'] ?></a>
+				<?php endforeach ?>
+			</nav>
+		<?php endif ?>
+
+		<?php if (isset($v['core_sub_navigation'])): ?>
+			<nav id="site-sub-nav">
+				<?php foreach ($v['core_sub_navigation'] as $path => $m): ?>
+					<a class="site-nav<?= $m['active'] ? ' active' : '' ?>"
+						 href="<?= ($m['path_root'] ?? $v['core_root'] ?? '/').$path ?>">
+						<?= $m['display'] ?></a>
 				<?php endforeach ?>
 			</nav>
 		<?php endif ?>

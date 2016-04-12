@@ -43,3 +43,13 @@
 	color           : <?= $v['style_navcolor'][0] ?> !important;
 	text-decoration : line-through;
 }
+
+#site-sub-nav .site-nav:link, #site-sub-nav .site-nav:visited {
+	font-size   : 2.0rem;
+
+	margin-left : 1.2rem;
+}
+
+.print {
+	display : none;
+}
