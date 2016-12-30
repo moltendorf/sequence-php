@@ -6,7 +6,7 @@ namespace sequence\root {
   use Exception;
   use sequence as s;
 
-  class Module implements ArrayAccess {
+  class Modules implements ArrayAccess {
 
     use s\Broadcaster;
 

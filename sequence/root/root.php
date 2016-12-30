@@ -17,7 +17,7 @@ namespace sequence\root {
    * @property-read Hook     $hook
    * @property-read Language $language
    * @property-read Mail     $mail
-   * @property-read Module   $module
+   * @property-read Modules  $module
    * @property-read Path     $path
    * @property-read Settings $settings
    * @property-read Template $template
