@@ -14,7 +14,7 @@ namespace sequence\root {
      *
      * @var array
      */
-    const messages = [];
+    const MESSAGES = [];
 
     /**
      * A full path to the system directory.

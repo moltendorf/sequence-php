@@ -109,7 +109,7 @@ namespace sequence\root {
     public function listen(callable $method, $message, $binding = null, $priority = 0) {
       if (isset($binding)) {
         if (isset($this->listeners[$binding])) {
-          if (s\debug && count($this->bindings[$binding])) {
+          if (s\DEBUG && count($this->bindings[$binding])) {
             $success = false;
 
             foreach ($this->bindings[$binding] as $object) {

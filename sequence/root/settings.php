@@ -15,7 +15,7 @@ namespace sequence\root {
      *
      * @var array
      */
-    const messages = [];
+    const MESSAGES = [];
 
     /**
      * Loaded settings.

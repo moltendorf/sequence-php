@@ -36,7 +36,7 @@
 		<?php endif; ?>
 	<?php endforeach; ?>
 
-	<?php if (sequence\ship): ?>
+	<?php if (sequence\SHIP): ?>
 		<script src="//code.jquery.com/jquery-2.1.4.min.js" defer></script>
 	<?php else: ?>
 		<script src="//code.jquery.com/jquery-2.1.4.js" defer></script>

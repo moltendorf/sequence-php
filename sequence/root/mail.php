@@ -24,7 +24,7 @@ namespace sequence\root {
      *
      * @var array
      */
-    const messages = [];
+    const MESSAGES = [];
 
     /**
      * Message queue.
@@ -254,7 +254,7 @@ namespace sequence\root {
           } catch (Exception $exception) {
             ob_end_flush();
 
-            if (s\debug) {
+            if (s\DEBUG) {
               throw $exception;
             }
           }

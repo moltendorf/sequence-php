@@ -74,7 +74,7 @@ namespace sequence {
         $base = substr($message, 0, $length);
 
         /** @noinspection PhpUndefinedClassConstantInspection */
-        if (debug && !in_array($base, self::messages)) {
+        if (DEBUG && !in_array($base, self::MESSAGES)) {
           throw new Exception("UNDEFINED_MESSAGE: $this->binding::$message");
         }
 
@@ -89,7 +89,7 @@ namespace sequence {
         }
       } else {
         /** @noinspection PhpUndefinedClassConstantInspection */
-        if (debug && !in_array($message, self::messages)) {
+        if (DEBUG && !in_array($message, self::MESSAGES)) {
           throw new Exception("UNDEFINED_MESSAGE: $this->binding::$message");
         }
 

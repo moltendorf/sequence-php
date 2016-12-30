@@ -15,7 +15,7 @@ namespace sequence\root {
      *
      * @var array
      */
-    const messages = ['template'];
+    const MESSAGES = ['template'];
 
     /**
      * Template data variables.
@@ -138,13 +138,13 @@ namespace sequence\root {
           if (isset($settings['inherits'])) {
             foreach ($settings['inherits'] as $inherit) {
               if (!$this->styleEnabled($inherit)) {
-                if (s\ship) {
+                if (s\SHIP) {
                   goto fail;
                 } else {
                   throw new Exception('STYLE_NOT_ENABLED');
                 }
               } elseif (in_array($inherit, $styles)) {
-                if (s\ship) {
+                if (s\SHIP) {
                   goto fail;
                 } else {
                   throw new Exception('STYLE_INHERITANCE_RECURSION');

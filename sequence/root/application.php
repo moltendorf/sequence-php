@@ -19,7 +19,7 @@ namespace sequence\root {
      *
      * @var array
      */
-    const messages = ['ready', 'output', 'close'];
+    const MESSAGES = ['ready', 'output', 'close'];
 
     /**
      * Errors that occurred during setup.
@@ -153,7 +153,7 @@ namespace sequence\root {
 
       unset($const);
 
-      define('sequence\\ship', !s\debug);
+      define('sequence\\ship', !s\DEBUG);
 
       unset($debug);
 
@@ -290,7 +290,7 @@ namespace sequence\root {
           $template->add(['runtime' => $runtime = microtime(true)*1e6 - $start]);
         }
 
-        if (s\ship) {
+        if (s\SHIP) {
           $this->generate();
 
           ob_end_clean();
@@ -373,7 +373,7 @@ namespace sequence\root {
       $this->broadcast('output', $this);
 
       // Prevent issues if we're debugging.
-      if (s\ship) {
+      if (s\SHIP) {
         $digest        = base64_encode(pack('H*', md5($this->content)));
         $this->content = gzencode($this->content, 9);
 

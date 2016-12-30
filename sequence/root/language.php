@@ -15,7 +15,7 @@ namespace sequence\root {
      *
      * @var array
      */
-    const messages = [];
+    const MESSAGES = [];
 
     /**
      * Language string key to value pairs.
@@ -185,7 +185,7 @@ namespace sequence\root {
     public function offsetGet($offset, $safety = false) {
       $offset = (string)$offset;
 
-      if (s\ship) {
+      if (s\SHIP) {
         if (isset($this->container[$offset])) {
           return $this->container[$offset];
         } else {
@@ -200,7 +200,7 @@ namespace sequence\root {
           if (isset($this->container[$offset])) {
             return $this->container[$offset];
           } else {
-            if (s\debug\language && !$safety) {
+            if (s\debug\LANGUAGE && !$safety) {
               throw new Exception('LANGUAGE_NOT_EXIST');
             } else {
               return $this->container[$offset] = "{LANG: $offset}";

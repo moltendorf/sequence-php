@@ -15,7 +15,7 @@ namespace sequence\root {
      *
      * @var array
      */
-    const messages = ['module', 'query'];
+    const MESSAGES = ['module', 'query'];
 
     /**
      * Array of content types.
@@ -613,7 +613,7 @@ namespace sequence\root {
 
         return $file;
       } else {
-        if (s\debug) {
+        if (s\DEBUG) {
           $this->info('BLANK_PAGE');
         } else {
           $this->setType('txt');
@@ -849,13 +849,13 @@ namespace sequence\root {
 
       $this->typeRaw = null;
 
-      if (s\ship) {
+      if (s\SHIP) {
         $this->setStatus($status);
       } else {
         $this->setStatus(302); // Override status.
       }
 
-      if ($title === null && s\ship) {
+      if ($title === null && s\SHIP) {
         header("Location: $location");
 
         $this->setTemplate(false);
@@ -923,7 +923,7 @@ namespace sequence\root {
 
       $this->typeRaw = null;
 
-      if (s\ship) {
+      if (s\SHIP) {
         $this->setTemplate('info.html');
       } else {
         $this->setTemplate('info_debug.html');
@@ -936,7 +936,7 @@ namespace sequence\root {
       if ($status instanceof Exception) {
         $this->setStatus(500);
 
-        if (s\debug) {
+        if (s\DEBUG) {
           do {
             $exception[] = [
               'instance' => $status,

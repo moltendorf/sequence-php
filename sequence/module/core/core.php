@@ -263,7 +263,7 @@ namespace sequence\module\core {
         'core_version'           => s\VERSION,
       ]);
 
-      if (s\debug) {
+      if (s\DEBUG) {
         $template->addModule('language');
         $template->addModule('module');
         $template->addModule('sequence');
