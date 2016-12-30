@@ -4,12 +4,94 @@ namespace sequence\module\push {
 
   use sequence as s;
   use sequence\functions as f;
+  use sequence\root\Root;
+  use sequence\SQL;
 
   class Push extends s\Module {
 
     use s\Listener;
+    use SQL;
+
+    const SQL_FETCH_PUSH_DEVICE                                    = 0;
+    const SQL_CREATE_PUSH_DEVICE                                   = 1;
+    const SQL_CREATE_PUSH_REGISTRATION                             = 2;
+    const SQL_DELETE_PUSH_REGISTRATION_BY_NOTIFICATION_AND_DEVICE  = 3;
+    const SQL_DELETE_PUSH_REGISTRATION_BY_NOTIFICATION_AND_CHANNEL = 4;
+    const SQL_FETCH_PUSH_NOTIFICATION_BY_TOKEN                     = 5;
+    const SQL_FETCH_ENABLED_PUSH_REGISTRATIONS_BY_NOTIFICATION     = 6;
+    const SQL_DELETE_PUSH_REGISTRATION_BY_CHANNEL                  = 7;
+    const SQL_CREATE_PUSH_ERROR_LOG                                = 8;
 
     private $response = [];
+
+    public function __construct(Root $root, $binding = '') {
+      $this->bind($root, $binding);
+      $this->buildSQL();
+    }
+
+    /**
+     * Build all SQL statements.
+     */
+    private function buildSQL(): void {
+      $root     = $this->root;
+      $database = $root->database;
+      $prefix   = $database->prefix;
+
+      $this->sql = [
+        self::SQL_FETCH_PUSH_DEVICE => "
+          SELECT HEX(push_device)
+          FROM {$prefix}push_devices
+          WHERE push_device = UNHEX(:device)
+          LIMIT 1",
+
+        self::SQL_CREATE_PUSH_DEVICE => "
+          INSERT INTO {$prefix}push_devices
+            (push_device)
+          VALUES
+            (UNHEX(:device))",
+
+        self::SQL_CREATE_PUSH_REGISTRATION => "
+          INSERT INTO {$prefix}push_general
+            (push_device, push_notification, push_channel)
+          VALUES
+            (UNHEX(:device), :notification, :channel)
+          ON DUPLICATE KEY UPDATE
+            push_device = UNHEX(:device),
+            push_channel = :channel",
+
+        self::SQL_DELETE_PUSH_REGISTRATION_BY_NOTIFICATION_AND_DEVICE => "
+          DELETE FROM {$prefix}push_general
+          WHERE push_device = UNHEX(:device)
+            AND push_notification = :notification",
+
+        self::SQL_DELETE_PUSH_REGISTRATION_BY_NOTIFICATION_AND_CHANNEL => "
+          DELETE FROM {$prefix}push_general
+          WHERE push_notification = :notification
+            AND push_channel = :channel",
+
+        self::SQL_FETCH_PUSH_NOTIFICATION_BY_TOKEN => "
+          SELECT push_notification
+          FROM {$prefix}push_tokens
+          WHERE push_token = UNHEX(:token)
+          LIMIT 1",
+
+        self::SQL_FETCH_ENABLED_PUSH_REGISTRATIONS_BY_NOTIFICATION => "
+          SELECT HEX(push_device), push_channel
+          FROM {$prefix}push_general
+          WHERE push_notification = :notification
+            AND push_enabled = 1",
+
+        self::SQL_DELETE_PUSH_REGISTRATION_BY_CHANNEL => "
+          DELETE FROM {$prefix}push_general
+          WHERE push_channel = :channel",
+
+        self::SQL_CREATE_PUSH_ERROR_LOG => "
+          INSERT INTO {$prefix}push_errors
+            (push_status, push_device, push_notification, push_channel, push_request_headers, push_request_body, push_response_headers, push_response_body)
+          VALUES
+            (:status, UNHEX(:device), :notification, :channel, :request_headers, :request_body, :response_headers, :response_body)"
+      ];
+    }
 
     /**
      *
@@ -53,38 +135,26 @@ namespace sequence\module\push {
     }
 
     private function create() {
-      $root     = $this->root;
-      $database = $root->database;
-      $prefix   = $database->getPrefix();
-
       $input = f\file_get_json('php://input');
 
       if (isset($input['device'])) {
-        $statement = $database->prepare("
-					select HEX(push_device)
-					from {$prefix}push_devices
-					where push_device = UNHEX(:device)
-					limit 1
-				");
+        $rows = $this->fetch(self::SQL_FETCH_PUSH_DEVICE, [
+          'device' => $input['device']
+        ]);
 
-        $statement->execute(['device' => $input['device']]);
-
-        if ($row = $statement->fetch(\PDO::FETCH_NUM)) {
+        if (count($rows)) {
+          [$row] = $rows;
           $this->response = $row[0];
 
           return 200;
         }
       }
 
-      do {
-        $device = bin2hex(openssl_random_pseudo_bytes(144));
-
-        $statement = $database->prepare("
-					insert into {$prefix}push_devices
-						(push_device)
-					values	(UNHEX(:device))
-				");
-      } while (!$statement->execute(['device' => $device]));
+      while (!$this->execute(self::SQL_CREATE_PUSH_DEVICE, [
+        'device' => $device = bin2hex(openssl_random_pseudo_bytes(144))
+      ])) {
+        // Everything is handled by the execute.
+      }
 
       $this->response = $device;
 
@@ -92,10 +162,6 @@ namespace sequence\module\push {
     }
 
     private function register() {
-      $root     = $this->root;
-      $database = $root->database;
-      $prefix   = $database->getPrefix();
-
       $input = f\file_get_json('php://input');
 
       if (!isset($input['notification']) || !isset($input['channel']) || !filter_var($input['channel'], FILTER_VALIDATE_URL)) {
@@ -115,16 +181,7 @@ namespace sequence\module\push {
         return 404;
       }
 
-      $statement = $database->prepare("
-				insert into {$prefix}push_general
-					(push_device, push_notification, push_channel)
-				values	(UNHEX(:device), :notification, :channel)
-				on duplicate key update
-					push_device = UNHEX(:device),
-					push_channel = :channel
-			");
-
-      $statement->execute([
+      $this->execute(self::SQL_CREATE_PUSH_REGISTRATION, [
         'device'       => $input['device'],
         'notification' => $input['notification'],
         'channel'      => $input['channel']
@@ -134,10 +191,6 @@ namespace sequence\module\push {
     }
 
     private function cancel() {
-      $root     = $this->root;
-      $database = $root->database;
-      $prefix   = $database->getPrefix();
-
       $input = f\file_get_json('php://input');
 
       if (!isset($input['notification'])) {
@@ -145,13 +198,7 @@ namespace sequence\module\push {
       }
 
       if (isset($input['device'])) {
-        $statement = $database->prepare("
-					delete from {$prefix}push_general
-					where push_device = UNHEX(:device)
-						and push_notification = :notification
-				");
-
-        $statement->execute([
+        $this->execute(self::SQL_DELETE_PUSH_REGISTRATION_BY_NOTIFICATION_AND_DEVICE, [
           'device'       => $input['device'],
           'notification' => $input['notification']
         ]);
@@ -166,13 +213,7 @@ namespace sequence\module\push {
             return 404;
           }
 
-          $statement = $database->prepare("
-					delete from {$prefix}push_general
-					where push_notification = :notification
-						and push_channel = :channel
-				");
-
-          $statement->execute([
+          $this->execute(self::SQL_DELETE_PUSH_REGISTRATION_BY_NOTIFICATION_AND_CHANNEL, [
             'notification' => $input['notification'],
             'channel'      => $input['channel']
           ]);
@@ -185,26 +226,19 @@ namespace sequence\module\push {
     }
 
     private function send() {
-      $root     = $this->root;
-      $database = $root->database;
-      $prefix   = $database->getPrefix();
-
       $input = f\file_get_json('php://input');
 
       if (!isset($input['token']) || !isset($input['message'])) {
         return 404;
       }
 
-      $statement = $database->prepare("
-				select push_notification
-				from {$prefix}push_tokens
-				where push_token = UNHEX(:token)
-				limit 1
-			");
+      $rows = $this->fetch(self::SQL_FETCH_PUSH_NOTIFICATION_BY_TOKEN, [
+        'token' => $input['token']
+      ]);
 
-      $statement->execute(['token' => $input['token']]);
+      if (count($rows)) {
+        [$row] = $rows;
 
-      if ($row = $statement->fetch(\PDO::FETCH_NUM)) {
         $this->listen(function () use ($row, $input) {
           $this->notify($row[0], $input['message']);
         }, 'close', 'application');
@@ -218,8 +252,6 @@ namespace sequence\module\push {
     public function notify($notification, $message) {
       $root     = $this->root;
       $settings = $root->settings;
-      $database = $root->database;
-      $prefix   = $database->getPrefix();
 
       $token   = $settings["push_token_slack_$notification"];
       $payload = $settings["push_payload_slack_$notification"];
@@ -264,16 +296,11 @@ namespace sequence\module\push {
         return false;
       }
 
-      $statement = $database->prepare("
-				select HEX(push_device), push_channel
-				from {$prefix}push_general
-				where push_notification = :notification
-				  and push_enabled = 1
-			");
+      $rows = $this->fetch(self::SQL_FETCH_ENABLED_PUSH_REGISTRATIONS_BY_NOTIFICATION, [
+        'notification' => $notification
+      ]);
 
-      $statement->execute(['notification' => $notification]);
-
-      foreach ($statement->fetchAll() as $row) {
+      foreach ($rows as $row) {
         push:
         $content = "<toast><visual><binding template=\"ToastText01\"><text id=\"1\">$message</text></binding></visual></toast>";
 
@@ -316,21 +343,11 @@ namespace sequence\module\push {
 
               goto push;
             } elseif ($code === "410") {
-              $statement = $database->prepare("
-								delete from {$prefix}push_general
-								where push_channel = :channel
-							");
-
-              $statement->execute(['channel' => $row[1]]);
+              $this->execute(self::SQL_DELETE_PUSH_REGISTRATION_BY_CHANNEL, [
+                'channel' => $row[1]
+              ]);
             } elseif ($code !== "200") {
-              $statement = $database->prepare("
-								insert into {$prefix}push_errors
-									(push_status, push_device, push_notification, push_channel,
-									push_request_headers, push_request_body, push_response_headers, push_response_body)
-								values (:status, UNHEX(:device), :notification, :channel, :request_headers, :request_body, :response_headers, :response_body)
-							");
-
-              $statement->execute([
+              $this->execute(self::SQL_CREATE_PUSH_ERROR_LOG, [
                 'status'           => $code,
                 'device'           => $row[0],
                 'notification'     => $notification,

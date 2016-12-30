@@ -6,6 +6,7 @@ namespace sequence\root {
   use sequence as s;
   use sequence\functions as f;
 
+  use sequence\SQL;
   use Swift;
   use Swift_Mailer as Mailer;
   use Swift_Message as Message;
@@ -18,6 +19,7 @@ namespace sequence\root {
   class Mail {
 
     use s\Broadcaster;
+    use SQL;
 
     /**
      * List of messages that this class can send.
@@ -25,6 +27,9 @@ namespace sequence\root {
      * @var array
      */
     const MESSAGES = [];
+
+    const SQL_FETCH_USER_BY_EMAIL    = 0;
+    const SQL_CREATE_USER_WITH_EMAIL = 1;
 
     /**
      * Message queue.
@@ -41,6 +46,7 @@ namespace sequence\root {
      */
     public function __construct(Root $root, $binding = '') {
       $this->bind($root, $binding);
+      $this->buildSQL();
 
       $this->listen([$this, 'close'], 'close', 'application');
 
@@ -48,6 +54,30 @@ namespace sequence\root {
         Preferences::getInstance()
                    ->setCharset('utf-8');
       });
+    }
+
+    /**
+     * Build all SQL statements.
+     */
+    private function buildSQL(): void {
+      $root     = $this->root;
+      $database = $root->database;
+      $prefix   = $database->prefix;
+
+      $this->sql = [
+        self::SQL_FETCH_USER_BY_EMAIL => "
+          SELECT user_id, user_name
+          FROM {$prefix}users
+          WHERE user_email = :user_email
+          LIMIT 1",
+
+        self::SQL_CREATE_USER_WITH_EMAIL => "
+          INSERT INTO {$prefix}users 
+            (user_email)
+          VALUES
+            (:user_email, :user_name)"
+
+      ];
     }
 
     /**
@@ -141,9 +171,7 @@ namespace sequence\root {
      */
     public function close() {
       $root     = $this->root;
-      $database = $root->database;
       $template = $root->template;
-      $prefix   = $database->getPrefix();
 
       if (count($this->queue)) {
         $root     = $this->root;
@@ -177,42 +205,26 @@ namespace sequence\root {
          * @throws Exception
          */
         $process = function ($to, $from, $subject, $message, array $options = [])
-        use ($database, $template, $prefix, $converter, $mailer, &$lookup, &$tokens) {
+        use ($template, $converter, $mailer, &$lookup, &$tokens) {
           list($name, $email) = $to;
 
           if (!isset($lookup[$email])) {
-            $statement = $database->prepare("
-						select user_id, user_name
-						from {$prefix}users
-						where user_email = :user_email
-					");
-
-            $statement->execute([
+            $rows = $this->fetch(self::SQL_FETCH_USER_BY_EMAIL, [
               'user_email' => $email
             ]);
 
-            $row = $statement->fetch();
-
-            $statement->closeCursor();
-
-            if ($row) {
+            if (count($rows)) {
+              [$row] = $rows;
               $id = $row[0];
 
               if (!is_string($name)) {
                 $name = $row[1];
               }
             } else {
-              $statement = $database->prepare("
-							insert into {$prefix}users (user_email) values
-							(:user_email, :user_name)
-						");
-
-              $statement->execute([
+              $id = $this->insertForId(self::SQL_CREATE_USER_WITH_EMAIL, [
                 'user_email' => $email,
                 'user_name'  => is_string($name) ? $name : null // Assume a little more data if we can get it.
               ]);
-
-              $id = $database->lastInsertId();
             }
 
             if ($options['generate']) {
@@ -271,13 +283,19 @@ namespace sequence\root {
         }
 
         if ($count = count($tokens)/3) {
-          $statement = $database->prepare("
-						replace into {$prefix}email_tokens (user_id, token_id, token_reason) values
-						".implode(",\n", array_fill(0, $count, '(?, UNHEX(?), ?)'))."
-					");
+          $database = $root->database;
+          $prefix   = $database->prefix;
+          $pdo      = $database->pdo;
 
-          $statement->execute($tokens);
-          $statement->closeCursor();
+          $query = $pdo->prepare("
+            REPLACE INTO {$prefix}email_tokens
+              (user_id, token_id, token_reason)
+            VALUES
+              ".implode(",\n", array_fill(0, $count, '(?, UNHEX(?), ?)'))."
+          ");
+
+          $query->execute($tokens);
+          $query->closeCursor();
         }
       }
     }

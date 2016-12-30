@@ -7,7 +7,7 @@ namespace sequence\root {
   use PDOStatement;
   use sequence as s;
 
-  class Database extends PDO {
+  class Database {
 
     use s\Listener;
 
@@ -18,6 +18,13 @@ namespace sequence\root {
      * @var string
      */
     public $prefix = 'sequence__';
+
+    /**
+     * Database connection.
+     *
+     * @var PDO
+     */
+    public $pdo;
 
     /**
      * Database settings.
@@ -77,21 +84,15 @@ namespace sequence\root {
       $username = (string)$settings['username'];
       $password = (string)$settings['password'];
 
-      parent::__construct($this->getPDODSN(), $username, $password, [self::ATTR_PERSISTENT => true]);
+      $options = [
+        PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_NUM,
+        PDO::ATTR_PERSISTENT         => true
+      ];
 
-      $this->listen(function () {
-        foreach ($this->buffered as $value) {
-          /**
-           * @var $statement PDOStatement
-           */
-          list($statement, $arguments) = $value;
+      $this->pdo = new PDO($this->buildDSN(), $username, $password, $options);
 
-          $statement->execute(...$arguments);
-          $statement->closeCursor();
-        }
-
-        $this->buffered = [];
-      }, 'close', 'application');
+      $this->listen([$this, 'close'], 'close', 'application');
     }
 
     /**
@@ -100,7 +101,7 @@ namespace sequence\root {
      * @return string
      * @throws Exception
      */
-    public function getPDODSN() {
+    public function buildDSN() {
       $settings = $this->settings;
 
       $dsn = [];
@@ -127,13 +128,21 @@ namespace sequence\root {
           }
         }
 
+        if (!isset($settings['charset'])) {
+          $settings['charset'] = 'utf8';
+        }
+
+        $dsn[] = "charset=$settings[charset]";
+
         break;
 
       default:
         throw new Exception('DATABASE_TYPE_INVALID');
       }
 
-      return "$type:".implode(';', $dsn);
+      $dsn = implode(';', $dsn);
+
+      return "$type:$dsn";
     }
 
     /**
@@ -184,38 +193,20 @@ namespace sequence\root {
     }
 
     /**
-     * Prepare a database query.
-     *
-     * @param string $statement
-     * @param null   $options
-     *
-     * @return PDOStatement
+     * Push all buffered statements to the database.
      */
-    public function prepare($statement, $options = null) {
-      if ($options) {
-        $result = parent::prepare($statement, $options);
-      } else {
-        $result = parent::prepare($statement);
+    public function close(): void {
+      foreach ($this->buffered as $value) {
+        /**
+         * @var $statement PDOStatement
+         */
+        [$statement, $arguments] = $value;
+
+        $statement->execute(...$arguments);
+        $statement->closeCursor();
       }
 
-      $result->setFetchMode(self::FETCH_NUM);
-
-      return $result;
-    }
-
-    /**
-     * Execute a statement later.
-     *
-     * @param PDOStatement $statement
-     */
-
-    /**
-     * Get the table prefix.
-     *
-     * @return string
-     */
-    public function getPrefix() {
-      return $this->prefix;
+      $this->buffered = [];
     }
   }
 }

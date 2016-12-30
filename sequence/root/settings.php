@@ -5,10 +5,12 @@ namespace sequence\root {
   use ArrayAccess;
   use Exception;
   use sequence as s;
+  use sequence\SQL;
 
   class Settings implements ArrayAccess {
 
     use s\Broadcaster;
+    use SQL;
 
     /**
      * List of messages that this class can send.
@@ -16,6 +18,11 @@ namespace sequence\root {
      * @var array
      */
     const MESSAGES = [];
+
+    const SQL_FETCH_SETTINGS          = 0;
+    const SQL_UPDATE_SETTING_BY_KEY   = 1;
+    const SQL_DELETE_SETTING_BY_KEY   = 2;
+    const SQL_CREATE_SETTING_WITH_KEY = 3;
 
     /**
      * Loaded settings.
@@ -53,31 +60,51 @@ namespace sequence\root {
         $this->container[$key] = $value;
       }
 
+      if (!$root->database) {
+        return;
+      }
+
+      $this->buildSQL();
+
       try {
-        if ($root->database) {
-          $database = $root->database;
-          $prefix   = $database->getPrefix();
-
-          $statement = $database->prepare("
-						select setting_key, setting_value
-						from {$prefix}settings
-					");
-
-          $statement->execute();
-
-          foreach ($statement->fetchAll() as $row) {
-            $this->container[$row[0]] = $row[1];
-          }
-
-          unset($row);
-
-          $statement->closeCursor();
-
-          $this->listen([$this, 'pushAll'], 'close', 'application');
+        foreach ($this->fetch(self::SQL_FETCH_SETTINGS) as $row) {
+          $this->container[$row[0]] = $row[1];
         }
+
+        $this->listen([$this, 'pushAll'], 'close', 'application');
       } catch (Exception $exception) {
         $application->errors[] = $exception;
       }
+    }
+
+    /**
+     * Build all SQL statements.
+     */
+    private function buildSQL(): void {
+      $root     = $this->root;
+      $database = $root->database;
+      $prefix   = $database->prefix;
+
+      $this->sql = [
+        self::SQL_FETCH_SETTINGS => "
+          SELECT setting_key, setting_value
+          FROM {$prefix}settings",
+
+        self::SQL_UPDATE_SETTING_BY_KEY => "
+          UPDATE {$prefix}settings
+          SET setting_value = :value
+          WHERE setting_key = :key",
+
+        self::SQL_DELETE_SETTING_BY_KEY => "
+          DELETE FROM {$prefix}settings
+          WHERE setting_key = :key",
+
+        self::SQL_CREATE_SETTING_WITH_KEY => "
+          REPLACE INTO {$prefix}settings
+            (setting_key, setting_value)
+          VALUES
+            (:key, :value)"
+      ];
     }
 
     /**
@@ -349,38 +376,19 @@ namespace sequence\root {
       $offset = (string)$offset;
 
       if (isset($this->push[$offset])) {
-        $root     = $this->root;
-        $database = $root->database;
-        $prefix   = $database->getPrefix();
-
         if ($this->original[$offset] !== false) {
           if ($this->push[$offset] !== false) {
-            $statement = $database->prepare("
-							update {$prefix}settings
-							set setting_value = :value
-							where setting_key = :key
-						");
-
-            $statement->execute([
+            $this->execute(self::SQL_UPDATE_SETTING_BY_KEY, [
               'key'   => $offset,
               'value' => $this->push[$offset]
             ]);
           } else {
-            $statement = $database->prepare("
-							delete from {$prefix}settings
-							where setting_key = :key
-						");
-
-            $statement->execute(['key' => $offset]);
+            $this->execute(self::SQL_DELETE_SETTING_BY_KEY, [
+              'key' => $offset
+            ]);
           }
         } else {
-          $statement = $database->prepare("
-							insert into {$prefix}settings
-									(setting_key, setting_value)
-							values	(:key, :value)
-						");
-
-          $statement->execute([
+          $this->execute(self::SQL_CREATE_SETTING_WITH_KEY, [
             'key'   => $offset,
             'value' => $this->push[$offset]
           ]);

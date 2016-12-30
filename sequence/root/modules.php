@@ -5,10 +5,12 @@ namespace sequence\root {
   use ArrayAccess;
   use Exception;
   use sequence as s;
+  use sequence\SQL;
 
   class Modules implements ArrayAccess {
 
     use s\Broadcaster;
+    use SQL;
 
     /**
      * List of messages that this class can send.
@@ -16,6 +18,8 @@ namespace sequence\root {
      * @var array
      */
     const MESSAGES = [];
+
+    const SQL_FETCH_ENABLED_MODULES = 0;
 
     /**
      * Loaded modules.
@@ -32,6 +36,23 @@ namespace sequence\root {
      */
     public function __construct(Root $root, $binding = '') {
       $this->bind($root, $binding);
+      $this->buildSQL();
+    }
+
+    /**
+     * Build all SQL statements.
+     */
+    private function buildSQL(): void {
+      $root     = $this->root;
+      $database = $root->database;
+      $prefix   = $database->prefix;
+
+      $this->sql = [
+        self::SQL_FETCH_ENABLED_MODULES => "
+          SELECT module_name
+          FROM {$prefix}modules
+          WHERE module_is_enabled = 1"
+      ];
     }
 
     /**
@@ -47,19 +68,9 @@ namespace sequence\root {
      * Load all enabled modules.
      */
     public function load() {
-      $root     = $this->root;
-      $database = $root->database;
-      $prefix   = $database->getPrefix();
+      $root = $this->root;
 
-      $statement = $database->prepare("
-				select module_name
-				from {$prefix}modules
-				where module_is_enabled = 1
-			");
-
-      $statement->execute();
-
-      foreach ($statement->fetchAll() as $row) {
+      foreach ($this->fetch(self::SQL_FETCH_ENABLED_MODULES) as $row) {
         $class = "sequence\\module\\$row[0]\\$row[0]";
 
         spl_autoload($class);

@@ -5,10 +5,12 @@ namespace sequence\root {
   use Exception;
   use sequence as s;
   use sequence\functions as f;
+  use sequence\SQL;
 
   class Template {
 
     use s\Broadcaster;
+    use SQL;
 
     /**
      * List of messages that this class can send.
@@ -16,6 +18,8 @@ namespace sequence\root {
      * @var array
      */
     const MESSAGES = ['template'];
+
+    const SQL_FETCH_ENABLED_STYLES = 0;
 
     /**
      * Template data variables.
@@ -40,8 +44,8 @@ namespace sequence\root {
     /**
      * Configure current template settings.
      *
-     * @param Root $root
-     * @param string              $binding
+     * @param Root   $root
+     * @param string $binding
      */
     public function __construct(Root $root, $binding = '') {
       $this->bind($root, $binding);
@@ -50,34 +54,24 @@ namespace sequence\root {
       $application = $root->application;
       $settings    = $root->settings;
 
+      if (!$root->database) {
+        goto set;
+      }
+
+      $this->buildSQL();
+
       try {
-        if ($root->database) {
-          $database = $root->database;
-          $prefix   = $database->getPrefix();
-
-          $statement = $database->prepare("
-						select style_name, style_customizations
-						from {$prefix}styles
-						where style_is_enabled = 1
-					");
-
-          $statement->execute();
-
-          foreach ($statement->fetchAll() as $row) {
-            $this->styles[$row[0]] = [
-              'customizations' => (boolean)$row[1],
-              'loaded'         => false
-            ];
-          }
-
-          unset($row);
-
-          $statement->closeCursor();
+        foreach ($this->fetch(self::SQL_FETCH_ENABLED_STYLES) as $row) {
+          $this->styles[$row[0]] = [
+            'customizations' => (boolean)$row[1],
+            'loaded'         => false
+          ];
         }
       } catch (Exception $exception) {
         $application->errors[] = $exception;
       }
 
+      set:
       if ((!isset($settings['style']) || !$this->setStyle($settings['style'])) && !isset($this->styles['default'])) {
         // Only enable the default style if the preferred style is not enabled.
         $this->styles['default'] = [
@@ -87,6 +81,22 @@ namespace sequence\root {
 
         $this->setStyle();
       }
+    }
+
+    /**
+     * Build all SQL statements.
+     */
+    private function buildSQL(): void {
+      $root     = $this->root;
+      $database = $root->database;
+      $prefix   = $database->prefix;
+
+      $this->sql = [
+        self::SQL_FETCH_ENABLED_STYLES => "
+          SELECT style_name, style_customizations
+          FROM {$prefix}styles
+          WHERE style_is_enabled = 1"
+      ];
     }
 
     /**

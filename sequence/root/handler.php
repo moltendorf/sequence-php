@@ -4,11 +4,14 @@ namespace sequence\root {
 
   use Exception;
   use sequence as s;
+  use sequence\Broadcaster;
   use sequence\functions as f;
+  use sequence\SQL;
 
   class Handler {
 
-    use s\Broadcaster;
+    use Broadcaster;
+    use SQL;
 
     /**
      * List of messages that this class can send.
@@ -16,6 +19,8 @@ namespace sequence\root {
      * @var array
      */
     const MESSAGES = ['module', 'query'];
+
+    const SQL_FETCH_ENABLED_PATHS = 0;
 
     /**
      * Array of content types.
@@ -104,65 +109,73 @@ namespace sequence\root {
         }
       }
 
-      $database = $root->database;
+      if (!$root->database) {
+        return;
+      }
 
-      if (isset($database)) {
-        $prefix = $database->getPrefix();
+      $this->buildSQL();
 
-        $statement = $database->prepare("
-				select path_root, module_name, module_display, path_alias, path_is_prefix, path_order
-				from {$prefix}paths
-				join {$prefix}modules
-					using (module_id)
-				where	module_is_enabled = 1
-					and	path_is_enabled = 1
-				order by
-					path_order asc
-			");
+      foreach ($this->fetch(self::SQL_FETCH_ENABLED_PATHS) as $row) {
+        $path = substr($row[0], 1);
 
-        $statement->execute();
+        if (strlen($path) > 0) {
+          $segments = explode('/', $path);
+        } else {
+          $segments = [];
+        }
 
-        foreach ($statement->fetchAll() as $row) {
-          $path = substr($row[0], 1);
+        $branch = &$this->tree;
 
-          if (strlen($path) > 0) {
-            $segments = explode('/', $path);
-          } else {
-            $segments = [];
+        foreach ($segments as $segment) {
+          if (!isset($branch['branches'])) {
+            $branch['branches'] = [];
           }
 
-          $branch = &$this->tree;
-
-          foreach ($segments as $segment) {
-            if (!isset($branch['branches'])) {
-              $branch['branches'] = [];
-            }
-
-            if (!isset($branch['branches'][$segment])) {
-              $branch['branches'][$segment] = [];
-            }
-
-            $branch = &$branch['branches'][$segment];
+          if (!isset($branch['branches'][$segment])) {
+            $branch['branches'][$segment] = [];
           }
 
-          $branch['path']    = "$path/";
-          $branch['module']  = $row[1];
-          $branch['display'] = $row[2];
-          $branch['alias']   = $row[3];
-          $branch['prefix']  = (boolean)$row[4];
+          $branch = &$branch['branches'][$segment];
+        }
 
-          unset($branch);
+        $branch['path']    = "$path/";
+        $branch['module']  = $row[1];
+        $branch['display'] = $row[2];
+        $branch['alias']   = $row[3];
+        $branch['prefix']  = (boolean)$row[4];
 
-          // Check if this path is to be included in the navigation.
-          if ($row[5]) {
-            $this->navigation[] = [
-              'path'    => $path,
-              'module'  => $row[1],
-              'display' => $row[2]
-            ];
-          }
+        unset($branch);
+
+        // Check if this path is to be included in the navigation.
+        if ($row[5]) {
+          $this->navigation[] = [
+            'path'    => $path,
+            'module'  => $row[1],
+            'display' => $row[2]
+          ];
         }
       }
+    }
+
+    /**
+     * Build all SQL statements.
+     */
+    private function buildSQL(): void {
+      $root     = $this->root;
+      $database = $root->database;
+      $prefix   = $database->prefix;
+
+      $this->sql = [
+        self::SQL_FETCH_ENABLED_PATHS => "
+          SELECT path_root, module_name, module_display, path_alias, path_is_prefix, path_order
+          FROM {$prefix}paths
+          JOIN {$prefix}modules
+            USING (module_id)
+          WHERE module_is_enabled = 1
+            AND path_is_enabled = 1
+          ORDER BY
+            path_order ASC"
+      ];
     }
 
     /**
