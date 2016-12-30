@@ -2,13 +2,15 @@
 
 namespace sequence {
 
+  use sequence\root\Root;
+
   /**
    * Main function.
    * Created and called to keep all variables out of global scope.
    *
    * @return Root
    */
-  function main() {
+  function main(): Root {
     /*
      * Pre-configuration.
      */
@@ -32,13 +34,6 @@ namespace sequence {
     // Include additional functions.
     require "$systemPath/functions.php";
 
-    /*
-     * Create the root.
-     */
-    $class = 'sequence\\Root';
-
-    spl_autoload($class);
-
-    return new $class($systemPath, $homePath);
+    return new Root($systemPath, $homePath);
   }
 }

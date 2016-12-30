@@ -40,10 +40,10 @@ namespace sequence\root {
     /**
      * Configure current template settings.
      *
-     * @param s\Root $root
-     * @param string $binding
+     * @param Root $root
+     * @param string              $binding
      */
-    public function __construct(s\Root $root, $binding = '') {
+    public function __construct(Root $root, $binding = '') {
       $this->bind($root, $binding);
       $this->clear();
 

@@ -11,7 +11,7 @@ namespace sequence\root {
      * The root of the application.
      * All major class instances are accessible from this class instance.
      *
-     * @var s\Root
+     * @var Root
      */
     protected $root;
 
@@ -42,10 +42,10 @@ namespace sequence\root {
 
     /**
      *
-     * @param s\Root $root
+     * @param Root   $root
      * @param string $binding
      */
-    final public function __construct(s\Root $root, $binding = '') {
+    final public function __construct(Root $root, $binding = '') {
       $this->root = $root;
     }
 

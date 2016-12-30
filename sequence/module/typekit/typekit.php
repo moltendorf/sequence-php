@@ -11,10 +11,10 @@ namespace sequence\module\typekit {
 
     /**
      *
-     * @param s\Root $root
-     * @param string $binding
+     * @param s\root\Root $root
+     * @param string      $binding
      */
-    public function __construct(s\Root $root, $binding = '') {
+    public function __construct(s\root\Root $root, $binding = '') {
       $this->bind($root, $binding);
 
       $settings = $root->settings;

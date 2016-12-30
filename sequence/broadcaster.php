@@ -3,6 +3,7 @@
 namespace sequence {
 
   use Exception;
+  use sequence\root\Root;
 
   trait Broadcaster {
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace sequence {
+namespace sequence\root {
 
   /**
    * Current version.
@@ -8,25 +8,24 @@ namespace sequence {
   const VERSION = '0.1';
 
   use Exception;
-  use sequence\root\Application;
 
   /**
    *
-   * @property-read root\Cache    $cache
-   * @property-read root\Database $database
-   * @property-read root\Handler  $handler
-   * @property-read root\Hook     $hook
-   * @property-read root\Language $language
-   * @property-read root\Mail     $mail
-   * @property-read root\Module   $module
-   * @property-read root\Path     $path
-   * @property-read root\Settings $settings
-   * @property-read root\Template $template
+   * @property-read Cache    $cache
+   * @property-read Database $database
+   * @property-read Handler  $handler
+   * @property-read Hook     $hook
+   * @property-read Language $language
+   * @property-read Mail     $mail
+   * @property-read Module   $module
+   * @property-read Path     $path
+   * @property-read Settings $settings
+   * @property-read Template $template
    */
   class Root {
 
     /**
-     * @var root\Application
+     * @var Application
      */
     public $application;
 
@@ -34,7 +33,7 @@ namespace sequence {
      * Instantiate the root class. This automatically instantiates the application class too.
      *
      * @param string $systemPath
-     * @param array  $homePath
+     * @param string  $homePath
      */
     public function __construct($systemPath, $homePath) {
       $this->application = new Application($this);

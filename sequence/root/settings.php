@@ -41,10 +41,10 @@ namespace sequence\root {
     /**
      * Fetch all settings from the database and register listeners for application close to push updates.
      *
-     * @param s\Root $root
+     * @param Root   $root
      * @param string $binding
      */
-    public function __construct(s\Root $root, $binding = '') {
+    public function __construct(Root $root, $binding = '') {
       $this->bind($root, $binding);
 
       $application = $root->application;

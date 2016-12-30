@@ -2,6 +2,8 @@
 
 namespace sequence {
 
+  use sequence\root\Root;
+
   abstract class Module {
 
     /**

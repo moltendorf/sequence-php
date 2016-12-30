@@ -51,16 +51,16 @@ namespace sequence\root {
     /**
      * Basic constructor. Store reference of root class instance.
      *
-     * @param s\Root $root
+     * @param Root $root
      */
-    public function __construct(s\Root $root) {
+    public function __construct(Root $root) {
       $this->root = $root;
     }
 
     /**
      *
      * @param string $systemPath
-     * @param array  $homePath
+     * @param string  $homePath
      */
     public function setup($systemPath, $homePath) {
       $root = $this->root;

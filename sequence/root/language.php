@@ -35,10 +35,10 @@ namespace sequence\root {
     /**
      * Basic constructor.
      *
-     * @param s\Root $root
+     * @param Root   $root
      * @param string $binding
      */
-    public function __construct(s\Root $root, $binding = '') {
+    public function __construct(Root $root, $binding = '') {
       $this->bind($root, $binding);
     }
 

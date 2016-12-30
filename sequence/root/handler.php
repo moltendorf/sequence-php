@@ -88,10 +88,10 @@ namespace sequence\root {
     private $typeRaw = null;
 
     /**
-     * @param s\Root $root
+     * @param Root   $root
      * @param string $binding
      */
-    public function __construct(s\Root $root, $binding = '') {
+    public function __construct(Root $root, $binding = '') {
       $this->bind($root, $binding);
 
       $path = $root->path;
