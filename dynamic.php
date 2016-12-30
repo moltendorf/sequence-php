@@ -31,9 +31,6 @@ namespace sequence {
     // We use UTC for everything internally.
     date_default_timezone_set('UTC');
 
-    // Include additional functions.
-    require "$systemPath/functions.php";
-
     return new Root($systemPath, $homePath);
   }
 }
