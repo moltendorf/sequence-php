@@ -19,6 +19,15 @@
 					href="<?= $v['core_stylesheet_print'] ?>"/>
 	<?php endif ?>
 
+	<?php foreach ($v['stylesheets'] as $stylesheet): ?>
+		<?php if (!empty($v['print'])) {
+			$stylesheet['media'] = array_diff($stylesheet['media'], ['print']);
+		} ?>
+		<link rel="stylesheet"
+					<?php if (!empty($stylesheet['media'])): ?>media="<?= implode(",", $stylesheet['media']) ?>"<?php endif ?>
+					href="<?= $stylesheet['href'] ?>"/>
+	<?php endforeach ?>
+
 	<?php foreach ($v['scripts'] as $script): ?>
 		<?php if (isset($script['src'])): ?>
 			<script src="<?= $script['src'] ?>"></script>

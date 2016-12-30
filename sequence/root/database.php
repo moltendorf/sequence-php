@@ -2,217 +2,220 @@
 
 namespace sequence\root {
 
-	use sequence as s;
+  use Exception;
+  use PDO;
+  use PDOStatement;
+  use sequence as s;
 
-	use exception, pdo, pdostatement;
+  class Database extends PDO {
 
-	class database extends pdo {
+    use s\Listener;
 
-		use s\listener;
+    /**
+     * Table prefix.
+     * Used to prevent two or more websites from conflicting with each other.
+     *
+     * @var string
+     */
+    public $prefix = 'sequence__';
 
-		/**
-		 * Table prefix.
-		 * Used to prevent two or more websites from conflicting with each other.
-		 *
-		 * @var string
-		 */
-		public $prefix = 'sequence__';
+    /**
+     * Database settings.
+     *
+     * @var array
+     */
+    private $settings = [];
 
-		/**
-		 * Database settings.
-		 *
-		 * @var array
-		 */
-		private $settings = [];
+    /**
+     * Buffered statements.
+     *
+     * @var array
+     */
+    private $buffered = [];
 
-		/**
-		 * Buffered statements.
-		 *
-		 * @var array
-		 */
-		private $buffered = [];
+    /**
+     * Basic constructor.
+     *
+     * @param s\Root $root
+     * @param string $binding
+     */
+    public function __construct(s\Root $root, $binding = '') {
+      $this->bind($root, $binding);
+    }
 
-		/**
-		 * Basic constructor.
-		 *
-		 * @param s\root $root
-		 * @param string $binding
-		 */
-		public function __construct(s\root $root, $binding = '') {
-			$this->bind($root, $binding);
-		}
+    /**
+     * Bind all classes in root to application identity.
+     *
+     * @return string
+     */
+    protected function getBinding() {
+      return 'application';
+    }
 
-		/**
-		 * Bind all classes in root to application identity.
-		 *
-		 * @return string
-		 */
-		protected function getBinding() {
-			return 'application';
-		}
+    /**
+     * Connect to the database and configure table prefix.
+     *
+     * @param array $settings
+     *
+     * @throws Exception
+     */
+    public function connect($settings) {
+      if (!isset($settings['username'])) {
+        throw new Exception('NO_DATABASE_USERNAME');
+      }
 
-		/**
-		 * Connect to the database and configure table prefix.
-		 *
-		 * @param array $settings
-		 *
-		 * @throws exception
-		 */
-		public function connect($settings) {
-			if (!isset($settings['username'])) {
-				throw new exception('NO_DATABASE_USERNAME');
-			}
+      if (!isset($settings['password'])) {
+        throw new Exception('NO_DATABASE_PASSWORD');
+      }
 
-			if (!isset($settings['password'])) {
-				throw new exception('NO_DATABASE_PASSWORD');
-			}
+      if (isset($settings['prefix'])) {
+        $this->prefix = (string)$settings['prefix'];
+      }
 
-			if (isset($settings['prefix'])) {
-				$this->prefix = (string)$settings['prefix'];
-			}
+      $this->settings = $settings;
 
-			$this->settings = $settings;
+      $username = (string)$settings['username'];
+      $password = (string)$settings['password'];
 
-			$username = (string)$settings['username'];
-			$password = (string)$settings['password'];
+      parent::__construct($this->getPDODSN(), $username, $password, [self::ATTR_PERSISTENT => true]);
 
-			parent::__construct($this->getPDODSN(), $username, $password, [self::ATTR_PERSISTENT => true]);
+      $this->listen(function () {
+        foreach ($this->buffered as $value) {
+          /**
+           * @var $statement PDOStatement
+           */
+          list($statement, $arguments) = $value;
 
-			$this->listen(function () {
-				foreach ($this->buffered as $value) {
-					/**
-					 * @var $statement pdostatement
-					 */
-					list($statement, $arguments) = $value;
+          $statement->execute(...$arguments);
+          $statement->closeCursor();
+        }
 
-					$statement->execute(...$arguments);
-					$statement->closeCursor();
-				}
+        $this->buffered = [];
+      }, 'close', 'application');
+    }
 
-				$this->buffered = [];
-			}, 'close', 'application');
-		}
+    /**
+     * Get the PDO DSN.
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getPDODSN() {
+      $settings = $this->settings;
 
-		/**
-		 * Get the PDO DSN.
-		 *
-		 * @return string
-		 */
-		public function getPDODSN() {
-			$settings = $this->settings;
+      $dsn = [];
 
-			$dsn = [];
+      $type = (string)$settings['type'];
 
-			$type = (string)$settings['type'];
+      switch ($type) {
+      case 'mysql':
+        if (!isset($settings['use'])) {
+          throw new Exception('NO_DATABASE_USE');
+        }
 
-			switch ($type) {
-			case 'mysql':
-				if (!isset($settings['use'])) {
-					throw new exception('NO_DATABASE_USE');
-				}
+        $dsn[] = "dbname=$settings[use]";
 
-				$dsn[] = "dbname=$settings[use]";
+        if (isset($settings['socket'])) {
+          $dsn[] = "unix_socket=$settings[socket]";
+        } else {
+          if (isset($settings['hostname'])) {
+            $dsn[] = "host=$settings[hostname]";
 
-				if (isset($settings['socket'])) {
-					$dsn[] = "unix_socket=$settings[socket]";
-				} else {
-					if (isset($settings['hostname'])) {
-						$dsn[] = "host=$settings[hostname]";
+            if (isset($settings['port'])) {
+              $dsn[] = "port=$settings[port]";
+            }
+          }
+        }
 
-						if (isset($settings['port'])) {
-							$dsn[] = "port=$settings[port]";
-						}
-					}
-				}
+        break;
 
-				break;
+      default:
+        throw new Exception('DATABASE_TYPE_INVALID');
+      }
 
-			default:
-				throw new exception('DATABASE_TYPE_INVALID');
-			}
+      return "$type:".implode(';', $dsn);
+    }
 
-			return "$type:".implode(';', $dsn);
-		}
+    /**
+     * Get the MDB2 DSN.
+     *
+     * @return string
+     * @throws Exception
+     */
+    public function getMDBDSN() {
+      $settings = $this->settings;
 
-		/**
-		 * Get the MDB2 DSN.
-		 *
-		 * @return string
-		 */
-		public function getMDBDSN() {
-			$settings = $this->settings;
+      $dsn = [];
 
-			$dsn = [];
+      $type = (string)$settings['type'];
 
-			$type = (string)$settings['type'];
+      $username = (string)$settings['username'];
+      $password = (string)$settings['password'];
 
-			$username = (string)$settings['username'];
-			$password = (string)$settings['password'];
+      switch ($type) {
+      case 'mysql':
+        if (!isset($settings['use'])) {
+          throw new Exception('NO_DATABASE_USE');
+        }
 
-			switch ($type) {
-			case 'mysql':
-				if (!isset($settings['use'])) {
-					throw new exception('NO_DATABASE_USE');
-				}
+        $dsn[] = "$username:$password";
 
-				$dsn[] = "$username:$password";
+        if (isset($settings['socket'])) {
+          $dsn[] = "@unix($settings[socket])";
+        } else {
+          if (isset($settings['hostname'])) {
+            $dsn[] = "@$settings[hostname]";
 
-				if (isset($settings['socket'])) {
-					$dsn[] = "@unix($settings[socket])";
-				} else {
-					if (isset($settings['hostname'])) {
-						$dsn[] = "@$settings[hostname]";
+            if (isset($settings['port'])) {
+              $dsn[] = ":$settings[port]";
+            }
+          }
+        }
 
-						if (isset($settings['port'])) {
-							$dsn[] = ":$settings[port]";
-						}
-					}
-				}
+        $dsn[] = "/$settings[use]";
 
-				$dsn[] = "/$settings[use]";
+        break;
 
-				break;
+      default:
+        throw new Exception('DATABASE_TYPE_INVALID');
+      }
 
-			default:
-				throw new exception('DATABASE_TYPE_INVALID');
-			}
+      return "$type://".implode('', $dsn);
+    }
 
-			return "$type://".implode('', $dsn);
-		}
+    /**
+     * Prepare a database query.
+     *
+     * @param string $statement
+     * @param null   $options
+     *
+     * @return PDOStatement
+     */
+    public function prepare($statement, $options = null) {
+      if ($options) {
+        $result = parent::prepare($statement, $options);
+      } else {
+        $result = parent::prepare($statement);
+      }
 
-		/**
-		 * Prepare a database query.
-		 *
-		 * @param string $statement
-		 * @param null   $options
-		 *
-		 * @return pdostatement
-		 */
-		public function prepare($statement, $options = null) {
-			if ($options) {
-				$result = parent::prepare($statement, $options);
-			} else {
-				$result = parent::prepare($statement);
-			}
+      $result->setFetchMode(self::FETCH_NUM);
 
-			$result->setFetchMode(self::FETCH_NUM);
+      return $result;
+    }
 
-			return $result;
-		}
+    /**
+     * Execute a statement later.
+     *
+     * @param PDOStatement $statement
+     */
 
-		/**
-		 * Execute a statement later.
-		 *
-		 * @param pdostatement $statement
-		 */
-
-		/**
-		 * Get the table prefix.
-		 *
-		 * @return string
-		 */
-		public function getPrefix() {
-			return $this->prefix;
-		}
-	}
+    /**
+     * Get the table prefix.
+     *
+     * @return string
+     */
+    public function getPrefix() {
+      return $this->prefix;
+    }
+  }
 }

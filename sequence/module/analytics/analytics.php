@@ -2,55 +2,57 @@
 
 namespace sequence\module\analytics {
 
-	use sequence as s;
-	use sequence\functions as f;
+  use sequence as s;
+  use sequence\functions as f;
 
-	class analytics extends s\module {
+  class Analytics extends s\Module {
 
-		use s\listener;
+    use s\Listener;
 
-		/**
-		 *
-		 * @param s\root $root
-		 * @param string $binding
-		 */
-		public function __construct(s\root $root, $binding = '') {
-			$this->bind($root, $binding);
+    /**
+     *
+     * @param s\Root $root
+     * @param string $binding
+     */
+    public function __construct(s\Root $root, $binding = '') {
+      $this->bind($root, $binding);
 
-			$settings = $root->settings;
+      $settings = $root->settings;
 
-			if (isset($settings['analytics_tracking_id'])) {
-				$this->listen([$this, 'template'], 'template', 'application', -10);
-			}
-		}
+      if (isset($settings['analytics_tracking_id'])) {
+        $this->listen([$this, 'template'], 'template', 'application', -10);
+      }
+    }
 
-		/**
-		 *
-		 * @param string $request
-		 * @param string $request_root
-		 *
-		 * @return array
-		 */
-		public function request($request, $request_root) {
-		}
+    /**
+     *
+     * @param string $request
+     * @param string $request_root
+     *
+     * @return array
+     */
+    public function request($request, $request_root): ?array {
+      return null;
+    }
 
-		/**
-		 *
-		 * @param array $query
-		 *
-		 * @return array
-		 */
-		public function query($query) {
-		}
+    /**
+     *
+     * @param array $query
+     *
+     * @return array
+     */
+    public function query($query): ?array {
+      return null;
+    }
 
-		/**
-		 *
-		 */
-		public function template() {
-			$root     = $this->root;
-			$template = $root->template;
+    /**
+     *
+     */
+    public function template() {
+      $root     = $this->root;
+      $template = $root->template;
 
-			$template->script('/static/script/module/analytics/analytics.js');
-		}
-	}
+      $template->script('/static/script/module/analytics/analytics.js');
+    }
+  }
 }

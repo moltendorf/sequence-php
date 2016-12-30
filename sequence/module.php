@@ -2,37 +2,37 @@
 
 namespace sequence {
 
-	abstract class module {
+  abstract class Module {
 
-		/**
-		 * Handle a query.
-		 *
-		 * @param array $query
-		 *
-		 * @return array|null
-		 */
-		public function query($query) {
-			return null;
-		}
+    /**
+     * Handle a query.
+     *
+     * @param array $query
+     *
+     * @return array|null
+     */
+    public function query($query): ?array {
+      return null;
+    }
 
-		/**
-		 * Handle a request for a normal page.
-		 *
-		 * @param string $request
-		 * @param string $request_root
-		 *
-		 * @return array
-		 */
-		public function request($request, $request_root) {
-			return 200;
-		}
+    /**
+     * Handle a request for a normal page.
+     *
+     * @param string $request
+     * @param string $request_root
+     *
+     * @return array
+     */
+    public function request($request, $request_root): ?array {
+      return null;
+    }
 
-		/**
-		 * Basic class instance setup.
-		 *
-		 * @param root   $root
-		 * @param string $binding
-		 */
-		abstract protected function bind(root $root, $binding = '');
-	}
+    /**
+     * Basic class instance setup.
+     *
+     * @param Root   $root
+     * @param string $binding
+     */
+    abstract protected function bind(Root $root, $binding = '');
+  }
 }

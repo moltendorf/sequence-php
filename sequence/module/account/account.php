@@ -8,44 +8,47 @@
 
 namespace sequence\module\account {
 
-	use sequence as s;
-	use sequence\functions as f;
+  use sequence as s;
+  use sequence\functions as f;
 
-	class account extends s\module {
+  class Account extends s\Module {
 
-		use s\listener;
+    use s\Listener;
 
-		/**
-		 *
-		 * @param s\root $root
-		 * @param string $binding
-		 */
-		public function __construct(s\root $root, $binding = '') {
-			$this->bind($root, $binding);
-		}
+    /**
+     *
+     * @param s\Root $root
+     * @param string $binding
+     */
+    public function __construct(s\Root $root, $binding = '') {
+      $this->bind($root, $binding);
+    }
 
-		/**
-		 *
-		 * @param string $request
-		 * @param string $request_root
-		 *
-		 * @return array
-		 */
-		public function request($request, $request_root) {
-			$this->listen([$this, 'template'], 'template', 'application');
-		}
+    /**
+     *
+     * @param string $request
+     * @param string $request_root
+     *
+     * @return array
+     */
+    public function request($request, $request_root): ?array {
+      $this->listen([$this, 'template'], 'template', 'application');
 
-		/**
-		 *
-		 * @param array $query
-		 *
-		 * @return array
-		 */
-		public function query($query) {
-		}
+      return null;
+    }
 
-		public function template() {
-			$this->root->template->addModule('module/account/account');
-		}
-	}
+    /**
+     *
+     * @param array $query
+     *
+     * @return array
+     */
+    public function query($query): ?array {
+      return null;
+    }
+
+    public function template() {
+      $this->root->template->addModule('module/account/account');
+    }
+  }
 }

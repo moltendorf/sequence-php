@@ -2,43 +2,43 @@
 
 namespace sequence {
 
-	/**
-	 * Main function.
-	 * Created and called to keep all variables out of global scope.
-	 *
-	 * @return root
-	 */
-	function main() {
-		/*
-		 * Pre-configuration.
-		 */
+  /**
+   * Main function.
+   * Created and called to keep all variables out of global scope.
+   *
+   * @return Root
+   */
+  function main() {
+    /*
+     * Pre-configuration.
+     */
 
-		$systemPath = __DIR__;
-		$homePath   = "$_SERVER[HOME]/system";
+    $systemPath = __DIR__;
+    $homePath   = "$_SERVER[HOME]/system";
 
-		// Attempt to auto-load files from $homePath first then $systemPath.
-		set_include_path(implode(PATH_SEPARATOR, [$homePath, $systemPath]));
+    // Attempt to auto-load files from $homePath first then $systemPath.
+    set_include_path(implode(PATH_SEPARATOR, [$homePath, $systemPath]));
 
-		// Classes are arranged by their namespace.
-		spl_autoload_extensions('.php');
-		spl_autoload_register();
+    // Classes are arranged by their namespace.
+    spl_autoload_extensions('.php');
+    spl_autoload_register();
 
-		// Include vendor classes.
-		require "$systemPath/vendor/autoload.php";
+    // Include vendor classes.
+    require "$systemPath/vendor/autoload.php";
 
-		// We use UTC for everything internally.
-		date_default_timezone_set('UTC');
+    // We use UTC for everything internally.
+    date_default_timezone_set('UTC');
 
-		// Include additional functions.
-		require "$systemPath/functions.php";
+    // Include additional functions.
+    require "$systemPath/functions.php";
 
-		/*
-		 * Create the root.
-		 */
-		$class = 'sequence\\root';
+    /*
+     * Create the root.
+     */
+    $class = 'sequence\\Root';
 
-		spl_autoload($class);
+    spl_autoload($class);
 
-		return new $class($systemPath, $homePath);
-	}
+    return new $class($systemPath, $homePath);
+  }
 }

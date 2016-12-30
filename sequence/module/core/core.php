@@ -2,266 +2,272 @@
 
 namespace sequence\module\core {
 
-	use sequence as s;
-	use sequence\functions as f;
+  use sequence as s;
+  use sequence\functions as f;
 
-	class core extends s\module {
+  class Core extends s\Module {
 
-		use s\listener;
+    use s\Listener;
 
-		/**
-		 *
-		 * @param s\root $root
-		 * @param string $binding
-		 */
-		public function __construct(s\root $root, $binding = '') {
-			$this->bind($root, $binding);
+    /**
+     *
+     * @param s\Root $root
+     * @param string $binding
+     */
+    public function __construct(s\Root $root, $binding = '') {
+      $this->bind($root, $binding);
 
-			$this->listen([$this, 'template'], 'template', 'application');
-		}
+      $this->listen([$this, 'template'], 'template', 'application');
+    }
 
-		/**
-		 *
-		 * @param string $request
-		 * @param string $request_root
-		 *
-		 * @return array
-		 */
-		public function request($request, $request_root) {
-			$root     = $this->root;
-			$handler  = $root->handler;
-			$path     = $root->path;
-			$template = $root->template;
+    /**
+     *
+     * @param string $request
+     * @param string $request_root
+     *
+     * @return array
+     */
+    public function request($request, $request_root): ?array {
+      $root     = $this->root;
+      $handler  = $root->handler;
+      $path     = $root->path;
+      $template = $root->template;
 
-			if (strlen($request) > 0) {
-				$segments = explode('/', $request);
-			} else {
-				$segments = [];
-			}
+      if (strlen($request) > 0) {
+        $segments = explode('/', $request);
+      } else {
+        $segments = [];
+      }
 
-			$count = count($segments);
+      $count = count($segments);
 
-			if ($count > 1) {
-				$file = end($segments);
-				$type = substr(strrchr($file, '.'), 1);
+      if ($count > 1) {
+        $file = end($segments);
+        $type = substr(strrchr($file, '.'), 1);
 
-				switch ($segments[0]) {
-				case 'script':
-					switch ($type) {
-					case 'js':
-					case 'json':
-						if ($count > 3 && $segments[1] === 'module') {
-							$module = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', $segments[2]);
-							$file   = $path->module("$module/script/".implode('/', array_slice($segments, 3)).'.php');
-						} else {
-							$file = $path->script(implode('/', array_slice($segments, 1)).'.php');
-						}
+        switch ($segments[0]) {
+        case 'script':
+          switch ($type) {
+          case 'js':
+          case 'json':
+            if ($count > 3 && $segments[1] === 'module') {
+              $module = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', $segments[2]);
+              $file   = $path->module("$module/script/".implode('/', array_slice($segments, 3)).'.php');
+            } else {
+              $file = $path->script(implode('/', array_slice($segments, 1)).'.php');
+            }
 
-						if ($file) {
-							$handler->setTemplateRaw($file);
-							$handler->setType($type);
+            if ($file) {
+              $handler->setTemplateRaw($file);
+              $handler->setType($type);
 
-							header('Cache-Control: s-maxage=14400, max-age=14400');
+              header('Cache-Control: s-maxage=14400, max-age=14400');
 
-							return 200;
-						}
-					}
-					break;
+              return [200];
+            }
+          }
+          break;
 
-				case 'style':
-					if ($count == 2) {
-						$style = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', basename($file, ".$type"));
+        case 'style':
+          if ($count == 2) {
+            $style = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', basename($file, ".$type"));
 
-						if ($template->styleEnabled($style)) {
-							$template->setStyle($style);
+            if ($template->styleEnabled($style)) {
+              $template->setStyle($style);
 
-							switch ($type) {
-							case 'css':
-								$handler->setMethod([$template, 'buildMainStyleSheet']);
+              switch ($type) {
+              case 'css':
+                $handler->setMethod([$template, 'buildMainStyleSheet']);
 
-								header('Cache-Control: s-maxage=14400, max-age=14400');
+                header('Cache-Control: s-maxage=14400, max-age=14400');
 
-								return 200;
+                return [200];
 
-							case 'js':
-								$handler->setMethod([$template, 'buildMainScript']);
+              case 'js':
+                $handler->setMethod([$template, 'buildMainScript']);
 
-								header('Cache-Control: s-maxage=14400, max-age=14400');
+                header('Cache-Control: s-maxage=14400, max-age=14400');
 
-								return 200;
-							}
-						}
-					} elseif ($count > 2) {
-						$style = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', $segments[1]);
+                return [200];
+              }
+            }
+          } elseif ($count > 2) {
+            $style = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', $segments[1]);
 
-						if ($template->setStyle($style)) {
-							if ($count > 4 && $segments[2] === 'module') {
-								$prefix = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', $segments[3]).':';
-								$file   = implode('/', array_slice($segments, 4));
-							} else {
-								$prefix = '';
-								$file   = implode('/', array_slice($segments, 2));
-							}
+            if ($template->setStyle($style)) {
+              if ($count > 4 && $segments[2] === 'module') {
+                $prefix = preg_replace('/(?:^[^a-z0-9]|[^a-z0-9_]|[^a-z0-9]$)/', '', $segments[3]).':';
+                $file   = implode('/', array_slice($segments, 4));
+              } else {
+                $prefix = '';
+                $file   = implode('/', array_slice($segments, 2));
+              }
 
-							switch ($type) {
-							case 'css':
-								if ($handler->setTemplate("{$prefix}style/$file")) {
-									header('Cache-Control: s-maxage=14400, max-age=14400');
+              switch ($type) {
+              case 'css':
+                if ($handler->setTemplate("{$prefix}style/$file")) {
+                  header('Cache-Control: s-maxage=14400, max-age=14400');
 
-									return 200;
-								}
-								break;
+                  return [200];
+                }
+                break;
 
-							case 'js':
-							case 'json':
-								if ($handler->setTemplate("{$prefix}script/$file")) {
-									header('Cache-Control: s-maxage=14400, max-age=14400');
+              case 'js':
+              case 'json':
+                if ($handler->setTemplate("{$prefix}script/$file")) {
+                  header('Cache-Control: s-maxage=14400, max-age=14400');
 
-									return 200;
-								}
-								break;
-							}
-						}
-					}
-					break;
-				}
-			}
+                  return [200];
+                }
+                break;
+              }
+            }
+          }
+          break;
+        }
+      }
 
-			return 404;
-		}
+      return [404];
+    }
 
-		/**
-		 * Define core template variables.
-		 */
-		public function template() {
-			$root     = $this->root;
-			$handler  = $root->handler;
-			$s        = $root->settings;
-			$template = $root->template;
+    /**
+     * Define core template variables.
+     */
+    public function template() {
+      $root     = $this->root;
+      $handler  = $root->handler;
+      $s        = $root->settings;
+      $template = $root->template;
 
-			$v = $template->get();
+      $v = $template->get();
 
-			// Site display.
+      // Site display.
 
-			if (isset($s['site_display'])) {
-				$display = $s['site_display'];
-			} else {
-				$display = $_SERVER['HTTP_HOST'];
-			}
+      if (isset($s['site_display'])) {
+        $display = $s['site_display'];
+      } else {
+        $display = $_SERVER['HTTP_HOST'];
+      }
 
-			// Site tagline.
+      // Site tagline.
 
-			if (isset($s['site_tagline'])) {
-				$tagline = $s['site_tagline'];
-			} else {
-				$tagline = null;
-			}
+      if (isset($s['site_tagline'])) {
+        $tagline = $s['site_tagline'];
+      } else {
+        $tagline = null;
+      }
 
-			// Site title.
+      // Site title.
 
-			$title = '';
+      $title = '';
 
-			if (isset($v['page_title'])) {
-				$title = $v['page_title'];
-			} elseif (isset($v['module_display'])) {
-				$title = $v['module_display'];
-			} elseif (isset($v['module_name'])) {
-				$title = $v['module_name'];
-			} else {
-				goto title_suffix;
-			}
+      if (isset($v['page_title'])) {
+        $title = $v['page_title'];
+      } elseif (isset($v['module_display'])) {
+        $title = $v['module_display'];
+      } elseif (isset($v['module_name'])) {
+        $title = $v['module_name'];
+      } else {
+        goto title_suffix;
+      }
 
-			$title .= ' // ';
+      $title .= ' // ';
 
-			title_suffix:
-			$title .= $display;
+      title_suffix:
+      $title .= $display;
 
-			// Copyright display.
+      // Copyright display.
 
-			if ($s['site_copyright'] === '1') {
-				$copyright = true;
+      if ($s['site_copyright'] === '1') {
+        $copyright = true;
 
-				if (isset($s['site_copyright_display'])) {
-					$copyright_display = $s['site_copyright_display'];
-				} else {
-					$copyright_display = $display;
-				}
+        if (isset($s['site_copyright_display'])) {
+          $copyright_display = $s['site_copyright_display'];
+        } else {
+          $copyright_display = $display;
+        }
 
-				if (isset($s['site_copyright_date'])) {
-					$year = date('Y');
+        if (isset($s['site_copyright_date'])) {
+          $year = date('Y');
 
-					if ($s['site_copyright_date'] < $year) {
-						$copyright_date = "{$s['site_copyright_date']}-$year";
-					} else {
-						$copyright_date = $s['site_copyright_date'];
-					}
-				} else {
-					$copyright_date = '';
-				}
-			} else {
-				$copyright         = null;
-				$copyright_display = null;
-				$copyright_date    = null;
-			}
+          if ($s['site_copyright_date'] < $year) {
+            $copyright_date = "{$s['site_copyright_date']}-$year";
+          } else {
+            $copyright_date = $s['site_copyright_date'];
+          }
+        } else {
+          $copyright_date = '';
+        }
+      } else {
+        $copyright         = null;
+        $copyright_display = null;
+        $copyright_date    = null;
+      }
 
-			// Navigation data.
+      // Navigation data.
 
-			$navigation = $handler->getNavigation();
+      $navigation = $handler->getNavigation();
 
-			if ($navigation) {
-				$active = $handler->getModules();
+      if ($navigation) {
+        $active = $handler->getModules();
 
-				if (!is_array($active)) {
-					$active = [];
-				}
+        if (!is_array($active)) {
+          $active = [];
+        }
 
-				$modules = [];
+        $modules = [];
 
-				foreach ($navigation as $module) {
-					$module['active'] = in_array($module['module'], $active);
+        foreach ($navigation as $module) {
+          $module['active'] = in_array($module['module'], $active);
 
-					$modules[] = $module;
-				}
-			} else {
-				$modules = null;
-			}
+          $modules[] = $module;
+        }
+      } else {
+        $modules = null;
+      }
 
-			// Style.
+      // Style.
 
-			if (isset($s['style'])) {
-				$style = $s['style'];
-			} else {
-				$style = 'default';
-			}
+      if (isset($s['style'])) {
+        $style = $s['style'];
+      } else {
+        $style = 'default';
+      }
 
-			// Script.
-			$script = "/static/style/$style.js";
+      // Script.
+      $script = "/static/style/$style.js";
 
-			$script_data = [
-				'query'   => $s['query'],
-				'version' => s\version
-			];
+      $script_data = [
+        'query'   => $s['query'],
+        'version' => s\VERSION
+      ];
 
-			// Stylesheet.
+      // Stylesheet.
 
-			$stylesheet       = "/static/style/$style.css";
-			$stylesheet_print = "/static/style/$style/print.css";
+      $stylesheet       = "/static/style/$style.css";
+      $stylesheet_print = "/static/style/$style/print.css";
 
-			$template->add([
-				'core_display'           => $display,
-				'core_tagline'           => $tagline,
-				'core_title'             => $title,
-				'core_copyright'         => $copyright,
-				'core_copyright_display' => $copyright_display,
-				'core_copyright_date'    => $copyright_date,
-				'core_root'              => $s['root'],
-				'core_navigation'        => $modules,
-				'core_script'            => $script,
-				'core_script_data'       => json_encode($script_data),
-				'core_stylesheet'        => $stylesheet,
-				'core_stylesheet_print'  => $stylesheet_print,
-				'core_version'           => s\version,
-			]);
-		}
-	}
+      $template->add([
+        'core_display'           => $display,
+        'core_tagline'           => $tagline,
+        'core_title'             => $title,
+        'core_copyright'         => $copyright,
+        'core_copyright_display' => $copyright_display,
+        'core_copyright_date'    => $copyright_date,
+        'core_root'              => $s['root'],
+        'core_navigation'        => $modules,
+        'core_script'            => $script,
+        'core_script_data'       => json_encode($script_data),
+        'core_stylesheet'        => $stylesheet,
+        'core_stylesheet_print'  => $stylesheet_print,
+        'core_version'           => s\VERSION,
+      ]);
+
+      if (s\debug) {
+        $template->addModule('language');
+        $template->addModule('module');
+        $template->addModule('sequence');
+      }
+    }
+  }
 }
