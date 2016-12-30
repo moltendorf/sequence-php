@@ -342,7 +342,7 @@ namespace sequence\root {
      */
     public function parseQuery() {
       $root     = $this->root;
-      $module   = $root->module;
+      $module   = $root->modules;
       $settings = $root->settings;
 
       $limit     = $settings['query_limit'];
@@ -469,7 +469,7 @@ namespace sequence\root {
      */
     public function request() {
       $root   = $this->root;
-      $module = $root->module;
+      $module = $root->modules;
 
       if (isset($this->query)) {
         $this->broadcast('query');

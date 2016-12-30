@@ -270,7 +270,7 @@ namespace sequence\root {
          */
 
         $handler  = $root->handler;
-        $module   = $root->module;
+        $module   = $root->modules;
         $template = $root->template;
 
         /*

@@ -59,7 +59,7 @@ namespace sequence\root {
     public function load() {
       $root = $this->root;
 
-      $module   = $root->module;
+      $module   = $root->modules;
       $settings = $root->settings;
 
       if (isset($settings['language'])) {

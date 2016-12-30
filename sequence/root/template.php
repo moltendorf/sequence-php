@@ -654,7 +654,7 @@ namespace sequence\root {
     public function buildMainStyleSheet() {
       $root    = $this->root;
       $handler = $root->handler;
-      $module  = $root->module;
+      $module  = $root->modules;
       $path    = $root->path;
 
       /**
@@ -746,7 +746,7 @@ namespace sequence\root {
     public function buildMainScript() {
       $root    = $this->root;
       $handler = $root->handler;
-      $module  = $root->module;
+      $module  = $root->modules;
       $path    = $root->path;
 
       /**
