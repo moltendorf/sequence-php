@@ -3,11 +3,12 @@
 namespace sequence\module\push {
 
   use sequence as s;
+  use sequence\classes\Module;
   use sequence\functions as f;
   use sequence\root\Root;
   use sequence\SQL;
 
-  class Push extends s\Module {
+  class Push extends Module {
 
     use s\Listener;
     use SQL;

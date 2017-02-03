@@ -3,8 +3,9 @@
 namespace sequence\module\robots {
 
   use sequence as s;
+  use sequence\classes\Module;
 
-  class Robots extends s\Module {
+  class Robots extends Module {
 
     use s\Listener;
 

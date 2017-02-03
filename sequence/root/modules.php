@@ -5,6 +5,7 @@ namespace sequence\root {
   use ArrayAccess;
   use Exception;
   use sequence as s;
+  use sequence\classes\Module;
   use sequence\SQL;
 
   class Modules implements ArrayAccess {
@@ -107,7 +108,7 @@ namespace sequence\root {
      *
      * @param string $offset
      *
-     * @return s\Module|null
+     * @return Module|null
      */
     public function offsetGet($offset) {
       $offset = (string)$offset;

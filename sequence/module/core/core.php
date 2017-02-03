@@ -3,9 +3,10 @@
 namespace sequence\module\core {
 
   use sequence as s;
+  use sequence\classes\Module;
   use sequence\functions as f;
 
-  class Core extends s\Module {
+  class Core extends Module {
 
     use s\Listener;
 

@@ -3,8 +3,9 @@
 namespace sequence\module\index {
 
   use sequence as s;
+  use sequence\classes\Module;
 
-  class Index extends s\Module {
+  class Index extends Module {
 
     use s\Listener;
 

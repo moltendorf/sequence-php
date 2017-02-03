@@ -3,10 +3,11 @@
 namespace sequence\module\redirect {
 
   use sequence as s;
+  use sequence\classes\Module;
   use sequence\root\Root;
   use sequence\SQL;
 
-  class Redirect extends s\Module {
+  class Redirect extends Module {
 
     use s\Listener;
     use SQL;

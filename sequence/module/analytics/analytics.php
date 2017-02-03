@@ -3,9 +3,10 @@
 namespace sequence\module\analytics {
 
   use sequence as s;
+  use sequence\classes\Module;
   use sequence\functions as f;
 
-  class Analytics extends s\Module {
+  class Analytics extends Module {
 
     use s\Listener;
 

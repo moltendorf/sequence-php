@@ -3,9 +3,10 @@
 namespace sequence\module\typekit {
 
   use sequence as s;
+  use sequence\classes\Module;
   use sequence\functions as f;
 
-  class TypeKit extends s\Module {
+  class TypeKit extends Module {
 
     use s\Listener;
 

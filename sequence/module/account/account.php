@@ -9,9 +9,10 @@
 namespace sequence\module\account {
 
   use sequence as s;
+  use sequence\classes\Module;
   use sequence\functions as f;
 
-  class Account extends s\Module {
+  class Account extends Module {
 
     use s\Listener;
 

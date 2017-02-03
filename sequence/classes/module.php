@@ -1,6 +1,6 @@
 <?php
 
-namespace sequence {
+namespace sequence\classes {
 
   use sequence\root\Root;
 
