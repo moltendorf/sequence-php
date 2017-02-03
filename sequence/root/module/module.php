@@ -1,6 +1,6 @@
 <?php
 
-namespace sequence\classes {
+namespace sequence\root\module {
 
   use sequence\root\Root;
 
@@ -8,7 +8,7 @@ namespace sequence\classes {
    * Class Module
    *
    * @deprecated
-   * @package sequence\classes
+   * @package sequence\root\module
    */
   abstract class Module {
 

@@ -3,7 +3,7 @@
 namespace sequence\module\robots {
 
   use sequence as s;
-  use sequence\classes\Module;
+  use sequence\root\module\Module;
 
   class Robots extends Module {
 

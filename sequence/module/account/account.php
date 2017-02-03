@@ -9,7 +9,7 @@
 namespace sequence\module\account {
 
   use sequence as s;
-  use sequence\classes\Module;
+  use sequence\root\module\Module;
   use sequence\functions as f;
 
   class Account extends Module {

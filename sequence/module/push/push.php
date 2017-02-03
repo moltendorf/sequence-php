@@ -3,7 +3,7 @@
 namespace sequence\module\push {
 
   use sequence as s;
-  use sequence\classes\Module;
+  use sequence\root\module\Module;
   use sequence\functions as f;
   use sequence\root\Root;
   use sequence\SQL;

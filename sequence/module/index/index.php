@@ -3,7 +3,7 @@
 namespace sequence\module\index {
 
   use sequence as s;
-  use sequence\classes\Module;
+  use sequence\root\module\Module;
 
   class Index extends Module {
 

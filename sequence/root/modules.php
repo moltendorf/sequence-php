@@ -5,7 +5,7 @@ namespace sequence\root {
   use ArrayAccess;
   use Exception;
   use sequence as s;
-  use sequence\classes\Module;
+  use sequence\root\module\Module;
   use sequence\SQL;
 
   class Modules implements ArrayAccess {

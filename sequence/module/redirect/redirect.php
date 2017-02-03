@@ -3,7 +3,7 @@
 namespace sequence\module\redirect {
 
   use sequence as s;
-  use sequence\classes\Module;
+  use sequence\root\module\Module;
   use sequence\root\Root;
   use sequence\SQL;
 
