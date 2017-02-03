@@ -4,6 +4,12 @@ namespace sequence\classes {
 
   use sequence\root\Root;
 
+  /**
+   * Class Module
+   *
+   * @deprecated
+   * @package sequence\classes
+   */
   abstract class Module {
 
     /**
